@@ -1,0 +1,789 @@
+importScripts(
+    "../helper.js",
+    "bg_send_message.js",
+    "bg_friend_requests.js",
+    "send_without_popup.js",
+    "birthday.js"
+);
+
+//****************************** DEFINE VARIABLES *****************************************//
+// GET HEIGHT WIDTH OF CHROME WINDOWS
+var window_height = 0;
+var window_width = 0;
+chrome.windows.getAll({ populate: true }, function(list) {
+    window_height = list[0].height;
+    window_width = list[0].width;
+});
+
+// Oninstall though window.open can be blocked by popup blockers
+chrome.runtime.onInstalled.addListener(function() {
+    chrome.alarms.create("wakeup_bg", { periodInMinutes: 1 / 60 });
+    // chrome.alarms.create('requestIsReceived', { periodInMinutes: 9 });
+    checkMessengerMobileView();
+    reloadAllNovalyaTabs();
+    reloadAllGroupTabs();
+    reloadAllFriendsTabs();
+    reloadMessengersTabs();
+    clearAlarm("requestIsReceived");
+});
+
+
+chrome.management.onEnabled.addListener(function(extensionInfo) {
+    checkMessengerMobileView();
+    reloadAllNovalyaTabs();
+    reloadAllGroupTabs();
+    reloadAllFriendsTabs();
+    reloadMessengersTabs();
+
+});
+
+chrome.management.onDisabled.addListener(function(extensionInfo) {
+    //console.log(extensionInfo.name + " disabled");
+    checkMessengerMobileView();
+    reloadAllNovalyaTabs();
+    reloadAllGroupTabs();
+    reloadAllFriendsTabs();
+    reloadMessengersTabs();
+
+});
+
+getCookies(site_url, "user_id", function(id) {
+    userId = id;
+});
+
+chrome.runtime.onStartup.addListener(function() {
+    checkMessengerMobileView();
+    reloadAllNovalyaTabs();
+    reloadAllGroupTabs();
+    reloadAllFriendsTabs();
+    reloadMessengersTabs();
+});
+
+chrome.alarms.onAlarm.addListener(function(alarm) {
+    if (alarm.name == "wakeup_bg") {
+        getCookies(site_url, "user_id", function(id) {
+            userId = id;
+            console.log("wake up service worker", userId);
+        });
+    }
+});
+
+// Clear a specific alarm by name
+function clearAlarm(alarmName) {
+    chrome.alarms.clear(alarmName, function(cleared) {
+        if (cleared) {
+            console.log("Alarm cleared successfully!");
+        } else {
+            console.log("Failed to clear alarm.");
+        }
+    });
+}
+
+// RUN CODE WHEN RELODE NOVALYA.COM
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (
+        typeof changeInfo.status != "undefined" &&
+        changeInfo.status == "complete"
+    ) {
+        if (typeof tab.url != "undefined" && tab.url.indexOf(my_domain) > -1) {
+            FriendRequestsNVClass.getRequestSettings();
+        }
+    }
+    return true;
+});
+
+//Listen to messages
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "sendMessageToMember") {
+        let window_data = {
+            text_message: message.textMsg,
+        };
+
+        chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
+            if (
+                typeof result.messengerMobViewStatus != "undefined" &&
+                result.messengerMobViewStatus != ""
+            ) {
+                //let mobileViewEnable = false;
+                let mobileViewEnable = result.messengerMobViewStatus.enable;
+                if (mobileViewEnable) {
+                    mfacebook_thread_url =
+                        "https://mbasic.facebook.com/messages/compose/?ids=" +
+                        message.memberid;
+                    SendMessageMembersNVClass.openSmallWindow(
+                        mfacebook_thread_url,
+                        window_data
+                    );
+                } else {
+                    SendMessageMembersNVClass.openMessengersWindow(
+                        message.memberid,
+                        message.textMsg
+                    );
+                }
+            } else {
+                mfacebook_thread_url =
+                    "https://mbasic.facebook.com/messages/compose/?ids=" +
+                    message.memberid;
+                SendMessageMembersNVClass.openSmallWindow(
+                    mfacebook_thread_url,
+                    window_data
+                );
+                checkMessengerMobileView();
+            }
+        });
+        //checkMessage(message.memberid,message.textMsg)
+    }
+    if(message.action === "Reload_all_novalya_tabs"){
+        if (message.currentLocationUrl.indexOf('messenger') > -1) {
+            reloadAllNovalyaTabs();
+        }
+       
+     }
+    if (message.action === "tagsApiCall") {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("user_id", userId);
+        formdata.append("type", "get");
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch("https://app.novalya.com/system/tags-api.php", requestOptions)
+            .then((response) => response.text())
+            .then((result) => sendResponse({ data: result, status: "ok" }))
+            .catch(error => console.log('error', error));
+        return true;
+    }
+
+    if (message.action === "tagsAssiging") {
+        const fbUserId = message.fb_user_id;
+        getBothAlphaAndNumericId(fbUserId)
+        .then(function (fbIDsObject) {
+            const numericUserFbId = fbIDsObject.numeric_fb_id;
+            const alphanumericUserFbId = fbIDsObject.fb_user_id;
+            const myHeaders = new Headers();
+            const formdata = new FormData();
+            formdata.append("type", "add");
+            formdata.append("user_id", userId);
+            formdata.append("fb_user_id", numericUserFbId);
+            formdata.append("fb_user_alphanumeric_id", alphanumericUserFbId);
+            formdata.append("fb_image_id", null);
+            formdata.append("fb_name", message.fbName);
+            formdata.append("profile_pic", message.profilePic);
+            formdata.append("is_primary", message.is_primary);
+            formdata.append("tag_id[]", message.selected_tags_ids);
+
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            const apiUrl = "https://app.novalya.com/system/taggeduser-api.php";
+            
+            // Perform the POST request
+            fetch(apiUrl, requestOptions)
+                .then(response => response.text())
+                .then(result => {
+                    chrome.tabs.sendMessage(sender.tab.id, {
+                        type: 'tag_update_done',
+                        from: 'background',
+                        result:result,
+                    });
+                    //sendResponse({ data: result.msg, status: "ok" });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    sendResponse({ data: "An error occurred", status: "error" });
+                });
+        })
+        .catch(error => {
+            console.error('Error getting FB IDs:', error);
+            sendResponse({ data: "An error occurred", status: "error" });
+        });
+
+    }
+
+    if(message.action === "single_users_tag_get"){
+
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("type", "single_get");
+        formdata.append("fb_user_id", message.fb_user_id);
+        console.log(message);
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
+        
+        fetch("https://app.novalya.com/system/taggeduser-api.php", requestOptions)
+          .then(response => response.text())
+          .then(result => sendResponse(result))
+          .catch(error => console.log('error', error));
+          return true;
+    }
+
+    if(message.action === "all_users_tag_get"){
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("type", "get");
+        formdata.append("user_id", userId);
+        
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
+        
+        fetch("https://app.novalya.com/system/taggeduser-api.php", requestOptions)
+          .then(response => response.text())
+          .then(result => {sendResponse(result)})
+          .catch(error => console.log('error', error));
+          return true;
+    }
+
+
+    if (message.action === "verifyGroupURL") {
+        let grouppage_url = message.url.replace("www", "mbasic");
+        getGroupName(sendResponse, grouppage_url);
+        return true;
+    }
+    if (message.action == "refreshExt") {
+        checkMessengerMobileView();
+        return true;
+    }
+
+    if (message.action === "addgroupapi") {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("user_id", userId);
+        formdata.append("name", message.name);
+        formdata.append("url", message.url);
+
+        var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow",
+        };
+
+        fetch(base_api_url + "saved-group-api.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => sendResponse({ data: result, status: "ok" }))
+            .catch((error) => sendResponse({ data: error, status: "error" }));
+        return true;
+    }
+
+
+    if (message.action === "addgroupapinew") {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("user_id", userId);
+        formdata.append("name", message.name);
+        formdata.append("url", message.url);
+        formdata.append("group_type", message.group_type);
+        var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow",
+        };
+
+        fetch(base_api_url + "saved-group-api-new.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => sendResponse({ data: result, status: "ok" }))
+            .catch((error) => sendResponse({ data: error, status: "error" }));
+        return true;
+    }
+
+
+
+    if (message.action === "getMessageSections") {
+        var myHeaders = new Headers();
+        var requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow",
+        };
+        fetch(
+                base_api_url + "target-send-request.php?user_id=" + userId,
+                requestOptions
+            )
+            .then((response) => response.json())
+            .then((res1) => {
+                chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
+                    chrome.tabs.create({ url: res1.data.group_url, active: true },
+                        function(tabs) {
+                            groupPageTabId = tabs.id;
+                            extension_page_tabid = sender.tab.id;
+                            chrome.storage.local.set({ nvAddFriendProcess: "process" },
+                                function() {
+                                    chrome.tabs.onUpdated.addListener(groupPageTabListener);
+                                    sendResponse({ data: res1 });
+                                }
+                            );
+                        }
+                    );
+                });
+            })
+            .catch((error) => console.log("error", error));
+    }
+
+    if (message.action == "fetchMessageFromGroupSegement") {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("message_id", message.groupid);
+        formdata.append("user_id", userId);
+
+        var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow",
+        };
+
+        fetch(base_api_url + "send-message-on-connect.php", requestOptions)
+            .then((response) => response.json())
+            .then((result) => sendResponse({ text: result.msg, status: "ok" }))
+            .catch((error) => sendResponse({ text: "", status: "error" }));
+        return true;
+    }
+
+    if (message.action == "closeTabs") {
+        setTimeout(() => {
+            chrome.tabs.remove(sender.tab.id);
+        }, 15000);
+        sendResponse({ status: true });
+        return true;
+    } 
+
+    if (message.action == "closeTabs2") {
+        setTimeout(() => {
+            chrome.tabs.remove(sender.tab.id);
+        }, 2000);
+        sendResponse({ status: true });
+        return true;
+    }
+
+    if (message.action === "getGenderCountry") {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        var raw = JSON.stringify({
+            name: message.name,
+        });
+
+        var requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow",
+        };
+
+        fetch(
+                "https://z7c5j0fjy8.execute-api.us-east-2.amazonaws.com/dev/tiersai",
+                requestOptions
+            )
+            .then((response) => response.json())
+            .then((result) => sendResponse({ gender: message.gender, data: result }))
+            .catch((error) => console.log("error", error));
+
+        return true; // Tells Chrome to keep the message channel open for async response
+    }
+
+    // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON DELECT REQUEST BUTTON
+    if (message.action == "deleteRequest") {
+        FriendRequestsNVClass.getRequestSettings();
+        setTimeout(() => {
+            chrome.storage.local.get(["requestSettings"], function(result) {
+                if (
+                    typeof result.requestSettings != "undefined" &&
+                    result.requestSettings != ""
+                ) {
+                    requestSettings1 = result.requestSettings;
+                    messageArray = requestSettings1.reject_message;
+                    var randomIndex = Math.floor(Math.random() * messageArray.length);
+                    var messageText = messageArray[randomIndex];
+                    var member_fullname = message.data.name;
+                    var member_names = member_fullname.split(" ");
+                    messageText = messageText.replace("[first name]", member_names[0]);
+                    messageText = messageText.replace("[last name]", member_names[1]);
+
+                    var window_data = {
+                        text_message: messageText,
+                    };
+                    mfacebook_thread_url =
+                        "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+                    SendMessageMembersNVClass.openSmallWindow(
+                        mfacebook_thread_url,
+                        window_data
+                    );
+                    sendResponse({ status: "ok" });
+                }
+            });
+            return true;
+        }, 6000)
+    }
+
+    // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON CONFIRM REQUEST BUTTON
+    if (message.action == "confirmRequest") {
+        FriendRequestsNVClass.getRequestSettings();
+        setTimeout(() => {
+            chrome.storage.local.get(["requestSettings"], function(result) {
+                if (
+                    typeof result.requestSettings != "undefined" &&
+                    result.requestSettings != ""
+                ) {
+                    requestSettings1 = result.requestSettings;
+                    messageArray = requestSettings1.accept_message;
+                    var randomIndex = Math.floor(Math.random() * messageArray.length);
+                    var messageText = messageArray[randomIndex];
+                    var member_fullname = message.data.name;
+                    var member_name = member_fullname.split(" ");
+                    messageText = messageText.replace("[first name]", member_name[0]);
+                    messageText = messageText.replace("[last name]", member_name[1]);
+                    var window_data = {
+                        text_message: messageText,
+                    };
+                    mfacebook_thread_url =
+                        "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+                    SendMessageMembersNVClass.openSmallWindow(
+                        mfacebook_thread_url,
+                        window_data
+                    );
+                    sendResponse({ status: "ok" });
+                }
+            });
+            return true;
+        }, 6000)
+    }
+
+    // CANCEL ALL SENT REQUESTS AFTER CLICK ON FOLLOW
+    if (message.action == "cancelSentFriendRequests") {
+        var outgoing_requests_url =
+            "https://m.facebook.com/friends/center/requests/outgoing";
+        chrome.tabs.create({ url: outgoing_requests_url, active: true },
+            function(tabs) {
+                outgoing_page_tabId = tabs.id;
+                chrome.tabs.onUpdated.addListener(function outgoingRequestsTabListener(
+                    tabId,
+                    changeInfo,
+                    tab
+                ) {
+                    if (
+                        changeInfo.status === "complete" &&
+                        tabId === outgoing_page_tabId
+                    ) {
+                        chrome.tabs.sendMessage(outgoing_page_tabId, {
+                            subject: "removeRequests",
+                        });
+                        chrome.tabs.onUpdated.removeListener(outgoingRequestsTabListener);
+                    }
+                });
+                sendResponse({ status: "start" });
+            }
+        );
+    }
+
+    if (message.action == "openChromeExtension") {
+        var outgoing_requests_url =
+            "chrome://extensions/?id=iemhbpcnoehagepnbflncegkcgpphmpc";
+        chrome.tabs.create({ url: outgoing_requests_url, active: true },
+            function(tabs) {
+                sendResponse({ status: "start" });
+            }
+        );
+        return true;
+    }
+
+    if (message.action == "openBirthdayEvent") {   
+        BirthdayNovaClass.getBirthdaySettings(message, sendResponse, sender);        
+        return true;
+    }
+
+    if (message.action == "sendMessageBirthday") {
+        const window_data = { text_message: message.messagtext };
+        getNumericID(message.member_fb_id)
+            .then(function(resopnse) {
+                chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
+                    if (
+                        typeof result.messengerMobViewStatus != "undefined" &&
+                        result.messengerMobViewStatus != ""
+                    ) {
+                        let mobileViewEnable = result.messengerMobViewStatus.enable;
+                        if (mobileViewEnable) {                            
+                            var mfacebook_thread_url = "https://mbasic.facebook.com/messages/compose/?ids=" + resopnse.userID;
+                            SendMessageMembersNVClass.openSmallWindow(
+                                mfacebook_thread_url,
+                                window_data
+                            );
+                        } else {
+                            SendMessageMembersNVClass.openMessengersWindow(
+                                resopnse.userID,
+                                message.messagtext
+                            );
+                        }
+                    } else {
+                        var mfacebook_thread_url = "https://mbasic.facebook.com/messages/compose/?ids=" + resopnse.userID;
+                        SendMessageMembersNVClass.openSmallWindow(
+                            mfacebook_thread_url,
+                            window_data
+                        );
+                        checkMessengerMobileView();
+                    }
+                });
+                sendResponse({ status: "start" });
+            })
+            .catch(function(response) {
+                console.log("error to find fb id");
+                sendResponse({ status: "error" });
+            });
+        return true;
+    }
+
+    if (message.action == "postFeedBirthday") {
+        const window_data = { text_message: message.messagtext };
+        facebook_profile_url = "https://www.facebook.com/" + message.member_fb_id;
+        SendMessageMembersNVClass.postTextOnTimeline(
+            facebook_profile_url,
+            window_data
+        );
+        sendResponse({ status: "start" });
+        return true;
+    }
+
+    if (message.action == "reloadExtensionId") {
+        //usage:
+        getCookies(site_url, "user_id", function(id) {
+            userId = id;
+            sendResponse({ user_id: userId });
+        });
+        return true;
+    }
+
+    if (message.action == "userCRMPermission") {
+        var myHeaders = new Headers();
+        var formdata = new FormData();
+        formdata.append("user_id", userId);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch("https://app.novalya.com/system/crm_status-api.php", requestOptions)
+        .then(response => response.json())
+        .then(result => sendResponse({ crm_status: result.data, status: "ok" }))
+        .catch(error => sendResponse({ crm_status: "", status: "error" }));
+        return true;
+    }
+
+    if (message.action === "getCRMMessageSections") {
+        var myHeaders = new Headers();
+        var requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow",
+        };
+
+        fetch(
+                base_api_url + "crm_send_message_api.php?user_id=" + userId,
+                requestOptions
+            )
+            .then((response) => response.json())
+            .then((resCRMApi) => {
+                sendResponse({ api_data: resCRMApi.data});
+            })
+            .catch((error) => console.log("error", error));
+        return true;
+    }
+
+    if(message.action == "sendMessageFromCRMOnebyOne") {
+        let window_data = {
+            text_message: message.textMsg,
+        };
+        sendMessageFromCRMOnebyOne(window_data, message.thread_id);
+        setTimeout( () => {
+            sendResponse({ 'status': 'ok'});
+        }, 5000)
+        return true;
+    }
+
+});
+var currentDate = getCurrentDate();
+
+
+
+function getCurrentDate() {
+    var d = new Date();
+    var month = d.getMonth() + 1,
+        day = d.getDate();
+    var output =
+        (day < 10 ? "0" : "") +
+        day +
+        "-" +
+        (month < 10 ? "0" : "") +
+        month +
+        "-" +
+        d.getFullYear();
+    return output;
+}
+
+/******* Check m.facebook/message/compose view on specific region for send message **********/
+
+function checkMessengerMobileView() {
+    let messengerUrl = "https://mbasic.facebook.com/messages/compose/";
+    fetch(messengerUrl)
+        .then((response) => response.text())
+        .then((data) => {
+            var str = data;
+            var mySubString = str.substring(
+                str.lastIndexOf('id="composer_form"') + 0,
+                str.lastIndexOf('id="composer_form"') + 25
+            );
+            //console.log('messenger '+mySubString);
+            if (mySubString.indexOf("composer_form") > -1) {
+                mobileViewEnable = true;
+            } else {
+                mobileViewEnable = false;
+            }
+            messengerMobViewStatus = {};
+            messengerMobViewStatus.enable = mobileViewEnable;
+            messengerMobViewStatus.date = currentDate;
+            chrome.storage.local.set({
+                messengerMobViewStatus: messengerMobViewStatus,
+            });
+        });
+}
+
+// GET USER ID FROM BACKOFFICE WITH GET COOKIES
+function getCookies(domain, name, callback) {
+    chrome.cookies.get({ url: domain, name: name }, function(cookie) {
+        if (callback) {
+            //console.log(cookie);
+            //console.log(cookie.value);
+            if (typeof cookie != undefined && cookie != null) {
+                callback(cookie.value);
+            }
+        }
+    });
+}
+
+
+function groupPageTabListener(tabId, changeInfo, tab) {
+    if (changeInfo.status === "complete" && tabId === groupPageTabId) {
+        extTabId = extension_page_tabid;
+        chrome.tabs.sendMessage(groupPageTabId, {
+            subject: "addTargetProcess",
+            from: "background",
+            extTabId: extTabId,
+        });
+        chrome.tabs.onUpdated.removeListener(groupPageTabId);
+    }
+}
+
+function getGroupName(sendResponse, grouppage_url) {
+    //console.log(grouppage_url);
+    fetch(grouppage_url, { method: "GET" })
+        .then((response) => response.text())
+        .then((textResponse) => {
+            sendResponse({ groupPageDOM: textResponse });
+        });
+}
+
+FriendRequestsNVClass.getRequestSettings();
+// FriendCRMClass.getCRMStatus();
+
+// GET FACEBOOK LOGGED-IN USER ID FROM APIS AND SET CUSTOMER ID
+function GetFacebookLoginId() {
+    return fetch("https://www.facebook.com/help")
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(text) {
+            myUserId = text.match(/"USER_ID":"(.*?)"/)[1];
+            chrome.storage.local.set({ nv_facebook_id: myUserId }, function() {});
+        });
+}
+
+// HEPER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
+async function getNumericID(facebook_id) {
+    return new Promise(function(resolve, reject) {
+        fetch("https://www.facebook.com/" + facebook_id)
+            .then((response) => response.text())
+            .then((str) => {
+                var mySubString = str.substring(
+                    str.lastIndexOf('"props":') + 8,
+                    str.lastIndexOf(',"entryPoint"') + 0
+                );
+                //console.log(mySubString);
+                if (CS_isValidJSONString(mySubString)) {
+                    decoded_data = JSON.parse(mySubString);
+                    viewerID = decoded_data.viewerID;
+                    userVanity = decoded_data.userVanity;
+                    userID = decoded_data.userID;
+                    userInfo = {
+                        viewerID: decoded_data.viewerID,
+                        userVanity: decoded_data.userVanity,
+                        userID: decoded_data.userID,
+                    };
+                    resolve(userInfo);
+                } else {
+                    reject(false);
+                }
+            });
+    });
+}
+
+function CS_isValidJSONString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+
+function sendMessageFromCRMOnebyOne(window_data, thread_id) {
+    chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
+            if (
+                typeof result.messengerMobViewStatus != "undefined" &&
+                result.messengerMobViewStatus != ""
+            ) {
+                //let mobileViewEnable = false;
+                let mobileViewEnable = result.messengerMobViewStatus.enable;
+                if (mobileViewEnable) {
+                    mfacebook_thread_url =
+                        "https://mbasic.facebook.com/messages/compose/?ids=" +
+                        thread_id;
+                    SendMessageMembersNVClass.openSmallWindow(
+                        mfacebook_thread_url,
+                        window_data
+                    );
+                } else {
+                    SendMessageMembersNVClass.openMessengersWindow(
+                        thread_id,
+                        window_data.text_message
+                    );
+                }
+            } else {
+                mfacebook_thread_url =
+                    "https://mbasic.facebook.com/messages/compose/?ids=" +
+                    thread_id;
+                SendMessageMembersNVClass.openSmallWindow(
+                    mfacebook_thread_url,
+                    window_data
+                );
+                checkMessengerMobileView();
+            }
+        });
+}
