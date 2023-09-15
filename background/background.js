@@ -145,76 +145,108 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
        
      }
     if (message.action === "tagsApiCall") {
-            console.log(authToken);
-            let token = authToken;
-            if(token != undefined && token != ''){
-                console.log(message);
-                var myHeaders = new Headers();
-                myHeaders.append("Authorization", "Bearer "+token);
-                myHeaders.append("Content-Type", "application/json");
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+authToken);
 
-                var raw = JSON.stringify({
-                  "type": "get"
-                });
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
 
-                var requestOptions = {
-                  method: 'POST',
-                  headers: myHeaders,
-                  body: raw,
-                  redirect: 'follow'
-                };
-
-                fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
-                   .then((response) => response.text())
-                    .then((result) => sendResponse({ data: result, status: "ok" }))
-                    .catch(error => console.log('error', error));               
-            }         
-
+        fetch("https://novalyabackend.novalya.com/user/api/group/", requestOptions)
+        .then(response => response.json())
+        .then(result => sendResponse({ data: result, status: "ok" }))
+        .catch(error => console.log('error', error));
         return true;
     }
-
+//sendResponse({ data: result, status: "ok" })
     if (message.action === "tagsAssiging") {
         const fbUserId = message.fb_user_id;
         getBothAlphaAndNumericId(fbUserId)
         .then(function (fbIDsObject) {
             const numericUserFbId = fbIDsObject.numeric_fb_id;
             const alphanumericUserFbId = fbIDsObject.fb_user_id;
-            const myHeaders = new Headers();
-            const formdata = new FormData();
-            formdata.append("type", "add");
-            formdata.append("user_id", userId);
-            formdata.append("fb_user_id", numericUserFbId);
-            formdata.append("fb_user_alphanumeric_id", alphanumericUserFbId);
-            formdata.append("fb_image_id", null);
-            formdata.append("fb_name", message.fbName);
-            formdata.append("profile_pic", message.profilePic);
-            formdata.append("is_primary", message.is_primary);
-            formdata.append("tag_id[]", message.selected_tags_ids);
-
-            const requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: formdata,
-                redirect: 'follow'
-            };
-
-            const apiUrl = "https://app.novalya.com/system/taggeduser-api.php";
             
-            // Perform the POST request
-            fetch(apiUrl, requestOptions)
-                .then(response => response.text())
-                .then(result => {
+
+            let token = authToken;
+            if(token != undefined && token != ''){
+                console.log(message);
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer "+token);
+                myHeaders.append("Content-Type", "application/json");
+                var raw = JSON.stringify({
+                  "type": "add",
+                  "fb_user_id": numericUserFbId,
+                  "fb_user_alphanumeric_id": alphanumericUserFbId,
+                  "fb_image_id": 'null',
+                  "fb_name": message.fbName,
+                  "profile_pic": message.profilePic,
+                  "is_primary": message.is_primary,
+                  "tag_id": message.selected_tags_ids
+                });
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: 'follow'
+                };
+                fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                .then((response) => response.json())
+                .then((result) => { 
                     chrome.tabs.sendMessage(sender.tab.id, {
                         type: 'tag_update_done',
                         from: 'background',
                         result:result,
-                    });
-                    //sendResponse({ data: result.msg, status: "ok" });
+                    }); 
+                    sendResponse({ data: result.msg, status: "ok" });
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    sendResponse({ data: "An error occurred", status: "error" });
-                });
+                .catch(error => console.log('error', error));               
+            } 
+
+
+
+
+
+
+
+
+            // const myHeaders = new Headers();
+            // const formdata = new FormData();            
+            // formdata.append("type", "add");
+            // formdata.append("user_id", userId);
+            // formdata.append("fb_user_id", numericUserFbId);
+            // formdata.append("fb_user_alphanumeric_id", alphanumericUserFbId);
+            // formdata.append("fb_image_id", null);
+            // formdata.append("fb_name", message.fbName);
+            // formdata.append("profile_pic", message.profilePic);
+            // formdata.append("is_primary", message.is_primary);
+            // formdata.append("tag_id[]", message.selected_tags_ids);
+
+            // const requestOptions = {
+            //     method: 'POST',
+            //     headers: myHeaders,
+            //     body: formdata,
+            //     redirect: 'follow'
+            // };
+
+            // const apiUrl = "https://app.novalya.com/system/taggeduser-api.php";
+            
+            // // Perform the POST request
+            // fetch(apiUrl, requestOptions)
+            //     .then(response => response.text())
+            //     .then(result => {
+            //         chrome.tabs.sendMessage(sender.tab.id, {
+            //             type: 'tag_update_done',
+            //             from: 'background',
+            //             result:result,
+            //         });
+            //         //sendResponse({ data: result.msg, status: "ok" });
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //         sendResponse({ data: "An error occurred", status: "error" });
+            //     });
         })
         .catch(error => {
             console.error('Error getting FB IDs:', error);
@@ -274,7 +306,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             };
 
             fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
-               .then(response => response.text())
+               .then(response => response.json())
                .then(result => { sendResponse(result)
                 })
                .catch(error => console.log('error', error));               

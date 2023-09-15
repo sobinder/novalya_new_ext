@@ -48,7 +48,9 @@ let AddLabelCRM;
             }, 1500);
 
             chrome.runtime.sendMessage({ action: "tagsApiCall" }, (res50) => {
-                tags_fetch_data = JSON.parse(res50.data).data;
+                console.log(res50);
+                tags_fetch_data = res50.data;
+                //console.log(res50);
                 //console.log(tags_fetch_data);
                 options2 = '<option value="">Select Primary</option>';
                 tags_fetch_data.forEach((tag) => {
@@ -216,30 +218,30 @@ let AddLabelCRM;
                         var tag_data_individual = JSON.parse(response);
                         tag_data_individual = tag_data_individual.data;
                         console.log(tag_data_individual);
-                        if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
-                            primary = tag_data_individual.is_primary;
-                            var arrayOfIds = tag_data_individual.tag.map(function (obj) {
-                                return obj.id;
-                            });
-                        }
+                        // if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
+                        //     primary = tag_data_individual.is_primary;
+                        //     var arrayOfIds = tag_data_individual.tag.map(function (obj) {
+                        //         return obj.id;
+                        //     });
+                        // }
 
                         // console.log(arrayOfIds);
                         // console.log(tag_data_individual)
-                        var checkMultiple = setInterval(()=>{
-                            // console.log('in')
-                            if( $('.multi-label-checkbox').length > 0){
-                                clearInterval(checkMultiple);
-                                $('.multi-label-checkbox').each(function () {
-                                    var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
+                        // var checkMultiple = setInterval(()=>{
+                        //     // console.log('in')
+                        //     if( $('.multi-label-checkbox').length > 0){
+                        //         clearInterval(checkMultiple);
+                        //         $('.multi-label-checkbox').each(function () {
+                        //             var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
         
-                                    // Check if the checkbox value exists in the valuesArray
-                                    // console.log(arrayOfIds)
-                                    if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
-                                        $(this).prop('checked', true); // Check the checkbox
-                                    }
-                                }); 
-                            }
-                        },1000);
+                        //             // Check if the checkbox value exists in the valuesArray
+                        //             // console.log(arrayOfIds)
+                        //             if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
+                        //                 $(this).prop('checked', true); // Check the checkbox
+                        //             }
+                        //         }); 
+                        //     }
+                        // },1000);
                     }                    
                     $('#mySelect option').each(function () {
                         // console.log(primary);
@@ -603,8 +605,10 @@ let AddLabelCRM;
             return selector_latest;
         },
         taggeduserapi: function () {
+            console.log('response');
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
-                let all_users_tag_get = JSON.parse(response).data;
+                console.log(response);
+                let all_users_tag_get = response.data;
                 console.log(all_users_tag_get);
                 userTagsArray = [];
                 if (all_users_tag_get.length > 0) {

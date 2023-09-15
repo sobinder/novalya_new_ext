@@ -527,6 +527,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     if(message.type == "tag_update_done" && message.from == "background"){
         let response = message.result;
+        console.log(message);
         if(response != undefined && response != ''){
             var parsedData = JSON.parse(response);
             var message = parsedData.msg;
