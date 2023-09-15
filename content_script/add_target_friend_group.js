@@ -54,8 +54,8 @@ let group_url_value = window.location.href ;
     },
 
     startAddingFriend: function (settings, extTabId) {
-      $this.addProgressModel(extTabId);
-
+      // $this.addProgressModel(extTabId);
+      showCustomToastr('info', '“Novalya is doing its magic”', 1000 , true  , true , true );
       processing_status = "running";
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
@@ -130,18 +130,19 @@ let group_url_value = window.location.href ;
         if ($(selector_for_validclass).length > 0 && loop1 < limit_req) {
           
           btnText = $(selector_for_validclass).find(
-            'div[aria-label="Add Friend"]:contains("Add Friend")'
+            'div[aria-label="Add Friend"]:containsI("Add Friend")'
           );
           
           if (btnText.length == 0) {
             btnText = $(selector_for_validclass).find(
-              'div[aria-label="Add friend"]:contains("Add Friend")'
+              'div[aria-label="Add friend"]:containsI("Add Friend")'
             );
           }
 
           //console.log('btnText.length', btnText.length);
 
           if (btnText.length == 1) {
+            showCustomToastr('info', 'Sending Friend Request', randomDelay , true );
             // positive keywords
             validKeyword = true;
             if (keywordTypeValue != "") {
@@ -300,7 +301,9 @@ let group_url_value = window.location.href ;
 
                   setTimeout(() => {
                     //console.log(segementMessage);
-                    btnText.click();                    
+                    showCustomToastr('success', 'Friend Request Sent', 5000 , false );
+                    btnText.click(); 
+                    showCustomToastr('success', 'Message Sending Start', 5000 , true );                   
                     setTimeout(() => {
                       // --------------------------------------
                       $this.closeWarningPopup();                      
@@ -315,6 +318,7 @@ let group_url_value = window.location.href ;
                             "[last name]",
                             member_names[1]
                           );
+                          showCustomToastr('success', 'Message Sent Successfully', 5000,false );
                           chrome.runtime.sendMessage(
                             {
                               action: "sendMessageToMember",
@@ -343,6 +347,7 @@ let group_url_value = window.location.href ;
                             }
                           );
                         } else {
+                          showCustomToastr('error', 'Message Sending Failled', 3000 , false );
                           console.log("reached iin else condition");
                           loop1++;
                           // $(selector_for_validclass).addClass(

@@ -35,8 +35,10 @@ let AddLabelCRM;
             setTimeout(function () {
                 processing = false;
                 chrome.runtime.sendMessage({ action: "userCRMPermission" }, (res18) => {
-                    if (res18.crm_status.crm_status == 'On') {
+
+                    if (res18.data.crm_status == 'On') {
                         // ADD LABEL IN MESSENGERS.COM
+                        console.log(res18.data);
                         $this.messengersCom();
                         $this.messageComHeader();
                         $this.facebookChats();
@@ -168,8 +170,9 @@ let AddLabelCRM;
 
             });
 
-            $(document).on('click', '.add-button-container', async function () {
-               
+            $(document).on('click', '.add-button-container', async function (event) {
+                event.preventDefault();
+                event.stopPropagation();
                 var fbName = '';
                 var profilePic = '';
                 var fb_user_id = '';
@@ -212,15 +215,13 @@ let AddLabelCRM;
                     if(response != undefined && response != ''){
                         var tag_data_individual = JSON.parse(response);
                         tag_data_individual = tag_data_individual.data;
-                        // console.log(tag_data_individual);
+                        console.log(tag_data_individual);
                         if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
                             primary = tag_data_individual.is_primary;
                             var arrayOfIds = tag_data_individual.tag.map(function (obj) {
                                 return obj.id;
                             });
                         }
-                       
-                        
 
                         // console.log(arrayOfIds);
                         // console.log(tag_data_individual)
@@ -305,8 +306,8 @@ let AddLabelCRM;
             clearMessageInt = setInterval(function () {
 
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
-                    var user_id = res16.user_id;
-                    if (user_id != 0 && user_id != "") {
+                    var authToken = res16.authToken;
+                    if (authToken != 0 && authToken != "") {
                         var selector_search_list = 'div[role="navigation"] div[role="grid"] div[role="row"]';
                         if($(selector_search_list).length > 0){
                             selector_members_list = selector_search_list
@@ -345,12 +346,10 @@ let AddLabelCRM;
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
-
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user === item.fb_user_id) {
+                                    if (fb_user === item.fb_user_id) { 
+                                        console.log(item.tags);                                       
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-                                        //  console.log(filteredTags);
-
                                         if (filteredTags.length > 0) {
 
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -507,7 +506,7 @@ let AddLabelCRM;
                                     $('.x1u998qt').find('div.header_button').remove();
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
-                                $(".x1u998qt").find('a').before(add_label_button);
+                                $(".x1u998qt").find('a').append(add_label_button);
                             }
                             userTagsArray.forEach((item) => {
                                 if (fb_user === item.fb_user_id) {
@@ -516,7 +515,7 @@ let AddLabelCRM;
 
                                         var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                         let add_tag_button = `<div class="add-button-container header_button" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
-                                        $(".x1u998qt").find('a').before(add_tag_button);
+                                        $(".x1u998qt").find('a').append(add_tag_button);
                                     }
 
                                 }
@@ -604,7 +603,7 @@ let AddLabelCRM;
         taggeduserapi: function () {
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
                 let all_users_tag_get = JSON.parse(response).data;
-               // console.log(all_users_tag_get);
+                console.log(all_users_tag_get);
                 userTagsArray = [];
                 if (all_users_tag_get.length > 0) {
                     for (let i = 0; i < all_users_tag_get.length; i++) {

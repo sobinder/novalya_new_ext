@@ -857,7 +857,11 @@ $(document).ready(function () {
 
     $(document).on("click", "#verfiyurlfbgroup", function () {
         $(this).text("Processing");
-        let group_url_value = $("#geturl").val();
+
+        var token = localStorage.getItem('token');
+        console.log(token);
+        let group_url_value = $('input[name="url"]').val();
+        console.log(group_url_value);
         if (group_url_value == "") {
             alert(
                 "Facebook group url cannot be blank, checked you are login with facebook"
@@ -865,11 +869,14 @@ $(document).ready(function () {
         } else {
             chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value },
                 (res8) => {
+                    console.log(res8);
                     let response = res8.groupPageDOM;
+                    console.log(response);
                     let title = $(response).filter("title").text();
+                    console.log(title);
                     $("#group_name").text("Group Name:- " + title + "( VERIFIED )");
                     $("#verfiyurlfbgroup").text("Saving..");
-                    chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title },
+                    chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title,token:token },
                         (res9) => {
                             console.log(res9);
                             if (res9.status == "ok") {
@@ -879,7 +886,8 @@ $(document).ready(function () {
                                 $("#group_name").css("color", "green");
                                 $("#verfiyurlfbgroup").text("Saved");
                                 setTimeout(() => {
-                                    window.location.reload();
+                                   // window.location.reload();
+                                    window.location.href = window.location.origin+'/connect-group';
                                 }, 1000);
                             } else {
                                 $("#group_name").text("Error to saved group");
@@ -942,6 +950,34 @@ $(document).ready(function () {
         }, 2000);
     });
 });
+
+$(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function() {
+    // Perform your actions here
+    alert("Button with text 'SEND BIRTHDAY MESSAGES' was clicked!");
+  });
+
+
+
+  $(document).on("click", "#add-group-btn", function () {        
+    let group_url_value = window.location.href;
+    if (group_url_value.includes("/things_in_common")) {
+        group_url_value = group_url_value.replace("/things_in_common", "");
+    } else if (group_url_value.includes("members/")) {
+        group_url_value = group_url_value.replace("members/", "members");
+    }
+    chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value }, (res8) => {
+        let response = res8.groupPageDOM;
+        let title = $(response).filter("title").text();
+        chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
+            if (res9.data.msg == 'group already saved') {
+                toastr["error"](res9.data.msg);
+            } else if (res9.data.msg == 'group saved') {
+                toastr["success"]('group saved successfully');
+            }
+        });
+    })
+});
+  
 
 function sendMessageFromMessengers(thread_id, templateMessage) {
     let msgBox = 'div[aria-label="Message"]';

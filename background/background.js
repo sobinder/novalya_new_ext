@@ -47,8 +47,13 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 
 });
 
-getCookies(site_url, "user_id", function(id) {
-    userId = id;
+getCookies(new_site_url, "authToken", function(id) {
+    authToken = id;
+});
+
+getCookies(new_site_url, "authToken", function(token) {
+    authToken = token;
+    console.log(authToken, "this is the auth token");
 });
 
 chrome.runtime.onStartup.addListener(function() {
@@ -61,8 +66,8 @@ chrome.runtime.onStartup.addListener(function() {
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
     if (alarm.name == "wakeup_bg") {
-        getCookies(site_url, "user_id", function(id) {
-            userId = id;
+        getCookies(new_site_url, "authToken", function(id) {
+            authToken = id;
             console.log("wake up service worker", userId);
         });
     }
@@ -140,22 +145,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
        
      }
     if (message.action === "tagsApiCall") {
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("user_id", userId);
-        formdata.append("type", "get");
+            console.log(authToken);
+            let token = authToken;
+            if(token != undefined && token != ''){
+                console.log(message);
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer "+token);
+                myHeaders.append("Content-Type", "application/json");
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
+                var raw = JSON.stringify({
+                  "type": "get"
+                });
 
-        fetch("https://app.novalya.com/system/tags-api.php", requestOptions)
-            .then((response) => response.text())
-            .then((result) => sendResponse({ data: result, status: "ok" }))
-            .catch(error => console.log('error', error));
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: raw,
+                  redirect: 'follow'
+                };
+
+                fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
+                   .then((response) => response.text())
+                    .then((result) => sendResponse({ data: result, status: "ok" }))
+                    .catch(error => console.log('error', error));               
+            }         
+
         return true;
     }
 
@@ -210,44 +224,62 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if(message.action === "single_users_tag_get"){
+        console.log(authToken);
+        let token = authToken;
+        if(token != undefined && token != ''){
+            console.log(message);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
 
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("type", "single_get");
-        formdata.append("fb_user_id", message.fb_user_id);
-        console.log(message);
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: formdata,
-          redirect: 'follow'
-        };
-        
-        fetch("https://app.novalya.com/system/taggeduser-api.php", requestOptions)
-          .then(response => response.text())
-          .then(result => sendResponse(result))
-          .catch(error => console.log('error', error));
-          return true;
+            var raw = JSON.stringify({
+              "type": "get",
+              "fb_user_id": message.fb_user_id
+            });
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
+                .then(response => response.text())
+                .then(result => sendResponse(result))
+                .catch(error => console.log('error', error));              
+        }
+        return true;
     }
 
     if(message.action === "all_users_tag_get"){
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("type", "get");
-        formdata.append("user_id", userId);
-        
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: formdata,
-          redirect: 'follow'
-        };
-        
-        fetch("https://app.novalya.com/system/taggeduser-api.php", requestOptions)
-          .then(response => response.text())
-          .then(result => {sendResponse(result)})
-          .catch(error => console.log('error', error));
-          return true;
+
+        console.log(authToken);
+        let token = authToken;
+        if(token != undefined && token != ''){
+            console.log(message);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+              "type": "get"
+            });
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
+               .then(response => response.text())
+               .then(result => { sendResponse(result)
+                })
+               .catch(error => console.log('error', error));               
+        }
+        return true;
     }
 
 
@@ -262,24 +294,62 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "addgroupapi") {
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("user_id", userId);
-        formdata.append("name", message.name);
-        formdata.append("url", message.url);
 
-        var requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: formdata,
-            redirect: "follow",
-        };
+        console.log(authToken);
+        let token = authToken;
+        if(token != undefined && token != ''){
+            console.log(message);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
 
-        fetch(base_api_url + "saved-group-api.php", requestOptions)
-            .then((response) => response.json())
-            .then((result) => sendResponse({ data: result, status: "ok" }))
-            .catch((error) => sendResponse({ data: error, status: "error" }));
+            var raw = JSON.stringify({
+              "name": message.name,
+              "url": message.url
+            });
+
+            // var raw = JSON.stringify({
+            //   "name": "AAM AADMI PARTY आम आदमी पार्टी",
+            //   "group_type": "member",
+            //   "url": "https://www.facebook.com/groups/3311089405775891/members"
+            // });
+
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            fetch(new_base_api_url+"group/create-group", requestOptions)
+                .then((response) => response.json())
+                .then((result) => sendResponse({ data: result, status: "ok" }))
+                .catch((error) => sendResponse({ data: error, status: "error" }));               
+        } 
+
+
+        // var myHeaders = new Headers();
+        // var formdata = new FormData();
+        // formdata.append("user_id", userId);
+        // formdata.append("name", message.name);
+        // formdata.append("url", message.url);
+
+        // var requestOptions = {
+        //     method: "POST",
+        //     headers: myHeaders,
+        //     body: formdata,
+        //     redirect: "follow",
+        // };
+
+        // fetch(new_base_api_url + "group/create-group", requestOptions)
+        //     .then((response) => response.json())
+        //     .then((result) => sendResponse({ data: result, status: "ok" }))
+        //     .catch((error) => sendResponse({ data: error, status: "error" }));
         return true;
+
+
+
     }
 
 
@@ -559,30 +629,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if (message.action === "addgroupapi") {
+        chrome.storage.local.get(["token"], function(result) {
+            let token = message.token;
+            if(token != undefined && token != ''){
+                console.log(message);
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer "+token);
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    "name": message.name,
+                    "group_type": "member",
+                    "url": message.url,
+                });
+        
+                var requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow",
+                };
+        
+                fetch(new_base_api_url + "group/create-group", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => sendResponse({ data: result, status: "ok" }))
+                    .catch((error) => sendResponse({ data: error, status: "error" }));
+            }
+        })
+
+        return true;
+    }
+
     if (message.action == "reloadExtensionId") {
         //usage:
-        getCookies(site_url, "user_id", function(id) {
-            userId = id;
-            sendResponse({ user_id: userId });
+        getCookies(new_site_url, "authToken", function(id) {
+            authToken = id;
+            sendResponse({ authToken: authToken });
         });
         return true;
     }
 
     if (message.action == "userCRMPermission") {
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("user_id", userId);
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
+        console.log(authToken);
+        let token = authToken;
+        if(token != undefined && token != ''){
+            console.log(message);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
 
-        fetch("https://app.novalya.com/system/crm_status-api.php", requestOptions)
-        .then(response => response.json())
-        .then(result => sendResponse({ crm_status: result.data, status: "ok" }))
-        .catch(error => sendResponse({ crm_status: "", status: "error" }));
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              redirect: 'follow'
+            };
+            fetch(new_base_api_url+"crm/get-crm-status", requestOptions)
+              .then(response => response.json())
+              .then(result =>sendResponse({ data: result.data, status: "ok" }))
+              .catch(error => sendResponse({ data: error, status: "error" }));                
+        }
         return true;
     }
 

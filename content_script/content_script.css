@@ -596,6 +596,9 @@ select#mySelect:focus {
 .add-button-container.header_button {
   margin-right: 345px;
   margin-top: 10px;
+  position: sticky;
+  top: 0; /* Adjust this value to set the distance from the top */
+  z-index: 1; /* Ensure it stays above other content */
 }
 
  .add-button-container.contact-pop-up-chat-window {
@@ -608,3 +611,60 @@ select#mySelect:focus {
   margin-top:0px !important;
   right: -50px !important;
 } 
+
+
+
+/* ------------------------ custom toastr---------------------- */
+
+
+body {
+  font-family: Arial, sans-serif;
+  /* text-align: center; */
+}
+
+.custom-toastr {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+ 
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+}
+
+.toastr-content {
+  display: flex;
+  align-items: center;
+}
+
+.toastr-message {
+  margin-left: 10px;
+}
+
+.fa {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.success-color{
+  background-color: #51a351;
+}
+
+.error-color{
+  background-color: #bd362f;
+}
+
+.info-color{
+  background-color: #f89406;
+}
+
+#customToastr{
+  padding: 10px;
+}
+
+button#stop_run {
+  margin-right: 15px;
+}
