@@ -348,12 +348,13 @@ let AddLabelCRM;
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
+                                //console.log(userTagsArray);
                                 userTagsArray.forEach((item) => {
                                     if (fb_user === item.fb_user_id) { 
-                                        console.log(item.tags);                                       
-                                        const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                        console.log(item.tags); 
+                                        tags_id =  item.tags.split(",");                                    
+                                        const filteredTags = tags_id.filter(tag => tag.id === item.primary_tag);
                                         if (filteredTags.length > 0) {
-
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
 
                                             let add_tag_button = `<div class="add-button-container" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
@@ -512,7 +513,9 @@ let AddLabelCRM;
                             }
                             userTagsArray.forEach((item) => {
                                 if (fb_user === item.fb_user_id) {
-                                    const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                    //console.log(item.tags); 
+                                    tags_id =  item.tags.split(","); 
+                                    const filteredTags = tags_id.filter(tag => tag.id === item.primary_tag);
                                     if (filteredTags.length > 0) {
 
                                         var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -561,7 +564,9 @@ let AddLabelCRM;
                             userTagsArray.forEach((item) => {
                                 // console.log(fb_user, item);
                                 if (fb_user === item.fb_user_id) {
-                                    const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                    console.log(item.tags); 
+                                    tags_id =  item.tags.split(","); 
+                                    const filteredTags = tags_id.filter(tag => tag.id === item.primary_tag);
                                     // console.log(filteredTags);
 
                                     if (filteredTags.length > 0) {
@@ -605,18 +610,17 @@ let AddLabelCRM;
             return selector_latest;
         },
         taggeduserapi: function () {
-            console.log('response');
+            
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
-                console.log(response);
                 let all_users_tag_get = response.data;
-                console.log(all_users_tag_get);
                 userTagsArray = [];
                 if (all_users_tag_get.length > 0) {
+                    console.log(all_users_tag_get);
                     for (let i = 0; i < all_users_tag_get.length; i++) {
                         const userData = all_users_tag_get[i];
                         const fbUserId = userData.fb_user_id;
                         const primary_tag = userData.is_primary;
-                        const tags = userData.tag;
+                        const tags = userData.tag_id;
                         userTagsArray.push({
                             fb_user_id: fbUserId,
                             tags: tags,

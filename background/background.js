@@ -307,8 +307,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
                .then(response => response.json())
-               .then(result => { sendResponse(result)
-                })
+               .then(result => { sendResponse(result) })
                .catch(error => console.log('error', error));               
         }
         return true;

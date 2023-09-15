@@ -618,9 +618,22 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", "#extension_submit", function () {
-        $("#extension_submit").prop("disabled", true);
-        $("#extension_submit").addClass("disabled_cls");
+    // $(document).on("click", "#extension_submit", function () {
+    //     $("#extension_submit").prop("disabled", true);
+    //     $("#extension_submit").addClass("disabled_cls");
+    //     setTimeout(function () {
+    //         chrome.runtime.sendMessage({ action: "getMessageSections" }, (res6) => {
+    //             setTimeout(() => {
+    //                 $("#extension_submit").prop("disabled", false);
+    //                 $("#extension_submit").removeClass("disabled_cls");
+    //             }, 5000)
+    //         });
+    //     }, 5000);
+    // });
+
+    $(document).on("click", "#stop_birthday_run", function () {
+        $("#stop_birthday_run").prop("disabled", true);
+        $("#stop_birthday_run").addClass("disabled_cls");
         setTimeout(function () {
             chrome.runtime.sendMessage({ action: "getMessageSections" }, (res6) => {
                 setTimeout(() => {
