@@ -631,14 +631,14 @@ $(document).ready(function () {
     //     }, 5000);
     // });
 
-    $(document).on("click", "#stop_birthday_run", function () {
-        $("#stop_birthday_run").prop("disabled", true);
-        $("#stop_birthday_run").addClass("disabled_cls");
+    $(document).on("click", "#start-novayla-connect", function () {
+        $("#start-novayla-connect").prop("disabled", true);
+        $("#start-novayla-connect").addClass("disabled_cls");
         setTimeout(function () {
             chrome.runtime.sendMessage({ action: "getMessageSections" }, (res6) => {
                 setTimeout(() => {
-                    $("#extension_submit").prop("disabled", false);
-                    $("#extension_submit").removeClass("disabled_cls");
+                    $("#start-novayla-connect").prop("disabled", false);
+                    $("#start-novayla-connect").removeClass("disabled_cls");
                 }, 5000)
             });
         }, 5000);

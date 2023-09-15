@@ -338,49 +338,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               "name": message.name,
               "url": message.url
             });
-
-            // var raw = JSON.stringify({
-            //   "name": "AAM AADMI PARTY आम आदमी पार्टी",
-            //   "group_type": "member",
-            //   "url": "https://www.facebook.com/groups/3311089405775891/members"
-            // });
-
-
             var requestOptions = {
               method: 'POST',
               headers: myHeaders,
               body: raw,
               redirect: 'follow'
             };
-
             fetch(new_base_api_url+"group/create-group", requestOptions)
                 .then((response) => response.json())
                 .then((result) => sendResponse({ data: result, status: "ok" }))
                 .catch((error) => sendResponse({ data: error, status: "error" }));               
         } 
-
-
-        // var myHeaders = new Headers();
-        // var formdata = new FormData();
-        // formdata.append("user_id", userId);
-        // formdata.append("name", message.name);
-        // formdata.append("url", message.url);
-
-        // var requestOptions = {
-        //     method: "POST",
-        //     headers: myHeaders,
-        //     body: formdata,
-        //     redirect: "follow",
-        // };
-
-        // fetch(new_base_api_url + "group/create-group", requestOptions)
-        //     .then((response) => response.json())
-        //     .then((result) => sendResponse({ data: result, status: "ok" }))
-        //     .catch((error) => sendResponse({ data: error, status: "error" }));
         return true;
-
-
-
     }
 
 
@@ -408,20 +377,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
     if (message.action === "getMessageSections") {
+        console.log(authToken);
         var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+authToken);
         var requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-            redirect: "follow",
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
         };
-        fetch(
-                base_api_url + "target-send-request.php?user_id=" + userId,
-                requestOptions
-            )
-            .then((response) => response.json())
-            .then((res1) => {
-                chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
-                    chrome.tabs.create({ url: res1.data.group_url, active: true },
+
+        fetch("https://novalyabackend.novalya.com/target/setting/api/all", requestOptions)
+          .then(response => response.json())
+          .then(res1 => {
+            console.log(res1);
+            chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
+                    chrome.tabs.create({ url: res1.data.groups.url, active: true },
                         function(tabs) {
                             groupPageTabId = tabs.id;
                             extension_page_tabid = sender.tab.id;
@@ -434,8 +404,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         }
                     );
                 });
-            })
-            .catch((error) => console.log("error", error));
+          })
+          .catch(error => console.log('error', error));
     }
 
     if (message.action == "fetchMessageFromGroupSegement") {
