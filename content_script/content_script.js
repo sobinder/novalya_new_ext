@@ -529,7 +529,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         let response = message.result;
         console.log(message);
         if(response != undefined && response != ''){
-            var parsedData = JSON.parse(response);
+            var parsedData = response;
             var message = parsedData.msg;
             toastr["success"](message);
         } else {
