@@ -179,7 +179,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 facebook_member_id = member_url_splitid;
                             }
 
-                            var birthdayMessagetextArray = birtday_response.msg;
+                            var birthdayMessagetextArray = birtday_response.data.messages;
                             var randomIndex = Math.floor(
                                 Math.random() * birthdayMessagetextArray.length
                             );
@@ -302,7 +302,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         loopValue = parseInt($("#loop1").text(), 10);
                         $("#loop1").text(loopValue + 1);
                         loopValue = parseInt($("#loop1").text(), 10);
-                        var birthdayMessagetextArray = birtday_response.msg;
+                        var birthdayMessagetextArray = birtday_response.data.messages;
                         var randomIndex = Math.floor(
                             Math.random() * birthdayMessagetextArray.length
                         );
@@ -426,7 +426,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         loopValue = parseInt($("#loop1").text(), 10);
                         $("#loop1").text(loopValue + 1);
                         loopValue = parseInt($("#loop1").text(), 10);
-                        var birthdayMessagetextArray = birtday_response.msg;
+                        var birthdayMessagetextArray = birtday_response.data.messages;
                         var randomIndex = Math.floor(
                             Math.random() * birthdayMessagetextArray.length
                         );
@@ -912,43 +912,52 @@ $(document).ready(function () {
     });
 
     // BIRTHDAY SECTION STARTS
-    $(document).on("click", ".birthday_msg_send", function (event) {
-        let day_type = $('input[name="birthday_type"]:checked').val();
-        console.log(day_type);
-        $(".birthday_msg_send").prop("disabled", true);
-        $(".birthday_msg_send").addClass("disabled_cls");
-        setTimeout(() => {
-            chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "message", day_type: day_type },
-                (res14) => {
+    // $(document).on("click", ".birthday_msg_send", function (event) {
+    //     let day_type = $('input[name="birthday_type"]:checked').val();
+    //     console.log(day_type);
+    //     $(".birthday_msg_send").prop("disabled", true);
+    //     $(".birthday_msg_send").addClass("disabled_cls");
+    //     setTimeout(() => {
+    //         chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "message", day_type: day_type },
+    //             (res14) => {
 
-                    console.log(res14);
-                    setTimeout(() => {
-                        $(".birthday_msg_send").prop("disabled", false);
-                        $(".birthday_msg_send").removeClass("disabled_cls");
-                    }, 5000)
-                }
-            );
-        }, 2000);
-    });
+    //                 console.log(res14);
+    //                 setTimeout(() => {
+    //                     $(".birthday_msg_send").prop("disabled", false);
+    //                     $(".birthday_msg_send").removeClass("disabled_cls");
+    //                 }, 5000)
+    //             }
+    //         );
+    //     }, 2000);
+    // });
 
-    // BIRTHDAY FEED SECTIONS
-    $(document).on("click", ".birthday_feed_send", function (event) {
-        let day_type = $('input[name="birthday_type"]:checked').val();
-        console.log(day_type);
-        $(".birthday_feed_send").prop("disabled", true);
-        $(".birthday_feed_send").addClass("disabled_cls");
-        setTimeout(() => {
-            chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "feed", day_type: day_type },
-                (res14) => {
-                    console.log(res14);
-                    setTimeout(() => {
-                        $(".birthday_feed_send").prop("disabled", false);
-                        $(".birthday_feed_send").removeClass("disabled_cls");
-                    }, 5000)
-                }
-            );
-        }, 2000);
-    });
+    // // BIRTHDAY FEED SECTIONS
+    // $(document).on("click", ".birthday_feed_send", function (event) {
+    //     let day_type = $('input[name="birthday_type"]:checked').val();
+    //     console.log(day_type);
+    //     $(".birthday_feed_send").prop("disabled", true);
+    //     $(".birthday_feed_send").addClass("disabled_cls");
+    //     setTimeout(() => {
+    //         chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "feed", day_type: day_type },
+    //             (res14) => {
+    //                 console.log(res14);
+    //                 setTimeout(() => {
+    //                     $(".birthday_feed_send").prop("disabled", false);
+    //                     $(".birthday_feed_send").removeClass("disabled_cls");
+    //                 }, 5000)
+    //             }
+    //         );
+    //     }, 2000);
+    // });
+});
+
+
+$(document).on("click", ".send_birthday_message", function (event) {
+    console.log("button clicked");
+    setTimeout(() => {
+        chrome.runtime.sendMessage({ action: "openBirthdayEventNew" });
+    }, 4000);
+
 });
 
 $(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function() {

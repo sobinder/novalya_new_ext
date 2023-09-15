@@ -502,6 +502,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }, 6000)
     }
 
+    if(message.action == "openBirthdayEventNew"){
+        BirthdayNovaClass.getBirthdaySettingsNew(message, sendResponse, sender);        
+        return true;
+    }
+
+
+
     // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON CONFIRM REQUEST BUTTON
     if (message.action == "confirmRequest") {
         FriendRequestsNVClass.getRequestSettings();

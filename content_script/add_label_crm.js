@@ -546,7 +546,9 @@ let AddLabelCRM;
                                 //fb_user = currentWindowUrl2.replace(/^\/|\/$/g, '');
                                 fb_user = currentWindowUrl2.replace('/t/', '');
                             }
-                            fb_user = fb_user.replace(/\//g, '');
+                            if(fb_user != '' && fb_user != null) {
+                                fb_user = fb_user.replace(/\//g, '');  
+                            }
                             
                             if (fb_user != '' && fb_user != null) {
                                 if ($('div[data-pagelet="ProfileTabs"]').find('div.add-button-container').length > 0) {
