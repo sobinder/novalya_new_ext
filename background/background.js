@@ -391,7 +391,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           .then(res1 => {
             console.log(res1);
             chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
-                    chrome.tabs.create({ url: res1.data.groups.url, active: true },
+                    chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
                         function(tabs) {
                             groupPageTabId = tabs.id;
                             extension_page_tabid = sender.tab.id;
