@@ -604,11 +604,9 @@ let AddLabelCRM;
         taggeduserapi: function () {
             
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
-                console.log(response);
                 let all_users_tag_get = response.data;
                 userTagsArray = [];
                 if (all_users_tag_get.length > 0) {
-                    console.log(all_users_tag_get);
                     for (let i = 0; i < all_users_tag_get.length; i++) {
                         const userData = all_users_tag_get[i];
                         const fbUserId = userData.fb_user_id;

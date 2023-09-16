@@ -295,7 +295,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
-              "type": "get"
+              "type": "get",
+              "user_id": "2"
             });
 
             var requestOptions = {
@@ -305,7 +306,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               redirect: 'follow'
             };
 
-            fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
+            fetch("https://novalyabackend.novalya.com/extension/api/taggeduser-api", requestOptions)
                .then(response => response.json())
                .then(result => { sendResponse(result) })
                .catch(error => console.log('error', error));               
@@ -474,10 +475,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         FriendRequestsNVClass.getRequestSettings();
         setTimeout(() => {
             chrome.storage.local.get(["requestSettings"], function(result) {
+                console.log(result);
                 if (
                     typeof result.requestSettings != "undefined" &&
                     result.requestSettings != ""
                 ) {
+
                     requestSettings1 = result.requestSettings;
                     messageArray = requestSettings1.reject_message;
                     var randomIndex = Math.floor(Math.random() * messageArray.length);
@@ -507,6 +510,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if(message.action == "openBirthdayEventNew"){
+        console.log('openBirthdayEventNew');
         BirthdayNovaClass.getBirthdaySettingsNew(message, sendResponse, sender);        
         return true;
     }
@@ -518,22 +522,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         FriendRequestsNVClass.getRequestSettings();
         setTimeout(() => {
             chrome.storage.local.get(["requestSettings"], function(result) {
+                console.log(result);
                 if (
                     typeof result.requestSettings != "undefined" &&
                     result.requestSettings != ""
                 ) {
                     requestSettings1 = result.requestSettings;
-                    messageArray = requestSettings1.accept_message;
+                    messageArray = requestSettings1.accept_message.Sections;
                     var randomIndex = Math.floor(Math.random() * messageArray.length);
+                    message3 = JSON.parse(messageArray);
+
+                    messageText = message3.join(' ');
                     //var messageText = messageArray[randomIndex];
 
                     // Disable for API
                    // var messageText = messageArray[randomIndex];
-                    var messageText = "Hello mr. [first name] [last name]";
+                    //var messageText = "Hello mr. [first name] [last name]";
                     var member_fullname = message.data.name;
                     var member_name = member_fullname.split(" ");
-                    messageText = messageText.replace("[first name]", member_name[0]);
-                    messageText = messageText.replace("[last name]", member_name[1]);
+                    messageText = messageText.replaceAll("[first name]", member_name[0]);
+                    messageText = messageText.replaceAll("[last name]", member_name[1]);
                     var window_data = {
                         text_message: messageText,
                     };

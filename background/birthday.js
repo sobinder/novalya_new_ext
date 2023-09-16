@@ -18,12 +18,12 @@ class BirthdayNova {
                         if (tab.url !== birthday_url && !tab.url.includes("birthdays")) {
 
                             chrome.tabs.sendMessage(birthday_page_tabId, { subject: "openTheBirthdays", birthday_tabId: extension_birthday_page_tabid }, function (resp20) {
-                                console.log(resp20);
-                                console.log("birthdaybuttonClicked", api_response.data.birthday_type);
-                                console.log("message.action", message.action);
+                                //console.log(resp20);
+                                ///console.log("birthdaybuttonClicked", api_response.data.birthday_type);
+                                //console.log("message.action", message.action);
 
                                 var subjectType;
-                                console.log("birthdaybuttonClicked", api_response.data.birthday_type);
+                                //console.log("birthdaybuttonClicked", api_response.data.birthday_type);
 
                                 if (message.day_type == 'today') {
                                     console.log("in the today");
@@ -131,11 +131,11 @@ class BirthdayNova {
             body: formdata,
             redirect: "follow",
         };
-        console.log('result', base_api_url + apiurl, requestOptions);
+        //console.log('result', base_api_url + apiurl, requestOptions);
         fetch(base_api_url + apiurl, requestOptions)
             .then((response) => response.json())
             .then((api_response) => {
-                console.log(api_response);
+                //console.log(api_response);
                 // console.log(api_response.data.birthday_type);
                 BirthdayNovaClass.openBirthdayEventPage(sender, api_response, message);
                 sendResponse({ status: "start" });
@@ -143,22 +143,27 @@ class BirthdayNova {
             .catch((error) => sendResponse({ status: "error" }));
     }
 
+
+
+
+
+
     getBirthdaySettingsNew(message, sendResponse, sender) {
+        //console.log('api_response');
+        //console.log(authToken);
 
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${authToken}`);
-        var raw = "";
+        myHeaders.append("Authorization", "Bearer "+authToken);
         var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
+          method: 'GET',
+          headers: myHeaders,
+          redirect: 'follow'
         };
 
-        fetch("https://novalyabackend.novalya.com/api/ext/birthday/get-listing", requestOptions)
+        fetch("https://novalyabackend.novalya.com/birthday/setting/api/fetch", requestOptions)
         .then((response) => response.json())
         .then((api_response) => {
-            console.log(api_response);
+            //console.log(api_response);
             // console.log(api_response.data.birthday_type);
             BirthdayNovaClass.openBirthdayEventPageNew(sender, api_response);
           

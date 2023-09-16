@@ -15,18 +15,16 @@ class FriendRequestsNV {
             myHeaders.append("Authorization", "Bearer "+authToken);
             myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({});
-
             var requestOptions = {
-              method: 'POST',
+              method: 'GET',
               headers: myHeaders,
-              body: raw,
               redirect: 'follow'
             };
 
-            fetch(new_base_url+"request/message/api/all", requestOptions)
+            fetch("https://novalyabackend.novalya.com/request/message/api/all", requestOptions)
               .then(response => response.json())
               .then(result => {
+                    console.log(result);
                     if(result.status == 200) {
                         chrome.storage.local.set({ requestSettings: result.data}, function() {   });
                     }
