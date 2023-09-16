@@ -481,7 +481,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     requestSettings1 = result.requestSettings;
                     messageArray = requestSettings1.reject_message;
                     var randomIndex = Math.floor(Math.random() * messageArray.length);
-                    var messageText = messageArray[randomIndex];
+
+                    // Disable for API
+                   // var messageText = messageArray[randomIndex];
+                    var messageText = "Hello mr. [first name] [last name]";
                     var member_fullname = message.data.name;
                     var member_names = member_fullname.split(" ");
                     messageText = messageText.replace("[first name]", member_names[0]);
@@ -522,7 +525,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     requestSettings1 = result.requestSettings;
                     messageArray = requestSettings1.accept_message;
                     var randomIndex = Math.floor(Math.random() * messageArray.length);
-                    var messageText = messageArray[randomIndex];
+                    //var messageText = messageArray[randomIndex];
+
+                    // Disable for API
+                   // var messageText = messageArray[randomIndex];
+                    var messageText = "Hello mr. [first name] [last name]";
                     var member_fullname = message.data.name;
                     var member_name = member_fullname.split(" ");
                     messageText = messageText.replace("[first name]", member_name[0]);

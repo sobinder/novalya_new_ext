@@ -7,6 +7,7 @@ let site_url = "https://app.novalya.com/";
 let new_site_url = "https://dashboard.novalya.com/";
 let base_api_url = "https://app.novalya.com/system/";
 let new_base_api_url = "https://novalyabackend.novalya.com/api/ext/";
+let new_base_url = "https://novalyabackend.novalya.com";
 
 // CALL APIS FOR ALL (CONTENT, POPUP, BACKGROUND)
 async function callAPIs(request_method, api_name, formdata) {
