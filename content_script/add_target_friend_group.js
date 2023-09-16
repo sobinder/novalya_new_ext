@@ -60,7 +60,7 @@ let group_url_value = window.location.href ;
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
 
-      const intervalValue = settings.interval;
+      const intervalValue = settings[0].interval;
       if (intervalValue == "30-60") {
         randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
       } else if (intervalValue == "1-3") {
@@ -73,21 +73,21 @@ let group_url_value = window.location.href ;
         randomDelay = 45000;
       }
 
-      const numberOfReqValue = settings.norequest;
+      const numberOfReqValue = 30;
       if (numberOfReqValue != "custom") {
         limit_req = numberOfReqValue;
       } else {
-        limit_req = settings.custom; // unlimited
+        limit_req = 50; // unlimited
       }
-      console.log(settings);
-      const keywordTypeValue = settings.keyword.toLowerCase();
-      const negative_keyword = settings.negative_keyword.toLowerCase();
-      const message_id = settings.message;
-      const gender = settings.gender;
-      const countryvalue = settings.country;
-      groupId = settings.message;
+      console.log(settings[0].keyword);
+      const keywordTypeValue = settings[0].keyword;
+      const negative_keyword = settings[0].negative_keyword;
+      const message_id = settings[0].message;
+      const gender = settings[0].gender;
+      const countryvalue = settings[0].country;
+      groupId = settings[0].message;
       $(".total1").text(limit_req);
-      search_index_value = settings.search_index;
+      search_index_value = 1;
       console.log('search_index_value', search_index_value);
       if (search_index_value != 0 && search_index_value != "") {
          console.log('enable search index');
@@ -146,12 +146,9 @@ let group_url_value = window.location.href ;
             // positive keywords
             validKeyword = true;
             if (keywordTypeValue != "") {
-              var description = $(selector_for_validclass)
-                .find(".x1pg5gke.xvq8zen")
-                .text()
-                .toLowerCase();
+              var description = ""
 
-              var arrayKeyword = keywordTypeValue.split(",");
+              var arrayKeyword = keywordTypeValue;
 
               if (description != "") {
                 matched = arrayKeyword.filter(
@@ -161,19 +158,16 @@ let group_url_value = window.location.href ;
                   validKeyword = false;
                 }
               } else {
-                validKeyword = false;
+                validKeyword = true;
               }
             }
 
             // negtive keyword
             invalidKeyword = false;
             if (negative_keyword != "") {
-              var description = $(selector_for_validclass)
-                .find(".x1pg5gke.xvq8zen")
-                .text()
-                .toLowerCase();
+              var description = "";
 
-              var arraynegative_keyword = negative_keyword.split(",");
+              var arraynegative_keyword = negative_keyword;
 
               if (description != "") {
                 matched = arraynegative_keyword.filter(
@@ -234,10 +228,10 @@ let group_url_value = window.location.href ;
                         (item) => item == response.data.body.countryName
                       );
                       if (matched.length == 0) {
-                        countryList = false;
+                        countryList = true;
                       }
                     } else {
-                      countryList = false;
+                      countryList = true;
                     }
                   }
                 }
@@ -259,6 +253,7 @@ let group_url_value = window.location.href ;
                 }
 
                 //console.log(validIndex);
+                console.log(validKeyword , invalidKeyword , countryList , validGender, validIndex);
                 if (
                   validKeyword &&
                   !invalidKeyword &&
@@ -266,6 +261,7 @@ let group_url_value = window.location.href ;
                   validGender &&
                   validIndex
                 ) {
+                  console.log("reached in the condition");
                   $(selector_for_validclass).addClass("add-done-border");
                   $(selector_for_validclass).addClass("loading_w_scl");
                   $(selector_for_validclass).attr("member_id", memberid2);
@@ -276,11 +272,13 @@ let group_url_value = window.location.href ;
                   let member_name = $(selector_for_validclass2)
                     .find('a[href*="/groups/"]')
                     .text();
+                    console.log(member_name);
                   let memberurl = groupHref.split("user/");
                   //let memberid = memberurl[1].replace('/', '');
                   var memberid = $(selector_for_validclass2).attr("member_id");
 
                   let member_names = member_name.split(" ");
+                  console.log(member_names);
                   $(selector_for_validclass).addClass("sca-member-proccessed");
 
                   var authtoken = "";
@@ -291,7 +289,7 @@ let group_url_value = window.location.href ;
                       authtoken: authtoken,
                     },
                     (response) => {
-                      segementMessagetextArray = response.text;
+                      segementMessagetextArray = ["hello [first name] [last name]" , "Hello [first name] start the magic of novalya"];
                       var randomIndex = Math.floor(
                         Math.random() * segementMessagetextArray.length
                       );
@@ -300,7 +298,7 @@ let group_url_value = window.location.href ;
                   );
 
                   setTimeout(() => {
-                    //console.log(segementMessage);
+                    console.log(segementMessage);
                     showCustomToastr('success', 'Friend Request Sent', 5000 , false );
                     btnText.click(); 
                     showCustomToastr('success', 'Message Sending Start', 5000 , true );                   
