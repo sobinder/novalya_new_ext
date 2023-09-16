@@ -899,14 +899,16 @@ $(document).ready(function () {
                                 );
                                 $("#group_name").css("color", "green");
                                 $("#verfiyurlfbgroup").text("Saved");
-                                setTimeout(() => {
-                                   // window.location.reload();
-                                    window.location.href = window.location.origin+'/connect-group';
-                                }, 1000);
+                                toastr["success"]('Group added successfully');
+                                // setTimeout(() => {
+                                //     window.location.reload();
+                                //     //window.location.href = window.location.origin+'/connect-group';
+                                // }, 2000);
                             } else {
                                 $("#group_name").text("Error to saved group");
                                 $("#group_name").css("color", "red");
                                 $("#verfiyurlfbgroup").text("Error");
+                                 toastr["error"]('Error to saved group');
                             }
                         }
                     );

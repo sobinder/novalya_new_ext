@@ -638,9 +638,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "addgroupapi") {
-        chrome.storage.local.get(["token"], function(result) {
-            let token = message.token;
-            if(token != undefined && token != ''){
+        let token = authToken;
+        if(token != undefined && token != ''){
                 console.log(message);
                 var myHeaders = new Headers();
                 myHeaders.append("Authorization", "Bearer "+token);
@@ -664,8 +663,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     .then((result) => sendResponse({ data: result, status: "ok" }))
                     .catch((error) => sendResponse({ data: error, status: "error" }));
             }
-        })
-
         return true;
     }
 
