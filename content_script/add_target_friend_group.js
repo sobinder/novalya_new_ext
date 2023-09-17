@@ -143,7 +143,7 @@ let group_url_value = window.location.href ;
           //console.log('btnText.length', btnText.length);
 
           if (btnText.length == 1) {
-            showCustomToastr('info', 'Sending Friend Request', randomDelay , true );
+           
             // positive keywords
             validKeyword = true;
             if (keywordTypeValue != "") {
@@ -263,6 +263,7 @@ let group_url_value = window.location.href ;
                   validIndex
                 ) {
                   console.log("reached in the condition");
+                  showCustomToastr('info', 'Sending Friend Request', randomDelay , true );
                   $(selector_for_validclass).addClass("add-done-border");
                   $(selector_for_validclass).addClass("loading_w_scl");
                   $(selector_for_validclass).attr("member_id", memberid2);
@@ -299,13 +300,13 @@ let group_url_value = window.location.href ;
                   // );
 
                   segementMessagetextArray = messageArray;
+                  console.log(segementMessagetextArray);
                   var randomIndex = Math.floor(
                     Math.random() * segementMessagetextArray.length
                   );
                   segementMessage_json = segementMessagetextArray[randomIndex];
-
+                  console.log(segementMessage_json)
                   segementMessage_varient_json = segementMessage_json.varient;
-
                   segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
 
                   segementMessage = segementMessage_varient_array.join(' ');
