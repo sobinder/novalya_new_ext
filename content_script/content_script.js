@@ -65,6 +65,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         chrome.storage.local.get(
             ["nvFriendReqInputs", "nvAddFriendProcess"],
             function (result) {
+                console.log(result);
                 if (
                     typeof result.nvFriendReqInputs != "undefined" &&
                     result.nvFriendReqInputs != ""
@@ -75,6 +76,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         result.nvAddFriendProcess != "" &&
                         result.nvAddFriendProcess == "process"
                     ) {
+                        console.log(add_friend_settings);
                         extTabId = message.extTabId;
                         AddTargetFriendNV.startAddingFriend(add_friend_settings, extTabId);
                         sendResponse({ status: "ok" });

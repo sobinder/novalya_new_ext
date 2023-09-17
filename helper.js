@@ -4,7 +4,7 @@ let sendMessageEnable = true;
 
 let my_domain = "app.novalya.com";
 let site_url = "https://app.novalya.com/";
-let new_site_url = "https://dashboard.novalya.com/";
+let new_site_url = "https://app.novalya.com/";
 let base_api_url = "https://app.novalya.com/system/";
 let new_base_api_url = "https://novalyabackend.novalya.com/api/ext/";
 let new_base_url = "https://novalyabackend.novalya.com";
@@ -45,7 +45,7 @@ function reloadAllGroupTabs() {
         windows.forEach(function (window) {
             if (window.type == "normal") {
                 window.tabs.forEach(function (tab) {
-                    if (tab.url && (tab.url.indexOf('/groups/') != -1 && tab.url.indexOf('facebook.com') != -1)) {
+                    if (tab.url && (tab.url.indexOf('/groups/') != -1 && tab.url.indexOf('facebook.com') != -1) ) {
                         chrome.tabs.reload(tab.id);
                     }
                 });
@@ -136,7 +136,7 @@ function reloadAllNovalyaTabs() {
         windows.forEach(function (window) {
             if (window.type == "normal") {
                 window.tabs.forEach(function (tab) {
-                    if (tab.url && (tab.url.indexOf('/system') != -1 && tab.url.indexOf(my_domain) != -1)) {
+                    if (tab.url && (tab.url.indexOf('app.novalya.com') != -1 && tab.url.indexOf(my_domain) != -1)) {
                         chrome.tabs.reload(tab.id);
                     }
                 });

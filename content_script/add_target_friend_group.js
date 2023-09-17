@@ -82,7 +82,8 @@ let group_url_value = window.location.href ;
       console.log(settings[0].keyword);
       const keywordTypeValue = settings[0].keyword;
       const negative_keyword = settings[0].negative_keyword;
-      const message_id = settings[0].message;
+      //const message_id = settings[0].message;
+      const messageArray = settings[0].messages.Sections;
       const gender = settings[0].gender;
       const countryvalue = settings[0].country;
       groupId = settings[0].message;
@@ -105,7 +106,7 @@ let group_url_value = window.location.href ;
           countryvalue,
           totalGroupMembers,
           gender,
-          message_id,
+          messageArray,
           search_index_value
         );
       }, 8000);
@@ -118,7 +119,7 @@ let group_url_value = window.location.href ;
       countryvalue,
       totalGroupMembers,
       gender,
-      message_id
+      messageArray
     ) {
       /****************FIND AND ADDING FRINED***************************/
       if (stoprequest == false) {
@@ -281,21 +282,34 @@ let group_url_value = window.location.href ;
                   console.log(member_names);
                   $(selector_for_validclass).addClass("sca-member-proccessed");
 
-                  var authtoken = "";
-                  chrome.runtime.sendMessage(
-                    {
-                      action: "fetchMessageFromGroupSegement",
-                      groupid: message_id,
-                      authtoken: authtoken,
-                    },
-                    (response) => {
-                      segementMessagetextArray = ["hello [first name] [last name]" , "Hello [first name] start the magic of novalya"];
-                      var randomIndex = Math.floor(
-                        Math.random() * segementMessagetextArray.length
-                      );
-                      segementMessage = segementMessagetextArray[randomIndex];
-                    }
+                  // var authtoken = "";
+                  // chrome.runtime.sendMessage(
+                  //   {
+                  //     action: "fetchMessageFromGroupSegement",
+                  //     groupid: message_id,
+                  //     authtoken: authtoken,
+                  //   },
+                  //   (response) => {
+                  //     segementMessagetextArray = ["hello [first name] [last name]" , "Hello [first name] start the magic of novalya"];
+                  //     var randomIndex = Math.floor(
+                  //       Math.random() * segementMessagetextArray.length
+                  //     );
+                  //     segementMessage = segementMessagetextArray[randomIndex];
+                  //   }
+                  // );
+
+                  segementMessagetextArray = messageArray;
+                  var randomIndex = Math.floor(
+                    Math.random() * segementMessagetextArray.length
                   );
+                  segementMessage_json = segementMessagetextArray[randomIndex];
+
+                  segementMessage_varient_json = segementMessage_json.varient;
+
+                  segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
+
+                  segementMessage = segementMessage_varient_array.join(' ');
+                  console.log(segementMessage); 
 
                   setTimeout(() => {
                     console.log(segementMessage);
@@ -339,7 +353,7 @@ let group_url_value = window.location.href ;
                                 countryvalue,
                                 totalGroupMembers,
                                 gender,
-                                message_id,
+                                messageArray,
                                 search_index_value
                               );
                             }
@@ -374,7 +388,7 @@ let group_url_value = window.location.href ;
                               countryvalue,
                               totalGroupMembers,
                               gender,
-                              message_id,
+                              messageArray,
                               search_index_value
                             );
                           }, 4000);
@@ -407,7 +421,7 @@ let group_url_value = window.location.href ;
                       countryvalue,
                       totalGroupMembers,
                       gender,
-                      message_id,
+                      messageArray,
                       search_index_value
                     );
                   }, 4000);
@@ -433,7 +447,7 @@ let group_url_value = window.location.href ;
                 countryvalue,
                 totalGroupMembers,
                 gender,
-                message_id,
+                messageArray,
                 search_index_value
               );
             }, 4000);
@@ -450,7 +464,7 @@ let group_url_value = window.location.href ;
                 countryvalue,
                 totalGroupMembers,
                 gender,
-                message_id,
+                messageArray,
                 search_index_value
               );
             }, 4000);
