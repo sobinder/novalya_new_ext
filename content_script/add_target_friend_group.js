@@ -73,11 +73,11 @@ let group_url_value = window.location.href ;
         randomDelay = 45000;
       }
 
-      const numberOfReqValue = 30;
+      const numberOfReqValue = settings[0].norequest;
       if (numberOfReqValue != "custom") {
         limit_req = numberOfReqValue;
       } else {
-        limit_req = 50; // unlimited
+        limit_req = settings[0].custom; // unlimited
       }
       console.log(settings[0].keyword);
       const keywordTypeValue = settings[0].keyword;
@@ -88,7 +88,7 @@ let group_url_value = window.location.href ;
       const countryvalue = settings[0].country;
       groupId = settings[0].message;
       $(".total1").text(limit_req);
-      search_index_value = 1;
+      search_index_value = settings[0].search_index;
       console.log('search_index_value', search_index_value);
       if (search_index_value != 0 && search_index_value != "") {
          console.log('enable search index');

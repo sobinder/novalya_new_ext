@@ -549,8 +549,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log(message);
         if(response != undefined && response != ''){
             var parsedData = response;
-            var message = parsedData.msg;
-            toastr["success"](message);
+            var message = response.message;
+           toastr["success"](message);
         } else {
             toastr["success"]('not found tag update done');
         }
@@ -565,28 +565,24 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 if (window.location.href.indexOf(my_domain) > -1) {
-    chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
-        console.log(res16.user_id);
-        userId = res16.user_id;
-        $("#installed").show();
-        $("#not-installed").hide();
-        $("#installed-video").show();
-        $(".installcheck").hide();
-        $(".introcheck").show();
-        $("#not-installed-video").hide();
-        $(".menu a").removeClass("extension_disabled");
+    chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {        
+        authToken = res16.authToken;
+        var clearTimeInt = setInterval( () => {
+            if($('.Mui-checked').length == 0) {
+                console.log('Extension Not Installed'); 
+                $('#switch-extension').parent().mclick();
+            } else {
+                console.log('Extension Installed', authToken);
+            }
+        }, 1000)
     });
 
     var latest_uploaded_version = $("#latest_version_nvl").attr("value");
-    console.log(latest_uploaded_version);
     const extensionVersion = chrome.runtime.getManifest().version;
-    console.log(extensionVersion);
-
     if (latest_uploaded_version <= extensionVersion) {
         $("#latest_version_nvl").css("display", "none");
-    }
+    }
 }
-
 
 $(document).ready(function () {
     // setTimeout(() => {

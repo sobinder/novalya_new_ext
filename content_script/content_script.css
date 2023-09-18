@@ -597,8 +597,8 @@ select#mySelect:focus {
   margin-right: 345px;
   margin-top: 10px;
   position: sticky;
-  top: 0; /* Adjust this value to set the distance from the top */
-  z-index: 1; /* Ensure it stays above other content */
+  top: 0;
+  z-index: 1; 
 }
 
  .add-button-container.contact-pop-up-chat-window {

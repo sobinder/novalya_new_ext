@@ -135,6 +135,7 @@ let AddLabelCRM;
                     }
 
                     var fbName = $(this).attr("fbname");
+                   
                     var profilePic = $(this).attr("profilepic");
                     var fb_user_id = $(this).attr("fb_user_id");
 
@@ -145,7 +146,6 @@ let AddLabelCRM;
                         //console.log(selected_tags_ids2, selectedTagId2);
                     });
                     var selectedOption2 = $('#mySelect').val();
-
                     const message = {
                         action: "tagsAssiging",
                         fbName: fbName,
@@ -184,9 +184,11 @@ let AddLabelCRM;
                         fbName = $('div[role="main"] span.x1xmvt09.x1lliihq.x1s928wv h1').text();
                     } else {
                         fbName = $(this).closest('div[aria-label="Chat settings"]').find('h2').find('span:last').text();
-
-                        if(fbName == undefined && fbName == ''){
+                        if(fbName == undefined || fbName == ''){
                             fbName = $(this).closest('div[aria-label="chat settings"]').find('h2').find('span:last').text();
+                        }
+                        if(fbName == ''){
+                            fbName = $(this).parent().find('h1').find('span:last').text();
                         }
                     }
                 }
@@ -211,41 +213,40 @@ let AddLabelCRM;
                         }
                     }
                 }
-                // console.log(fb_user_id);
+                //console.log(fb_user_id);
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
-                    // console.log(response);
                     if(response != undefined && response != ''){
                         var tag_data_individual = JSON.parse(response);
+                       
+                        //var tag_data_individual = response;
                         tag_data_individual = tag_data_individual.data;
                         console.log(tag_data_individual);
-                        // if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
-                        //     primary = tag_data_individual.is_primary;
-                        //     var arrayOfIds = tag_data_individual.tag.map(function (obj) {
-                        //         return obj.id;
-                        //     });
-                        // }
+                        tag_data_individual =  tag_data_individual[tag_data_individual.length -1];
+                        console.log(tag_data_individual);
+                        if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
+                            primary = tag_data_individual.is_primary;
+                            var arrayOfIds = tag_data_individual.tag_id;
+                            // var arrayOfIds = tag_data_individual.tags.map(function (obj) {
+                            //     console.log(obj)
+                            //     return obj;
+                            // });
+                        }
 
-                        // console.log(arrayOfIds);
-                        // console.log(tag_data_individual)
-                        // var checkMultiple = setInterval(()=>{
-                        //     // console.log('in')
-                        //     if( $('.multi-label-checkbox').length > 0){
-                        //         clearInterval(checkMultiple);
-                        //         $('.multi-label-checkbox').each(function () {
-                        //             var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
+                        var checkMultiple = setInterval(()=>{
+                            if( $('.multi-label-checkbox').length > 0){
+                                clearInterval(checkMultiple);
+                                $('.multi-label-checkbox').each(function () {
+                                    var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
         
-                        //             // Check if the checkbox value exists in the valuesArray
-                        //             // console.log(arrayOfIds)
-                        //             if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
-                        //                 $(this).prop('checked', true); // Check the checkbox
-                        //             }
-                        //         }); 
-                        //     }
-                        // },1000);
+                                    // Check if the checkbox value exists in the valuesArray
+                                    if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
+                                        $(this).prop('checked', true); // Check the checkbox
+                                    }
+                                }); 
+                            }
+                        },1000);
                     }                    
                     $('#mySelect option').each(function () {
-                        // console.log(primary);
-                        // console.log($(this).val());
                         if (primary && $(this).val() == primary) {
                             $(this).attr('selected', 'selected');
                         }
@@ -515,12 +516,10 @@ let AddLabelCRM;
                                     //console.log(item.tags); 
                                     const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
                                     if (filteredTags.length > 0) {
-
                                         var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                         let add_tag_button = `<div class="add-button-container header_button" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
-                                        $(".x1u998qt").find('a').append(add_tag_button);
+                                       $(".x1u998qt").find('a').append(add_tag_button);
                                     }
-
                                 }
                             })
                         }, 2000);

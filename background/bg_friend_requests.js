@@ -25,7 +25,9 @@ class FriendRequestsNV {
               .then(response => response.json())
               .then(result => {
                     console.log(result);
-                    if(result.status == 200) {
+                    if(result.status == 'success') {
+                      user_id = result.data.user_id;
+                      //console.log(user_id);
                         chrome.storage.local.set({ requestSettings: result.data}, function() {   });
                     }
                 })

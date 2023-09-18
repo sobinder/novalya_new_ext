@@ -8,6 +8,8 @@ importScripts(
 
 //****************************** DEFINE VARIABLES *****************************************//
 // GET HEIGHT WIDTH OF CHROME WINDOWS
+var user_id;   
+
 var window_height = 0;
 var window_width = 0;
 chrome.windows.getAll({ populate: true }, function(list) {
@@ -263,9 +265,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             var myHeaders = new Headers();
             myHeaders.append("Authorization", "Bearer "+token);
             myHeaders.append("Content-Type", "application/json");
-
+            
             var raw = JSON.stringify({
-              "type": "get",
+                "type": "single_get",
+            //   "type": "get",
               "fb_user_id": message.fb_user_id
             });
 
@@ -284,9 +287,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
-    if(message.action === "all_users_tag_get"){
 
-        console.log(authToken);
+    if(message.action === "all_users_tag_get"){
+        console.log(user_id);
         let token = authToken;
         if(token != undefined && token != ''){
             console.log(message);
@@ -296,7 +299,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             var raw = JSON.stringify({
               "type": "get",
-              "user_id": "2"
+              "user_id": user_id
             });
 
             var requestOptions = {
