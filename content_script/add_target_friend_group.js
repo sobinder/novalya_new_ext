@@ -244,17 +244,11 @@ let group_url_value = window.location.href ;
                 //cint = Number(currentIndex);
                 var cint =
                   typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
-                console.log(cint, search_index_value);
                 if (cint < search_index_value) {
-                  console.log("false");
                   validIndex = false;
                 } else {
-                  console.log("true");
                   validIndex = true;
                 }
-
-                //console.log(validIndex);
-                console.log(validKeyword , invalidKeyword , countryList , validGender, validIndex);
                 if (
                   validKeyword &&
                   !invalidKeyword &&
@@ -280,39 +274,23 @@ let group_url_value = window.location.href ;
                   var memberid = $(selector_for_validclass2).attr("member_id");
 
                   let member_names = member_name.split(" ");
-                  console.log(member_names);
                   $(selector_for_validclass).addClass("sca-member-proccessed");
-
-                  // var authtoken = "";
-                  // chrome.runtime.sendMessage(
-                  //   {
-                  //     action: "fetchMessageFromGroupSegement",
-                  //     groupid: message_id,
-                  //     authtoken: authtoken,
-                  //   },
-                  //   (response) => {
-                  //     segementMessagetextArray = ["hello [first name] [last name]" , "Hello [first name] start the magic of novalya"];
-                  //     var randomIndex = Math.floor(
-                  //       Math.random() * segementMessagetextArray.length
-                  //     );
-                  //     segementMessage = segementMessagetextArray[randomIndex];
-                  //   }
-                  // );
-
+                  var segementMessage = [];
                   segementMessagetextArray = messageArray;
                   console.log(segementMessagetextArray);
-                  var randomIndex = Math.floor(
-                    Math.random() * segementMessagetextArray.length
-                  );
-                  segementMessage_json = segementMessagetextArray[randomIndex];
-                  console.log(segementMessage_json)
-                  segementMessage_varient_json = segementMessage_json.varient;
-                  segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
-                  var randomIndex2 = Math.floor(
+
+                  segementMessagetextArray.forEach(function (item, i) {
+                    segementMessage_json = segementMessagetextArray[i];
+                    segementMessage_varient_json = segementMessage_json.varient;
+                    segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
+                    var randomIndex2 = Math.floor(
                       Math.random() * segementMessage_varient_array.length
-                  );
-                  segementMessage = segementMessage_varient_array[randomIndex2];
-                  console.log(segementMessage); 
+                    );
+                    segementMessage.push(segementMessage_varient_array[randomIndex2]);
+                    
+                  });
+
+                  segementMessage = segementMessage.join(' ');
                   setTimeout(() => {
                     console.log(segementMessage);
                     showCustomToastr('success', 'Friend Request Sent', 5000 , false );
