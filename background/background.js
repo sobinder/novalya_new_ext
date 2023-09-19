@@ -285,10 +285,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "addgroupapi") {
-
-        console.log(authToken);
         let token = authToken;
-        if(token != undefined && token != ''){
             console.log(message);
             var myHeaders = new Headers();
             myHeaders.append("Authorization", "Bearer "+token);
@@ -308,29 +305,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 .then((response) => response.json())
                 .then((result) => sendResponse({ data: result, status: "ok" }))
                 .catch((error) => sendResponse({ data: error, status: "error" }));               
-        } 
         return true;
     }
 
 
-    if (message.action === "addgroupapinew") {
-        var myHeaders = new Headers();
-        var formdata = new FormData();
-        formdata.append("user_id", userId);
-        formdata.append("name", message.name);
-        formdata.append("url", message.url);
-        formdata.append("group_type", message.group_type);
-        var requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: formdata,
-            redirect: "follow",
-        };
+    if (message.action === "addgroupapinew") {  
+        let token = authToken;
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
 
-        fetch(base_api_url + "saved-group-api-new.php", requestOptions)
-            .then((response) => response.json())
-            .then((result) => sendResponse({ data: result, status: "ok" }))
-            .catch((error) => sendResponse({ data: error, status: "error" }));
+            var raw = JSON.stringify({
+              "name": message.name,
+              "url": message.url,
+              "group_type":message.group_type
+            });
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+            fetch(new_base_api_url+"group/create-group", requestOptions)
+                .then((response) => response.json())
+                .then((result) => sendResponse({ data: result, status: "ok" }))
+                .catch((error) => sendResponse({ data: error, status: "error" }));               
         return true;
     }
 

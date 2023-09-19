@@ -317,24 +317,24 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         loopValue = parseInt($("#loop1").text(), 10);
                         $("#loop1").text(loopValue + 1);
                         loopValue = parseInt($("#loop1").text(), 10);
-                            var birthdayMessage = [];
-                            var birthdayMessagetextArray = birtday_response.data.message.Sections;
+                        var birthdayMessage = [];
+                        var birthdayMessagetextArray = birtday_response.data.message.Sections;
 
-                            console.log(birthdayMessagetextArray);
+                        console.log(birthdayMessagetextArray);
 
-                            birthdayMessagetextArray.forEach(function (item, i) {
+                        birthdayMessagetextArray.forEach(function (item, i) {
                             birthdayMessage_json = birthdayMessagetextArray[i];
                             birthdayMessage_varient_json = birthdayMessage_json.varient;
                             birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
                             var randomIndex2 = Math.floor(
-                            Math.random() * birthdayMessage_varient_array.length
+                                Math.random() * birthdayMessage_varient_array.length
                             );
                             birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
 
-                            });
+                        });
 
-                            birthdayMessage = birthdayMessage.join(' ');
-                            console.log(birthdayMessage);  
+                        birthdayMessage = birthdayMessage.join(' ');
+                        console.log(birthdayMessage);  
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
                         birthdayMessage = birthdayMessage.replaceAll(
@@ -858,7 +858,9 @@ $(document).ready(function () {
         );
     });
 
-    $(document).on("click", "#add-group-btn", function () {        
+    $(document).on("click", "#add-group-btn", function () { 
+        
+        $("#add-group-btn").text('Adding group...');  
         let group_url_value = window.location.href;
         if (group_url_value.includes("/things_in_common")) {
             group_url_value = group_url_value.replace("/things_in_common", "");
@@ -869,11 +871,13 @@ $(document).ready(function () {
             let response = res8.groupPageDOM;
             let title = $(response).filter("title").text();
             chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
-                if (res9.data.msg == 'group already saved') {
-                    toastr["error"](res9.data.msg);
-                } else if (res9.data.msg == 'group saved') {
-                    toastr["success"]('group saved successfully');
+                console.log(res9);
+                if (res9.data.status == 'error') {
+                    toastr["error"](res9.data.message);
+                } else {
+                    toastr["success"](res9.data.message);
                 }
+                $("#add-group-btn").text(' + Add this group to Novalya');
             });
         })
     });
@@ -881,7 +885,7 @@ $(document).ready(function () {
     $(document).on("click", "#add-group-btn2", function () {
         console.log("clicked");
         let group_url_value = window.location.href;
-
+         $("#add-group-btn2").text('Adding group...'); 
         if (group_url_value.includes("things_in_common")) {
             group_url_value = group_url_value.replace("things_in_common", "");
             group_url_value = group_url_value + "things_in_common";
@@ -900,11 +904,13 @@ $(document).ready(function () {
                 console.log(title);
                 chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "things in common" },
                     (res9) => {
-                        if (res9.data.msg == 'group already saved') {
-                            toastr["error"](res9.data.msg);
-                        } else if (res9.data.msg == 'group saved') {
-                            toastr["success"]('group saved successfully');
+                        console.log(res9);
+                        if (res9.data.status == 'error') {
+                            toastr["error"](res9.data.message);
+                        } else {
+                            toastr["success"](res9.data.message);
                         }
+                        $("#add-group-btn2").text(' + Add this group to Novalya');
                     });
 
             })
@@ -1026,25 +1032,25 @@ $(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')"
 
 
 
-  $(document).on("click", "#add-group-btn", function () {        
-    let group_url_value = window.location.href;
-    if (group_url_value.includes("/things_in_common")) {
-        group_url_value = group_url_value.replace("/things_in_common", "");
-    } else if (group_url_value.includes("members/")) {
-        group_url_value = group_url_value.replace("members/", "members");
-    }
-    chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value }, (res8) => {
-        let response = res8.groupPageDOM;
-        let title = $(response).filter("title").text();
-        chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
-            if (res9.data.msg == 'group already saved') {
-                toastr["error"](res9.data.msg);
-            } else if (res9.data.msg == 'group saved') {
-                toastr["success"]('group saved successfully');
-            }
-        });
-    })
-});
+//   $(document).on("click", "#add-group-btn", function () {        
+//     let group_url_value = window.location.href;
+//     if (group_url_value.includes("/things_in_common")) {
+//         group_url_value = group_url_value.replace("/things_in_common", "");
+//     } else if (group_url_value.includes("members/")) {
+//         group_url_value = group_url_value.replace("members/", "members");
+//     }
+//     chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value }, (res8) => {
+//         let response = res8.groupPageDOM;
+//         let title = $(response).filter("title").text();
+//         chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
+//             if (res9.data.msg == 'group already saved') {
+//                 toastr["error"](res9.data.msg);
+//             } else if (res9.data.msg == 'group saved') {
+//                 toastr["success"]('group saved successfully');
+//             }
+//         });
+//     })
+// });
   
 
 function sendMessageFromMessengers(thread_id, templateMessage) {
