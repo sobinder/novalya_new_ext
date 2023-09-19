@@ -73,7 +73,7 @@ class BirthdayNova {
                         if (tab.url !== birthday_url && !tab.url.includes("birthdays")) {
 
                             chrome.tabs.sendMessage(birthday_page_tabId, { subject: "openTheBirthdays", birthday_tabId: extension_birthday_page_tabid }, function (resp20) {
-                                console.log(resp20);
+                                console.log(api_response);
                                 console.log("birthdaybuttonClicked", api_response.data.birthday_type);
 
                                 var subjectType;
