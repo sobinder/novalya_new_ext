@@ -549,8 +549,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log(message);
         if(response != undefined && response != ''){
             var parsedData = response;
-            var message = response.message;
-           toastr["success"](message);
+            // var message = response.message;
+           toastr["success"]('Tag update successfully');
         } else {
             toastr["success"]('not found tag update done');
         }

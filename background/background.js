@@ -299,8 +299,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
-              "type": "get",
-              "user_id": user_id
+              "type": "get"
             });
 
             var requestOptions = {
