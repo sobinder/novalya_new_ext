@@ -750,9 +750,11 @@ $(document).ready(function () {
     chrome.storage.local.get(["requestSettings"], function (result) {
         if (
             typeof result.requestSettings != "undefined" &&
-            result.requestSettings != ""
+            result.requestSettings != "" && result.requestSettings != null 
         ) {
+            console.log(result);
             requestSettings1 = result.requestSettings;
+            console.log(result);
             if (requestSettings1.reject_status == 1) {
                 $(document).on(
                     "click",
@@ -815,6 +817,8 @@ $(document).ready(function () {
                     }
                 );
             }
+        } else {
+            console.log('request setting not saved');
         }
     });
 
