@@ -1,7 +1,7 @@
 // CONSTANTS 
 let userId = 0;
 let sendMessageEnable = true;
-
+let authToken = "";
 let my_domain = "app.novalya.com";
 let site_url = "https://app.novalya.com/";
 let new_site_url = "https://dashboard.novalya.com/";

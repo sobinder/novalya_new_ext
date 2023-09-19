@@ -8,7 +8,7 @@ class FriendRequestsNV {
 
     getRequestSettings() {
         GetFacebookLoginId();
-        getCookies(new_site_url, "authToken", function(id) {
+        getCookies(site_url, "authToken", function(id) {
            authToken = id;
             console.log(authToken); 
             var myHeaders = new Headers();

@@ -49,11 +49,12 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 
 });
 
-getCookies(new_site_url, "authToken", function(id) {
-    authToken = id;
+getCookies(site_url, "user_id", function(id) {
+    user_id = id;
+    console.log(user_id , "this is the user id");
 });
 
-getCookies(new_site_url, "authToken", function(token) {
+getCookies(site_url, "authToken", function(token) {
     authToken = token;
     console.log(authToken, "this is the auth token");
 });
@@ -68,7 +69,7 @@ chrome.runtime.onStartup.addListener(function() {
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
     if (alarm.name == "wakeup_bg") {
-        getCookies(new_site_url, "authToken", function(id) {
+        getCookies(site_url, "authToken", function(id) {
             authToken = id;
             console.log("wake up service worker", userId);
         });
@@ -686,7 +687,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action == "reloadExtensionId") {
         //usage:
-        getCookies(new_site_url, "authToken", function(id) {
+        getCookies(site_url, "authToken", function(id) {
             authToken = id;
             sendResponse({ authToken: authToken });
         });
