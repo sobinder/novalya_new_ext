@@ -180,16 +180,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             } else {
                                 facebook_member_id = member_url_splitid;
                             }
-                            var birthdayMessagetextArray = birtday_response.data.message.Sections;
+                        var birthdayMessagetextArray = birtday_response.data.message.Sections;
                         var randomIndex = Math.floor(
                             Math.random() * birthdayMessagetextArray.length
                         );
 
                         birthdayMessage1 = birthdayMessagetextArray[randomIndex];
                         birthdayMessage2 = birthdayMessage1.varient;
-                        birthdayMessage3 = JSON.parse(birthdayMessage2);
+                        birthdayVarientArray = JSON.parse(birthdayMessage2);
 
-                        birthdayMessage = birthdayMessage3.join(' ');
+                        var randomIndex2 = Math.floor(
+                            Math.random() * birthdayVarientArray.length
+                        );
+                        birthdayMessage = birthdayVarientArray[randomIndex2];
                         console.log(birthdayMessage); 
                             var member_fullname = $(this).find("h2 span").text();
                             var member_names = member_fullname.split(" ");
@@ -316,9 +319,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                         birthdayMessage1 = birthdayMessagetextArray[randomIndex];
                         birthdayMessage2 = birthdayMessage1.varient;
-                        birthdayMessage3 = JSON.parse(birthdayMessage2);
+                        birthdayVarientArray = JSON.parse(birthdayMessage2);
 
-                        birthdayMessage = birthdayMessage3.join(' ');
+                        var randomIndex2 = Math.floor(
+                            Math.random() * birthdayVarientArray.length
+                        );
+                        birthdayMessage = birthdayVarientArray[randomIndex2];
                         console.log(birthdayMessage); 
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
@@ -446,9 +452,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                         birthdayMessage1 = birthdayMessagetextArray[randomIndex];
                         birthdayMessage2 = birthdayMessage1.varient;
-                        birthdayMessage3 = JSON.parse(birthdayMessage2);
+                        birthdayVarientArray = JSON.parse(birthdayMessage2);
 
-                        birthdayMessage = birthdayMessage3.join(' ');
+                        var randomIndex2 = Math.floor(
+                            Math.random() * birthdayVarientArray.length
+                        );
+                        birthdayMessage = birthdayVarientArray[randomIndex2];
+                        console.log(birthdayMessage); 
                         console.log(birthdayMessage); 
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");

@@ -308,10 +308,11 @@ let group_url_value = window.location.href ;
                   console.log(segementMessage_json)
                   segementMessage_varient_json = segementMessage_json.varient;
                   segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
-
-                  segementMessage = segementMessage_varient_array.join(' ');
+                  var randomIndex2 = Math.floor(
+                      Math.random() * segementMessage_varient_array.length
+                  );
+                  segementMessage = segementMessage_varient_array[randomIndex2];
                   console.log(segementMessage); 
-
                   setTimeout(() => {
                     console.log(segementMessage);
                     showCustomToastr('success', 'Friend Request Sent', 5000 , false );
