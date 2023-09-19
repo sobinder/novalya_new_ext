@@ -206,56 +206,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 })
                 .catch(error => console.log('error', error));               
             } 
-
-
-
-
-
-
-
-
-            // const myHeaders = new Headers();
-            // const formdata = new FormData();            
-            // formdata.append("type", "add");
-            // formdata.append("user_id", userId);
-            // formdata.append("fb_user_id", numericUserFbId);
-            // formdata.append("fb_user_alphanumeric_id", alphanumericUserFbId);
-            // formdata.append("fb_image_id", null);
-            // formdata.append("fb_name", message.fbName);
-            // formdata.append("profile_pic", message.profilePic);
-            // formdata.append("is_primary", message.is_primary);
-            // formdata.append("tag_id[]", message.selected_tags_ids);
-
-            // const requestOptions = {
-            //     method: 'POST',
-            //     headers: myHeaders,
-            //     body: formdata,
-            //     redirect: 'follow'
-            // };
-
-            // const apiUrl = "https://app.novalya.com/system/taggeduser-api.php";
-            
-            // // Perform the POST request
-            // fetch(apiUrl, requestOptions)
-            //     .then(response => response.text())
-            //     .then(result => {
-            //         chrome.tabs.sendMessage(sender.tab.id, {
-            //             type: 'tag_update_done',
-            //             from: 'background',
-            //             result:result,
-            //         });
-            //         //sendResponse({ data: result.msg, status: "ok" });
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //         sendResponse({ data: "An error occurred", status: "error" });
-            //     });
         })
         .catch(error => {
             console.error('Error getting FB IDs:', error);
             sendResponse({ data: "An error occurred", status: "error" });
         });
-
+        return true;
     }
 
     if(message.action === "single_users_tag_get"){
