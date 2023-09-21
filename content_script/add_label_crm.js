@@ -53,11 +53,13 @@ let AddLabelCRM;
                 //console.log(res50);
                 //console.log(tags_fetch_data);
                 options2 = '<option value="">Select Primary</option>';
-                tags_fetch_data.forEach((tag) => {
-                    if (tag.name !== 'Unlabeled') {
-                        options2 += `<option value="${tag.id}">${tag.name}</option>`;
-                    }
-                });
+                if(tags_fetch_data.length > 0) {
+                    tags_fetch_data.forEach((tag) => {
+                        if (tag.name !== 'Unlabeled') {
+                            options2 += `<option value="${tag.id}">${tag.name}</option>`;
+                        }
+                    });
+                }
             });
 
             $(document).on('click', '.close-model', function () {

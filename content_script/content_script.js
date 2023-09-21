@@ -104,7 +104,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             }
         }, 4000);
     }
-
     
     if (message.subject === "postBirthday") {
         setTimeout(() => {
@@ -197,7 +196,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                             });
 
-                            birthdayMessage = birthdayMessage.join(' ');
+                            birthdayMessage = birthdayMessage.join('');
                             console.log(birthdayMessage); 
                             var member_fullname = $(this).find("h2 span").text();
                             var member_names = member_fullname.split(" ");
@@ -333,7 +332,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                         });
 
-                        birthdayMessage = birthdayMessage.join(' ');
+                        birthdayMessage = birthdayMessage.join('');
                         console.log(birthdayMessage);  
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
@@ -470,7 +469,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                         });
 
-                        birthdayMessage = birthdayMessage.join(' ');
+                        birthdayMessage = birthdayMessage.join('');
 
                         console.log(birthdayMessage); 
                         var member_fullname = item.name;
@@ -639,10 +638,6 @@ $(document).ready(function () {
         $(".title_lg").text("Send Birthday Wishes Feature Stopped");
         $(".simple-txt.fs-spacing").text("window close with in few seconds");
         $(".loading").remove();
-        //extBirthdayTabId = $(this).attr("data-tabid");
-        // setTimeout( () => {
-        //     window.close();
-        // }, 20000)
         chrome.runtime.sendMessage({ action: "closeTabs" },
             (res22) => {
                 //window.close();
@@ -656,106 +651,110 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", "#submit-campaign", function () {
-        //alert('in')
-        console.log($(this).attr('attr-data'));
-        console.log(JSON.parse($(this).attr('attr-data')));
+    $(document).on("click", "#submit-campaign", function () {        
         $("#submit-campaign").prop("disabled", true);
-        $("#submit-campaign").addClass("disabled_cls");
-        // toastr["error"]('We are working on send message feature!');
+        $("#submit-campaign").addClass("disabled_cls");        
         let data = JSON.parse($(this).attr('attr-data'));
+        console.log(data);
         setTimeout(() => {
-            chrome.runtime.sendMessage({ action: "getCRMMessageSections",data:data }, (res17) => {
-                // response = JSON.parse(res17.api_data);
-                // console.log(response);
-                // var total_memberss = response.tagged_user.length;
-                console.log(res17);
-                var total_memberss = res17.api_data.tagged_user.length;
-                let html_processing_model = `<section class="main-app">
-                        <div class="overlay-ld">
-                            <div class="container-ld">
-                                <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
-                                <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
-                                <h3 class="title_lg">NEXT REQUEST IS SENDING...</h3>
-                                <div class="loading">
-                                    <span class="fill"></span>
+            chrome.runtime.sendMessage({ action: "getCRMSettings", settins:data }, (res7) => {                
+                console.log(res7);
+                let status_api = res7.setting.status;
+                if(status_api == "success") {
+                    toastr["success"]('setting saved successfully! fetching members');
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings"}, (res17) => {                
+                        console.log(res17);
+                        let reponse17 = res17.api_data.data;
+                        let crm_settings = reponse17[0];
+                        console.log(reponse17[0]);
+
+                        let total_memberss = crm_settings.taggedUsers.length;
+                        let html_processing_model = `<section class="main-app">
+                                <div class="overlay-ld">
+                                    <div class="container-ld">
+                                        <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
+                                        <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                                        <h3 class="title_lg">NEXT REQUEST IS SENDING...</h3>
+                                        <div class="loading">
+                                            <span class="fill"></span>
+                                        </div>
+                                        <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${total_memberss}</span></p>
+                                        <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
+                                    </div>
                                 </div>
-                                <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${total_memberss}</span></p>
-                                <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
-                            </div>
-                        </div>
-                    </section>`;
-                $("body:not('.process-model-added')").prepend(html_processing_model);
-                $("body").addClass("process-model-added");
-                setTimeout(() => {
-                    $("#submit-campaign").prop("disabled", false);
-                    $("#submit-campaign").removeClass("disabled_cls");
-                }, 5000);
+                            </section>`;
+                        $("body:not('.process-model-added')").prepend(html_processing_model);
+                        $("body").addClass("process-model-added");
 
-                var selected_group_members = res17.api_data.tagged_user;
-                const intervalValue = res17.api_data.interval;
-                if (intervalValue == "30-60") {
-                    randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
-                } else if (intervalValue == "1-3") {
-                    randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
-                } else if (intervalValue == "3-5") {
-                    randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
-                } else if (intervalValue == "5-10") {
-                    randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
-                } else {
-                    randomDelay = 60000;
-                }
-
-                // const numberOfReqValue = res17.api_data.norequest;
-                // if (numberOfReqValue != "custom") {
-                //     limit_req = numberOfReqValue;
-                // } else {
-                //     limit_req = settings.custom; // unlimited
-                // }
-
-                selected_group_members.forEach(function (item, i) {
-                    if (i < total_memberss) {
                         setTimeout(() => {
-                            var thread_id = item.fb_user_id;
-                            console.log(thread_id);   
-                            text_messageArray = res17.api_data.message;
-                            var randomIndex = Math.floor(Math.random() * text_messageArray.length);
-                            text_message = text_messageArray[randomIndex];
-                            var thread_id = item.fb_user_id;
-                            var member_fullname = item.fb_name;
-                            var member_names = member_fullname.split(" ");
-                            var messageText = "";
-                            messageText = text_message.replaceAll("[first name]", member_names[0]);
-                            messageText = messageText.replaceAll("[last name]", member_names[1]); 
-                            chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: messageText, thread_id: thread_id }, (res18) => {
-                                $('#processed_member').text(i + 1);
-                                if (i === selected_group_members.length - 1) {
-                                    console.log('End of loop reached.');
-                                    $("#stop_crm").text("Close popup");
-                                    $(".loading").remove();
-                                    $("h3.title_lg").text("Completed");
-                                }
-                            })
-                        }, i * randomDelay)
+                            $("#submit-campaign").prop("disabled", false);
+                            $("#submit-campaign").removeClass("disabled_cls");
+                        }, 5000);
 
-                    }
-                })
+                        var selected_group_members = crm_settings.taggedUsers;
+                        const intervalValue = crm_settings.interval;
+                        if (intervalValue == "30-60 sec") {
+                            randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
+                        } else if (intervalValue == "1-3 min") {
+                            randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
+                        } else if (intervalValue == "3-5 min") {
+                            randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
+                        } else if (intervalValue == "5-10 min") {
+                            randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
+                        } else {
+                            randomDelay = 60000;
+                        }
+                        console.log(randomDelay);
+                        selected_group_members.forEach(function (item, i) {
+                        if (i < total_memberss) {
+                            setTimeout(() => {
+                                var thread_id = item.fb_user_id;                            
+                                var crmMessage = [];
+                                var crmMessagetextArray = crm_settings.MessageDatum.Sections;
+
+                                console.log(crm_settings.MessageDatum.Sections);
+
+                                crmMessagetextArray.forEach(function (item, i) {
+                                crmMessage_json = crmMessagetextArray[i];
+                                crmMessage_varient_json = crmMessage_json.varient;
+                                crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
+                                var randomIndex2 = Math.floor(
+                                    Math.random() * crmMessage_varient_array.length
+                                );
+                                    crmMessage.push(crmMessage_varient_array[randomIndex2]);
+                                });
+
+                                crmMessage = crmMessage.join('');
+
+                                var thread_id = item.fb_user_id;
+                                var member_fullname = item.fb_name;
+                                var member_names = member_fullname.split(" ");
+
+                                console.log(thread_id, '######', crmMessage); 
+
+
+                                crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
+                                crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
+                                chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
+                                    $('#processed_member').text(i + 1);
+                                    if (i === selected_group_members.length - 1) {
+                                        console.log('End of loop reached.');
+                                        $("#stop_crm").text("Close popup");
+                                        $(".loading").remove();
+                                        $("h3.title_lg").text("Completed");
+                                    }
+                                })
+                            }, i * randomDelay)
+                        }
+                    })
+                    });                     
+                } 
+                else {
+                    toastr["error"]('setting not saved successfully!');
+                }
             });
-        }, 5000);
+        }, 1000);
     });
-
-    // $(document).on("click", "#extension_submit", function () {
-    //     $("#extension_submit").prop("disabled", true);
-    //     $("#extension_submit").addClass("disabled_cls");
-    //     setTimeout(function () {
-    //         chrome.runtime.sendMessage({ action: "getMessageSections" }, (res6) => {
-    //             setTimeout(() => {
-    //                 $("#extension_submit").prop("disabled", false);
-    //                 $("#extension_submit").removeClass("disabled_cls");
-    //             }, 5000)
-    //         });
-    //     }, 5000);
-    // });
 
     $(document).on("click", "#start-novayla-connect", function () {
         $("#start-novayla-connect").prop("disabled", true);
@@ -769,7 +768,6 @@ $(document).ready(function () {
             });
         }, 5000);
     });
-
 
     $(document).on("click", "#crm_submit", function () {
         $("#crm_submit").prop("disabled", true);
@@ -855,7 +853,6 @@ $(document).ready(function () {
         window.location.reload();
 
     });
-
 
     // CLICK DELETE BUTTON ON FRIEND REQUEST PAGE
     chrome.storage.local.get(["requestSettings"], function (result) {
@@ -1064,84 +1061,20 @@ $(document).ready(function () {
             }
         );
     });
-
-    // BIRTHDAY SECTION STARTS
-    // $(document).on("click", ".birthday_msg_send", function (event) {
-    //     let day_type = $('input[name="birthday_type"]:checked').val();
-    //     console.log(day_type);
-    //     $(".birthday_msg_send").prop("disabled", true);
-    //     $(".birthday_msg_send").addClass("disabled_cls");
-    //     setTimeout(() => {
-    //         chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "message", day_type: day_type },
-    //             (res14) => {
-
-    //                 console.log(res14);
-    //                 setTimeout(() => {
-    //                     $(".birthday_msg_send").prop("disabled", false);
-    //                     $(".birthday_msg_send").removeClass("disabled_cls");
-    //                 }, 5000)
-    //             }
-    //         );
-    //     }, 2000);
-    // });
-
-    // // BIRTHDAY FEED SECTIONS
-    // $(document).on("click", ".birthday_feed_send", function (event) {
-    //     let day_type = $('input[name="birthday_type"]:checked').val();
-    //     console.log(day_type);
-    //     $(".birthday_feed_send").prop("disabled", true);
-    //     $(".birthday_feed_send").addClass("disabled_cls");
-    //     setTimeout(() => {
-    //         chrome.runtime.sendMessage({ action: "openBirthdayEvent", type: "feed", day_type: day_type },
-    //             (res14) => {
-    //                 console.log(res14);
-    //                 setTimeout(() => {
-    //                     $(".birthday_feed_send").prop("disabled", false);
-    //                     $(".birthday_feed_send").removeClass("disabled_cls");
-    //                 }, 5000)
-    //             }
-    //         );
-    //     }, 2000);
-    // });
 });
 
 
-$(document).on("click", ".send_birthday_message", function (event) {
-    
+$(document).on("click", ".send_birthday_message", function (event) {    
     setTimeout(() => {
         chrome.runtime.sendMessage({ action: "openBirthdayEventNew" });
         console.log("button clicked");
     }, 4000);
-
 });
 
 $(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function() {
     // Perform your actions here
     alert("Button with text 'SEND BIRTHDAY MESSAGES' was clicked!");
   });
-
-
-
-//   $(document).on("click", "#add-group-btn", function () {        
-//     let group_url_value = window.location.href;
-//     if (group_url_value.includes("/things_in_common")) {
-//         group_url_value = group_url_value.replace("/things_in_common", "");
-//     } else if (group_url_value.includes("members/")) {
-//         group_url_value = group_url_value.replace("members/", "members");
-//     }
-//     chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value }, (res8) => {
-//         let response = res8.groupPageDOM;
-//         let title = $(response).filter("title").text();
-//         chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
-//             if (res9.data.msg == 'group already saved') {
-//                 toastr["error"](res9.data.msg);
-//             } else if (res9.data.msg == 'group saved') {
-//                 toastr["success"]('group saved successfully');
-//             }
-//         });
-//     })
-// });
-  
 
 function sendMessageFromMessengers(thread_id, templateMessage) {
     let msgBox = 'div[aria-label="Message"]';

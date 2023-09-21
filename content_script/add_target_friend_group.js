@@ -286,7 +286,7 @@ let group_url_value = window.location.href ;
                     
                   });
                   //2, 11, 333
-                  segementMessage = segementMessage.join(' ');
+                  segementMessage = segementMessage.join('');
                   console.log(segementMessage);
                   setTimeout(() => {
                     //console.log(segementMessage);

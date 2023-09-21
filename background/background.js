@@ -157,7 +157,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             redirect: 'follow'
         };
 
-        fetch("https://novalyabackend.novalya.com/user/api/group/", requestOptions)
+        fetch(new_base_url+"/user/api/group", requestOptions)
         .then(response => response.json())
         .then(result => sendResponse({ data: result, status: "ok" }))
         .catch(error => console.log('error', error));
@@ -462,7 +462,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         );
                         reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
                     });
-                    reqeuestMessage = reqeuestMessage.join(' ');
+                    reqeuestMessage = reqeuestMessage.join('');
                     console.log(reqeuestMessage);
                     messageText = reqeuestMessage;
 
@@ -517,7 +517,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         );
                         reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
                     });
-                    reqeuestMessage = reqeuestMessage.join(' ');
+                    reqeuestMessage = reqeuestMessage.join('');
                     console.log(reqeuestMessage);
                     messageText = reqeuestMessage;
                     var member_fullname = message.data.name;
@@ -694,51 +694,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
-    if (message.action === "getCRMMessageSections") {
+    if (message.action === "getCRMSettings") {
         let token = authToken;
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+token);
         myHeaders.append("Content-Type", "application/json");
-
+        myHeaders.append("Authorization", "Bearer "+token);
         var raw = JSON.stringify({
-            "group_id": message.data.group_id,
-            "message_id": message.data.message_id,
-            "time_interval": message.data.time_interval,
+          "group_id": message.settins.group_id,
+          "message_id": message.settins.message_id,
+          "time_interval": message.settins.time_interval
         });
 
         var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
-        .then(response => response.json())
-        .then((resCRMApi) => {
-            console.log(resCRMApi);
-
-            getCrmTaggedUser(resCRMApi ,sendResponse);
-            //sendResponse({ api_data: resCRMApi});
-        })
-        .catch(error => console.log('error', error));
-
-        // var myHeaders = new Headers();
-        // var requestOptions = {
-        //     method: "GET",
-        //     headers: myHeaders,
-        //     redirect: "follow",
-        // };
-
-        // fetch(
-        //         base_api_url + "crm_send_message_api.php?user_id=" + userId,
-        //         requestOptions
-        //     )
-        //     .then((response) => response.json())
-        //     .then((resCRMApi) => {
-        //         sendResponse({ api_data: resCRMApi.data});
-        //     })
-        //     .catch((error) => console.log("error", error));
+          .then(response => response.json())
+          .then(result => { console.log(result); sendResponse({ setting: result}) })
+          .catch(error => console.log('error', error));
         return true;
     }
 
@@ -753,29 +730,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if(message.action == "getMessagesANDSettings") {
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+        };
+
+        fetch(new_base_url+"/user/api/compaigns", requestOptions)
+        .then(response => response.json())
+        .then((result) => {
+            console.log(result)
+            sendResponse({ api_data: result});
+        })
+        .catch(error => console.log('error', error));
+        return true;
+    }
+
 });
 var currentDate = getCurrentDate();
-
-function getCrmTaggedUser(response,sendResponse){
-    let token = authToken;
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer "+token);
-    myHeaders.append("Content-Type", "application/json");
-
-    var requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow'
-    };
-
-    fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
-    .then(response => response.text())
-    .then((result) => {
-        console.log(result)
-        sendResponse({ api_data: result});
-    })
-    .catch(error => console.log('error', error));
-}
 
 function getCurrentDate() {
     var d = new Date();
