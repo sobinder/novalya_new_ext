@@ -698,11 +698,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer "+token);
-        myHeaders.append("Cookie", "connect.sid=s%3AiUPuaF13XnFtCW0XYP7pe2ksuxpkftVo.n1%2FsKjrDOWdKJ7%2FtWxrruCOyXm3qkP8lp1w2RvF%2FXBY");
+        myHeaders.append("Content-Type", "application/json");
 
         var raw = JSON.stringify({
             "group_id": message.data.group_id,
             "message_id": message.data.message_id,
+            "time_interval": message.data.time_interval,
         });
 
         var requestOptions = {
@@ -713,10 +714,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
 
         fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
-        .then(response => response.text())
+        .then(response => response.json())
         .then((resCRMApi) => {
             console.log(resCRMApi);
-            sendResponse({ api_data: resCRMApi});
+
+            getCrmTaggedUser(resCRMApi ,sendResponse);
+            //sendResponse({ api_data: resCRMApi});
         })
         .catch(error => console.log('error', error));
 
@@ -753,7 +756,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 var currentDate = getCurrentDate();
 
+function getCrmTaggedUser(response,sendResponse){
+    let token = authToken;
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer "+token);
+    myHeaders.append("Content-Type", "application/json");
 
+    var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+    };
+
+    fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
+    .then(response => response.text())
+    .then((result) => {
+        console.log(result)
+        sendResponse({ api_data: result});
+    })
+    .catch(error => console.log('error', error));
+}
 
 function getCurrentDate() {
     var d = new Date();
