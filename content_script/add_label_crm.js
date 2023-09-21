@@ -8,7 +8,7 @@
 let AddLabelCRM;
 (function ($) {
     let $this;
-    var tags_fetch_data = '';
+    var tags_fetch_data = [];
     var selected_tags_ids = [];
     let selected_primary_ids = [];
     var options2 = '';
