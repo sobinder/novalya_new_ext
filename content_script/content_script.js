@@ -771,6 +771,7 @@ $(document).ready(function () {
 
     // CLICK DELETE BUTTON ON FRIEND REQUEST PAGE
     chrome.storage.local.get(["requestSettings"], function (result) {
+        console.log(result);
         if (
             typeof result.requestSettings != "undefined" &&
             result.requestSettings != "" && result.requestSettings != null 
@@ -810,6 +811,7 @@ $(document).ready(function () {
             }
 
             // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
+            console.log(requestSettings1.accept_status);
             if (requestSettings1.accept_status == 1) {
                 $(document).on(
                     "click",

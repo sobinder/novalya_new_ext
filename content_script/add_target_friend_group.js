@@ -191,7 +191,6 @@ let group_url_value = window.location.href ;
             let groupHref2 = $(selector_for_validclass2)
               .find('a[href*="/groups/"]')
               .attr("href");
-              console.log('groupHref2', groupHref2);
             let memberurl2 = groupHref2.split("user/");
             let memberid2 = memberurl2[1].replace("/", "");
             let member_name2 = $(selector_for_validclass2)
@@ -256,7 +255,6 @@ let group_url_value = window.location.href ;
                   validGender &&
                   validIndex
                 ) {
-                  console.log("reached in the condition");
                   showCustomToastr('info', 'Sending Friend Request', randomDelay , true );
                   $(selector_for_validclass).addClass("add-done-border");
                   $(selector_for_validclass).addClass("loading_w_scl");
@@ -268,7 +266,6 @@ let group_url_value = window.location.href ;
                   let member_name = $(selector_for_validclass2)
                     .find('a[href*="/groups/"]')
                     .text();
-                    console.log(member_name);
                   let memberurl = groupHref.split("user/");
                   //let memberid = memberurl[1].replace('/', '');
                   var memberid = $(selector_for_validclass2).attr("member_id");
@@ -278,7 +275,6 @@ let group_url_value = window.location.href ;
                   var segementMessage = [];
                   segementMessagetextArray = messageArray;
                   console.log(segementMessagetextArray);
-
                   segementMessagetextArray.forEach(function (item, i) {
                     segementMessage_json = segementMessagetextArray[i];
                     segementMessage_varient_json = segementMessage_json.varient;
@@ -289,10 +285,11 @@ let group_url_value = window.location.href ;
                     segementMessage.push(segementMessage_varient_array[randomIndex2]);
                     
                   });
-
+                  //2, 11, 333
                   segementMessage = segementMessage.join(' ');
+                  console.log(segementMessage);
                   setTimeout(() => {
-                    console.log(segementMessage);
+                    //console.log(segementMessage);
                     showCustomToastr('success', 'Friend Request Sent', 5000 , false );
                     btnText.click(); 
                     showCustomToastr('success', 'Message Sending Start', 5000 , true );                   
@@ -301,7 +298,6 @@ let group_url_value = window.location.href ;
                       $this.closeWarningPopup();                      
                       setTimeout(() => {
                         if (!warningStatus) {
-                          console.log("in the condition");
                           segementMessage = segementMessage.replaceAll(
                             "[first name]",
                             member_names[0]

@@ -349,20 +349,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           .then(response => response.json())
           .then(res1 => {
             console.log(res1);
-            chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
-                    chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
-                        function(tabs) {
-                            groupPageTabId = tabs.id;
-                            extension_page_tabid = sender.tab.id;
-                            chrome.storage.local.set({ nvAddFriendProcess: "process" },
-                                function() {
-                                    chrome.tabs.onUpdated.addListener(groupPageTabListener);
-                                    sendResponse({ data: res1 });
-                                }
-                            );
-                        }
-                    );
-                });
+            if(res1.status == "error") {
+                console.log(res1.message);
+            } else {
+                chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
+                        chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
+                            function(tabs) {
+                                groupPageTabId = tabs.id;
+                                extension_page_tabid = sender.tab.id;
+                                chrome.storage.local.set({ nvAddFriendProcess: "process" },
+                                    function() {
+                                        chrome.tabs.onUpdated.addListener(groupPageTabListener);
+                                        sendResponse({ data: res1 });
+                                    }
+                                );
+                            }
+                        );
+                    });
+            }
           })
           .catch(error => console.log('error', error));
     }
@@ -440,12 +444,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 ) {
 
                     requestSettings1 = result.requestSettings;
-                    messageArray = requestSettings1.reject_message;
-                    var randomIndex = Math.floor(Math.random() * messageArray.length);
+                   //  messageArray = requestSettings1.reject_message;
+                   //  var randomIndex = Math.floor(Math.random() * messageArray.length);
 
-                    // Disable for API
-                   // var messageText = messageArray[randomIndex];
-                    var messageText = "Hello mr. [first name] [last name]";
+                   //  // Disable for API
+                   // // var messageText = messageArray[randomIndex];
+                   //  var messageText = "Hello mr. [first name] [last name]";
+
+                    var reqeuestMessage = [];
+                    var reqeuestMessagetextArray = requestSettings1.reject_message.Sections;
+                    reqeuestMessagetextArray.forEach(function (item, i) {
+                        reqeuestMessage_json = reqeuestMessagetextArray[i];
+                        reqeuestMessage_varient_json = reqeuestMessage_json.varient;
+                        reqeuestMessage_varient_array = JSON.parse(reqeuestMessage_varient_json);
+                            var randomIndex2 = Math.floor(
+                            Math.random() * reqeuestMessage_varient_array.length
+                        );
+                        reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
+                    });
+                    reqeuestMessage = reqeuestMessage.join(' ');
+                    console.log(reqeuestMessage);
+                    messageText = reqeuestMessage;
+
                     var member_fullname = message.data.name;
                     var member_names = member_fullname.split(" ");
                     messageText = messageText.replace("[first name]", member_names[0]);
@@ -486,16 +506,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     result.requestSettings != ""
                 ) {
                     requestSettings1 = result.requestSettings;
-                    messageArray = requestSettings1.accept_message.Sections;
-                    var randomIndex = Math.floor(Math.random() * messageArray.length);
-                    message3 = JSON.parse(messageArray);
-
-                    messageText = message3.join(' ');
-                    //var messageText = messageArray[randomIndex];
-
-                    // Disable for API
-                   // var messageText = messageArray[randomIndex];
-                    //var messageText = "Hello mr. [first name] [last name]";
+                    var reqeuestMessage = [];
+                    var reqeuestMessagetextArray = requestSettings1.accept_message.Sections;
+                    reqeuestMessagetextArray.forEach(function (item, i) {
+                        reqeuestMessage_json = reqeuestMessagetextArray[i];
+                        reqeuestMessage_varient_json = reqeuestMessage_json.varient;
+                        reqeuestMessage_varient_array = JSON.parse(reqeuestMessage_varient_json);
+                            var randomIndex2 = Math.floor(
+                            Math.random() * reqeuestMessage_varient_array.length
+                        );
+                        reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
+                    });
+                    reqeuestMessage = reqeuestMessage.join(' ');
+                    console.log(reqeuestMessage);
+                    messageText = reqeuestMessage;
                     var member_fullname = message.data.name;
                     var member_name = member_fullname.split(" ");
                     messageText = messageText.replaceAll("[first name]", member_name[0]);
