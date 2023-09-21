@@ -695,22 +695,47 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "getCRMMessageSections") {
+        let token = authToken;
         var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Cookie", "connect.sid=s%3AiUPuaF13XnFtCW0XYP7pe2ksuxpkftVo.n1%2FsKjrDOWdKJ7%2FtWxrruCOyXm3qkP8lp1w2RvF%2FXBY");
+
+        var raw = JSON.stringify({
+            "group_id": message.data.group_id,
+            "message_id": message.data.message_id,
+        });
+
         var requestOptions = {
-            method: "GET",
+            method: 'POST',
             headers: myHeaders,
-            redirect: "follow",
+            body: raw,
+            redirect: 'follow'
         };
 
-        fetch(
-                base_api_url + "crm_send_message_api.php?user_id=" + userId,
-                requestOptions
-            )
-            .then((response) => response.json())
-            .then((resCRMApi) => {
-                sendResponse({ api_data: resCRMApi.data});
-            })
-            .catch((error) => console.log("error", error));
+        fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
+        .then(response => response.text())
+        .then((resCRMApi) => {
+            console.log(resCRMApi);
+            sendResponse({ api_data: resCRMApi});
+        })
+        .catch(error => console.log('error', error));
+
+        // var myHeaders = new Headers();
+        // var requestOptions = {
+        //     method: "GET",
+        //     headers: myHeaders,
+        //     redirect: "follow",
+        // };
+
+        // fetch(
+        //         base_api_url + "crm_send_message_api.php?user_id=" + userId,
+        //         requestOptions
+        //     )
+        //     .then((response) => response.json())
+        //     .then((resCRMApi) => {
+        //         sendResponse({ api_data: resCRMApi.data});
+        //     })
+        //     .catch((error) => console.log("error", error));
         return true;
     }
 

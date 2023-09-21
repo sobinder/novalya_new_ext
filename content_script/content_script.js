@@ -656,6 +656,94 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", "#submit-campaign", function () {
+        //alert('in')
+        console.log($(this).attr('attr-data'));
+        console.log(JSON.parse($(this).attr('attr-data')));
+        $("#submit-campaign").prop("disabled", true);
+        $("#submit-campaign").addClass("disabled_cls");
+        // toastr["error"]('We are working on send message feature!');
+        let data = JSON.parse($(this).attr('attr-data'));
+        setTimeout(() => {
+            chrome.runtime.sendMessage({ action: "getCRMMessageSections",data:data }, (res17) => {
+                // response = JSON.parse(res17.api_data);
+                // console.log(response);
+                // var total_memberss = response.tagged_user.length;
+                console.log(res17);
+                var total_memberss = res17.api_data.tagged_user.length;
+                let html_processing_model = `<section class="main-app">
+                        <div class="overlay-ld">
+                            <div class="container-ld">
+                                <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
+                                <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                                <h3 class="title_lg">NEXT REQUEST IS SENDING...</h3>
+                                <div class="loading">
+                                    <span class="fill"></span>
+                                </div>
+                                <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${total_memberss}</span></p>
+                                <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
+                            </div>
+                        </div>
+                    </section>`;
+                $("body:not('.process-model-added')").prepend(html_processing_model);
+                $("body").addClass("process-model-added");
+                setTimeout(() => {
+                    $("#submit-campaign").prop("disabled", false);
+                    $("#submit-campaign").removeClass("disabled_cls");
+                }, 5000);
+
+                var selected_group_members = res17.api_data.tagged_user;
+                const intervalValue = res17.api_data.interval;
+                if (intervalValue == "30-60") {
+                    randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
+                } else if (intervalValue == "1-3") {
+                    randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
+                } else if (intervalValue == "3-5") {
+                    randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
+                } else if (intervalValue == "5-10") {
+                    randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
+                } else {
+                    randomDelay = 60000;
+                }
+
+                // const numberOfReqValue = res17.api_data.norequest;
+                // if (numberOfReqValue != "custom") {
+                //     limit_req = numberOfReqValue;
+                // } else {
+                //     limit_req = settings.custom; // unlimited
+                // }
+
+                selected_group_members.forEach(function (item, i) {
+                    if (i < total_memberss) {
+                        setTimeout(() => {
+                            var thread_id = item.fb_user_id;
+                            console.log(thread_id);   
+                            text_messageArray = res17.api_data.message;
+                            var randomIndex = Math.floor(Math.random() * text_messageArray.length);
+                            text_message = text_messageArray[randomIndex];
+                            var thread_id = item.fb_user_id;
+                            var member_fullname = item.fb_name;
+                            var member_names = member_fullname.split(" ");
+                            var messageText = "";
+                            messageText = text_message.replaceAll("[first name]", member_names[0]);
+                            messageText = messageText.replaceAll("[last name]", member_names[1]); 
+                            chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: messageText, thread_id: thread_id }, (res18) => {
+                                $('#processed_member').text(i + 1);
+                                if (i === selected_group_members.length - 1) {
+                                    console.log('End of loop reached.');
+                                    $("#stop_crm").text("Close popup");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Completed");
+                                }
+                            })
+                        }, i * randomDelay)
+
+                    }
+                })
+            });
+        }, 5000);
+    });
+
     // $(document).on("click", "#extension_submit", function () {
     //     $("#extension_submit").prop("disabled", true);
     //     $("#extension_submit").addClass("disabled_cls");
