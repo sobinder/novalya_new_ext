@@ -23,7 +23,7 @@ let AddLabelCRM;
                 $this.onInitMethods();
             });
         },
-        onInitMethods: function () { 
+        onInitMethods: function () {
             $("body").append(`
                     <div class="hide-by-escape" id="overlay-assign-labels">
                         <div id="container_assign_labels">
@@ -53,7 +53,7 @@ let AddLabelCRM;
                 //console.log(res50);
                 //console.log(tags_fetch_data);
                 options2 = '<option value="">Select Primary</option>';
-                if(tags_fetch_data.length > 0) {
+                if (tags_fetch_data.length > 0) {
                     tags_fetch_data.forEach((tag) => {
                         if (tag.name !== 'Unlabeled') {
                             options2 += `<option value="${tag.id}">${tag.name}</option>`;
@@ -137,7 +137,7 @@ let AddLabelCRM;
                     }
 
                     var fbName = $(this).attr("fbname");
-                   
+
                     var profilePic = $(this).attr("profilepic");
                     var fb_user_id = $(this).attr("fb_user_id");
 
@@ -186,10 +186,10 @@ let AddLabelCRM;
                         fbName = $('div[role="main"] span.x1xmvt09.x1lliihq.x1s928wv h1').text();
                     } else {
                         fbName = $(this).closest('div[aria-label="Chat settings"]').find('h2').find('span:last').text();
-                        if(fbName == undefined || fbName == ''){
+                        if (fbName == undefined || fbName == '') {
                             fbName = $(this).closest('div[aria-label="chat settings"]').find('h2').find('span:last').text();
                         }
-                        if(fbName == ''){
+                        if (fbName == '') {
                             fbName = $(this).parent().find('h1').find('span:last').text();
                         }
                     }
@@ -217,15 +217,15 @@ let AddLabelCRM;
                 }
                 //console.log(fb_user_id);
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
-                    if(response != undefined && response != ''){
+                    if (response != undefined && response != '') {
                         var tag_data_individual = JSON.parse(response);
-                       
+
                         //var tag_data_individual = response;
                         tag_data_individual = tag_data_individual.data;
                         console.log(tag_data_individual);
-                        tag_data_individual =  tag_data_individual[tag_data_individual.length -1];
+                        tag_data_individual = tag_data_individual[tag_data_individual.length - 1];
                         console.log(tag_data_individual);
-                        if(tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null){
+                        if (tag_data_individual != undefined && tag_data_individual != '' && tag_data_individual != null) {
                             primary = tag_data_individual.is_primary;
                             var arrayOfIds = tag_data_individual.tag_id;
                             // var arrayOfIds = tag_data_individual.tags.map(function (obj) {
@@ -234,20 +234,20 @@ let AddLabelCRM;
                             // });
                         }
 
-                        var checkMultiple = setInterval(()=>{
-                            if( $('.multi-label-checkbox').length > 0){
+                        var checkMultiple = setInterval(() => {
+                            if ($('.multi-label-checkbox').length > 0) {
                                 clearInterval(checkMultiple);
                                 $('.multi-label-checkbox').each(function () {
                                     var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
-        
+
                                     // Check if the checkbox value exists in the valuesArray
                                     if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
                                         $(this).prop('checked', true); // Check the checkbox
                                     }
-                                }); 
+                                });
                             }
-                        },1000);
-                    }                    
+                        }, 1000);
+                    }
                     $('#mySelect option').each(function () {
                         if (primary && $(this).val() == primary) {
                             $(this).attr('selected', 'selected');
@@ -286,7 +286,7 @@ let AddLabelCRM;
                     </div>`;
                 $('#content-assign-labels').html(options);
                 $('#overlay-assign-labels').show();
-                    
+
             });
 
             // $(document).on('click','span:contains("Search messages for")',function(){
@@ -294,9 +294,9 @@ let AddLabelCRM;
             //     selector_members_list = 'div[role="navigation"] div[role="grid"] div[role="row"]';
             //     //console.log(selector_members_list);
             // });
-        
+
         },
-        sendMessageforSingleUsers:function(fb_user_id){
+        sendMessageforSingleUsers: function (fb_user_id) {
 
             return new Promise((resolve, reject) => {
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
@@ -314,35 +314,35 @@ let AddLabelCRM;
                     var authToken = res16.authToken;
                     if (authToken != 0 && authToken != "") {
                         var selector_search_list = 'div[role="navigation"] div[role="grid"] div[role="row"]';
-                        if($(selector_search_list).length > 0){
+                        if ($(selector_search_list).length > 0) {
                             selector_members_list = selector_search_list
                         }
-                       // console.log($(selector_members_list));
+                        // console.log($(selector_members_list));
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('messenger') > -1) {
                             //console.log("hello running")
                             processing = true;
                             var add_label_button = '<div class="add-button-container"><span class="add-icon">+</span>';
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
-                           // console.log(selector_members_list);
+                            // console.log(selector_members_list);
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
                                     fb_user = $(this).find('a:eq(0)').attr('href').split('/t/')[1];
-                                    
-                                    if (fb_user != undefined&& fb_user != '' && fb_user.indexOf('?') > -1) {
+
+                                    if (fb_user != undefined && fb_user != '' && fb_user.indexOf('?') > -1) {
                                         fb_user = fb_user.split('?')[0];
                                     }
-                                    if(fb_user != '' && fb_user != undefined){
+                                    if (fb_user != '' && fb_user != undefined) {
                                         fb_user = fb_user.replace('/', '');
                                     }
                                 } else {
                                     //console.log('fb id not found');
                                 }
 
-                               // console.log(fb_user);
+                                // console.log(fb_user);
                                 if (fb_user != '' && fb_user != undefined) {
                                     if ($(this).find('div.add-button-container').length > 0) {
                                         $(this).find('div.add-button-container').remove();
@@ -353,8 +353,8 @@ let AddLabelCRM;
                                 }
                                 //console.log(userTagsArray);
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user === item.fb_user_id) { 
-                                                                            
+                                    if (fb_user === item.fb_user_id) {
+
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
                                         if (filteredTags.length > 0) {
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -382,7 +382,7 @@ let AddLabelCRM;
                                 $(this).addClass('cts-message-thread-id-1');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
-                               
+
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
                                     fb_user = $(this).find('a:eq(0)').attr('href').split('/')[1];
                                     // console.log(fb_user);
@@ -506,33 +506,38 @@ let AddLabelCRM;
                                 //  console.log('fb id not found');
                             }
 
+                            console.log(fb_user);
+
                             if (fb_user != '') {
                                 if ($('.x1u998qt').find('div.header_button').length > 0) {
                                     $('.x1u998qt').find('div.header_button').remove();
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
-                                $(".x1u998qt").find('a').append(add_label_button);
                             }
-                            userTagsArray.forEach((item) => {
-                                if (fb_user === item.fb_user_id) {
-                                    //console.log(item.tags); 
-                                    const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-                                    if (filteredTags.length > 0) {
-                                        var style = `background-color: ${filteredTags[0].custom_color} !important;`;
-                                        let add_tag_button = `<div class="add-button-container header_button" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
-                                       $(".x1u998qt").find('a').append(add_tag_button);
-                                    }
-                                }
-                            })
+
+                            const filteredTags = userTagsArray
+                                .filter(item => fb_user === item.fb_user_id)
+                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)); 
+
+                            if (filteredTags.length > 0) {
+                                const style = `background-color: ${filteredTags[0].custom_color} !important;`;
+                                const addTagButton = `
+                                                <div class="add-button-container header_button" style="${style}">
+                                                    <span class="add-icon" style="${style}">${filteredTags[0].name}</span>
+                                                </div>`;
+                                $(".x1u998qt a").append(addTagButton);
+                            } else {
+                                $(".x1u998qt a").append(add_label_button);
+                            }
                         }, 2000);
-                    } 
+                    }
                     else {
                         console.log('userid not found');
                         clearInterval(clearMessageInt);
                     }
                 });
             }, 1000);
-        }, 
+        },
         currentProfile: function () {
             var clearMessageInt = setInterval(() => {
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
@@ -550,10 +555,10 @@ let AddLabelCRM;
                                 //fb_user = currentWindowUrl2.replace(/^\/|\/$/g, '');
                                 fb_user = currentWindowUrl2.replace('/t/', '');
                             }
-                            if(fb_user != '' && fb_user != null) {
-                                fb_user = fb_user.replace(/\//g, '');  
+                            if (fb_user != '' && fb_user != null) {
+                                fb_user = fb_user.replace(/\//g, '');
                             }
-                            
+
                             if (fb_user != '' && fb_user != null) {
                                 if ($('div[data-pagelet="ProfileTabs"]').find('div.add-button-container').length > 0) {
                                     $('div[data-pagelet="ProfileTabs"]').find('div.add-button-container').remove();
@@ -561,7 +566,7 @@ let AddLabelCRM;
                                 $('div[data-pagelet="ProfileTabs"]').append(add_label_button);
                             }
                             userTagsArray.forEach((item) => {
-                                if (fb_user === item.fb_user_id) {                                    
+                                if (fb_user === item.fb_user_id) {
                                     const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
                                     if (filteredTags.length > 0) {
                                         var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -580,13 +585,13 @@ let AddLabelCRM;
 
         },
         messengersMembersListSelector: function () {
-            
+
             var selector_latest = 'div[aria-label="Chats"][role="grid"] div[role="row"]';
             var selector_clist1 = 'div[data-testid="mwthreadlist-item"]';
             var selector_clist2 = 'div[aria-label="Chats"][role="grid"] div[role="row"]';
             var selector_clist3 = 'div[aria-label][role="grid"].x78zum5 div[role="row"]';
 
-        
+
 
             if ($(selector_clist1).length > 0) {
                 selector_latest = selector_clist1
@@ -603,7 +608,7 @@ let AddLabelCRM;
             return selector_latest;
         },
         taggeduserapi: function () {
-            
+
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
                 let all_users_tag_get = response.data;
                 userTagsArray = [];

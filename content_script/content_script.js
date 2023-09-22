@@ -711,9 +711,6 @@ $(document).ready(function () {
                                 var thread_id = item.fb_user_id;                            
                                 var crmMessage = [];
                                 var crmMessagetextArray = crm_settings.MessageDatum.Sections;
-
-                                console.log(crm_settings.MessageDatum.Sections);
-
                                 crmMessagetextArray.forEach(function (item, i) {
                                 crmMessage_json = crmMessagetextArray[i];
                                 crmMessage_varient_json = crmMessage_json.varient;
