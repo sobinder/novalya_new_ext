@@ -522,7 +522,7 @@ let AddLabelCRM;
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                 const addTagButton = `
-                                                <div class="add-button-container header_button" style="${style}">
+                                                <div id="msg-header" class="add-button-container header_button" style="${style}">
                                                     <span class="add-icon" style="${style}">${filteredTags[0].name}</span>
                                                 </div>`;
                                 $(".x1u998qt a").append(addTagButton);

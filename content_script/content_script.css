@@ -601,6 +601,15 @@ select#mySelect:focus {
   z-index: 1; 
 }
 
+#msg-header{
+  padding-top: 5px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+  border-radius: 8px !important;
+  height: 30px !important;
+  width: auto !important;
+}
+
  .add-button-container.contact-pop-up-chat-window {
   transform: translate(32px, 22px);
   width: 100px;
