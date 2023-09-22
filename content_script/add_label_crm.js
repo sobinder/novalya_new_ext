@@ -506,7 +506,7 @@ let AddLabelCRM;
                                 //  console.log('fb id not found');
                             }
 
-                            console.log(fb_user);
+                            // console.log(fb_user);
 
                             if (fb_user != '') {
                                 if ($('.x1u998qt').find('div.header_button').length > 0) {
@@ -514,11 +514,11 @@ let AddLabelCRM;
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
                             }
-
-                            const filteredTags = userTagsArray
+                             
+                             let filteredTags = userTagsArray
                                 .filter(item => fb_user === item.fb_user_id)
-                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)); 
-
+                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean); 
+                            // console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                 const addTagButton = `
