@@ -815,4 +815,48 @@ ul li:hover > ul {
 }
 
 
+
+ul#myDropdown {}
+
+.dropdown-content ul#submenu {
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: -51px;
+    margin-top: 4px;
+    background: #fff;
+}
+
+ul#submenu li {
+    color: #fff;
+    text-transform: capitalize;
+    font-weight: 500;
+    background: #fff !important;
+}
+
+ul#submenu li:not(:last-child) {
+    border-bottom: 1px solid #c9c9c9;
+}
+
+button.dropbtn.custom-drop {
+    padding: 2px 7px 3px;
+    background: #e4e6eb;
+    border: navajowhite;
+    font-weight: 600;
+    border-radius: 3px;
+}
+
+a#sort-by-group {
+}
+
+ul#myDropdown {
+    box-shadow: none !important;
+    padding: 0px 5px !important;
+    font-weight: 600;
+    background: #e4e6eb;
+    min-width: 55px;
+    margin-top: 2px;
+    padding-bottom: 3px !important;
+    border-radius: 3px;
+}
+
 /* filter css end */
