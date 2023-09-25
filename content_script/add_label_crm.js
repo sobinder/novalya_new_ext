@@ -15,6 +15,7 @@ let AddLabelCRM;
     let primary = '';
     let userTagsArray = [];
     selector_members_list = '';
+    let listItems = [];
     AddLabelCRM = {
         settings: {},
         initilaize: function () {
@@ -22,6 +23,8 @@ let AddLabelCRM;
             $(document).ready(function () {
                 $this.onInitMethods();
             });
+
+           
         },
         onInitMethods: function () {
             $("body").append(`
@@ -295,15 +298,117 @@ let AddLabelCRM;
             //     //console.log(selector_members_list);
             // });
 
+            //Messenger filter function 
+            if (window.location.href.indexOf('messenger.com') > -1) {
+                var appendSortBtn = setInterval(() => {
+                    const h1Element = $('h1');
+                    if (h1Element.length > 0 && tags_fetch_data.length > 0) {
+                        clearInterval(appendSortBtn);
+                        let ddownhtml = `<div class="dropdown custom-filter">
+                                            <button class="dropbtn custom-drop">Filter</button>
+                                            <ul id="myDropdown" class="dropdown-content">
+                                                <li>
+                                                <a id="sort-by-group">By group</a>
+                                                    <ul id="submenu">`
+
+                                        for (i = 0; i < tags_fetch_data.length; i++) {
+                                            var style = '';
+                                            style = `style = "background:` + tags_fetch_data[i].custom_color + ` !important"`;
+
+                                            ddownhtml += ` <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color sortByTag' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
+                                            ddownhtml += `>${tags_fetch_data[i].name}</li>`;
+                                        }
+                                        ddownhtml += `</ul>
+                                                        </li>
+                                                       
+                                                    </ul>
+                                                </div>`;
+
+                                                // <li><a id="unread">Unread</a></li>
+                                                // <li><a id="not-replied">Not replied</a></li>
+
+                        // Create a jQuery element from the HTML
+                        const dropdownMenuElement = $(ddownhtml);
+                        // Append the dropdown menu after the first <h1> element
+                        const parentElement = h1Element.first().parent().parent().parent().parent().parent().parent().parent().parent().parent();
+                        parentElement.append(dropdownMenuElement);
+                    }
+                }, 2000);
+            };
+            
+            $(document).on("click", '.dropbtn', function () {
+                document.getElementById("myDropdown").classList.toggle("show");
+            });
+
+            $(document).on('click', '#sort-by-group', function () {
+                console.log('here');
+                $('#submenu').toggle();
+            });
+
+            $(document).on('click', '.sortByTag', function () {
+                const id = $(this).attr('tag-id');
+                const name = $(this).text().trim();
+                const spanElement = `
+                  <div id="filter-message">
+                    <p>Message</p>
+                    <div>
+                      <span class="close-icon selected-tag" tag-id="${id}">
+                        ${name}
+                      </span>
+                      <span class="close-by-group">X</span>
+                    </div>
+                  </div>`;
+
+                const $filterMessage = $('#filter-message');
+                if ($filterMessage.length === 0) {
+                    // Append the filter message if it doesn't exist
+                    $('.custom-filter').parent().append(spanElement);
+                } else {
+                    // Update the existing filter message
+                    const $selectedTag = $('.selected-tag');
+                    $selectedTag.attr('tag-id', id);
+                    $selectedTag.text(name);
+                }
+                let loader = `<div id="overlay" class="overlay">
+                                    <div class="loader"></div>
+                                </div>`;
+                $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader); 
+                
+               $this.sortMessengerComMembers(id);
+               $this.closefilterAfterSelect();
+            });
+
+            $(document).on('click', '.close-by-group', function () {
+                $this.revertByGroupFilter();
+            });
+
+            var scrollId = setInterval(()=>{
+                let ContainerDiv = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+                if(ContainerDiv != null){
+                    parentContainerDiv = ContainerDiv.parentNode.parentNode;
+                    clearInterval(scrollId);
+                    let parentContainerDivClass = parentContainerDiv.classList.value
+                    $('.' + parentContainerDivClass).on('scroll',function(){
+                        // Get the current scroll position
+                        let selectedTag = $('.selected-tag').attr('tag-id');
+                        if(selectedTag){
+                            //console.log(selectedTag);
+                           $this.sortMessengerComMembers(selectedTag);
+                        }
+                    });
+                }
+            },1000);
+            
+
+            //end messenger filter
+
         },
         sendMessageforSingleUsers: function (fb_user_id) {
-
             return new Promise((resolve, reject) => {
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     resolve(response);
                 });
             });
-
         },
         messengersCom: function () {
             console.log('messengersCom');
@@ -356,7 +461,9 @@ let AddLabelCRM;
                                     if (fb_user === item.fb_user_id) {
 
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                        
                                         if (filteredTags.length > 0) {
+                                            $(this).attr('tag-id', filteredTags[0].id)
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
 
                                             let add_tag_button = `<div class="add-button-container" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
@@ -629,7 +736,110 @@ let AddLabelCRM;
                     userTagsArray = [];
                 }
             });
-        }
+        },
+        sortMessengerComMembers: function (selectedTag) {
+            //console.log(selectedTag);
+            $('#overlay').show();
+            lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+
+            Array.from(lists).forEach((item) => {
+                // Check if the item's parent does not contain the "sort-proceed" class
+                if (!item.parentNode.classList.contains('sort-proceed')) {
+                  listItems.push(item);
+                }
+            });
+              
+            let newlistItem = Array.from(lists).map((item) => {
+                item.parentNode.classList.add('sort-proceed');
+                return item.parentNode;
+            });
+
+            const filteredItems = Array.from(newlistItem).filter(item => {
+                const childElement = item.querySelector('[tag-id]');
+                if (childElement) {
+                    return childElement.getAttribute('tag-id') === selectedTag;
+                }
+                return false; 
+            });
+
+            // Sort the filtered elements based on their content
+            filteredItems.sort((a, b) => {
+                const aValue = a.textContent.trim();
+                const bValue = b.textContent.trim();
+                return aValue.localeCompare(bValue);
+            });
+
+            // Get the parent container
+            const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+            parentContainer.classList.add('sort-filter-class')
+
+            if (parentContainer) {
+                const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
+                const firstChildParent = firstChild.parentNode;
+                filteredItems.forEach(item => {
+                    parentContainer.insertBefore(item, firstChildParent);
+                });
+            }
+            setTimeout(()=>{
+                $('#overlay').hide();
+            },1000);
+            
+        },
+        revertByGroupFilter: function () {
+            $('#overlay').show();
+            $('#filter-message').remove();
+           filteredlists = Array.from(listItems).map(item=>item);
+            filteredlists.sort((a, b) => {
+                const aValue = a.textContent.trim().toLowerCase();
+                const bValue = b.textContent.trim().toLowerCase();
+                return aValue.localeCompare(bValue);
+            });
+            filteredlists.forEach(li => li.remove());
+            let getFirstChildInterval = setInterval(() => {
+                const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+                if (firstChild) {
+                    $('#overlay').show();
+                    clearInterval(getFirstChildInterval);
+                    const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+                    if (parentContainer) {
+                        console.log('if')
+                        const firstChildParent = firstChild.parentNode;
+                        listItems.forEach(item => {
+                            parentContainer.insertBefore(item, firstChildParent);
+                        });
+                        setTimeout(()=>{
+                            $('#overlay').hide();
+                        },1000);
+                    }else{  
+                        console.log('else')
+                        const parentContainer = document.querySelector('div.sort-filter-class');
+                        if (parentContainer) {
+                            clearInterval(getFirstChildInterval);
+                            if(parentContainer){
+                                listItems.forEach(item => {
+                                    parentContainer.prepend(item);
+                                });
+                            }
+                        }
+                        setTimeout(()=>{
+                            $('#overlay').hide();
+                        },1000);
+                    }
+                }
+                
+            }, 2000); 
+        },
+        closefilterAfterSelect() {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        },
+        
     };
     AddLabelCRM.initilaize();
 })(jQuery);
