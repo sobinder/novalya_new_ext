@@ -595,14 +595,16 @@ if (window.location.href.indexOf(my_domain) > -1) {
                 $('#switch-extension').parent().mclick();
             } else {
                 console.log('Extension Installed', authToken);
+                $('#download-extension').hide();
             }
         }, 1000)
     });
 
-    var latest_uploaded_version = $("#latest_version_nvl").attr("value");
+    //var latest_uploaded_version = $("#latest_version_nvl").attr("value");
+    var latest_uploaded_version = "1.3.4";
     const extensionVersion = chrome.runtime.getManifest().version;
     if (latest_uploaded_version <= extensionVersion) {
-        $("#latest_version_nvl").css("display", "none");
+        $("#update-extension").css("display", "none");
     }
 }
 
