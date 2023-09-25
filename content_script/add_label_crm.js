@@ -305,12 +305,10 @@ let AddLabelCRM;
                     if (h1Element.length > 0 && tags_fetch_data.length > 0) {
                         clearInterval(appendSortBtn);
                         let url = chrome.runtime.getURL("assets/image/filter.png");
-                        let url_img2 = chrome.runtime.getURL("assets/image/second2.png");
-                        console.log(url);
                         let ddownhtml = `<div class="dropdown custom-filter">
-                                            <button class="dropbtn custom-drop"> <img width="20px" heigth="20px" src="${url}" class="filter_icon">Filter</button>
+                                            <button class="dropbtn custom-drop"><svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6C4 5.44772 4.44772 5 5 5H19C19.5523 5 20 5.44772 20 6C20 6.55228 19.5523 7 19 7H5C4.44772 7 4 6.55228 4 6Z" fill="currentColor"/><path d="M4 18C4 17.4477 4.44772 17 5 17H19C19.5523 17 20 17.4477 20 18C20 18.5523 19.5523 19 19 19H5C4.44772 19 4 18.5523 4 18Z" fill="currentColor"/><path d="M5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H5Z" fill="currentColor"/></svg> Menu</button>
                                             <ul id="myDropdown" class="dropdown-content">
-                                                <li class="filter_heading"> <img width="20px" heigth="20px" src="${url}" class="filter_icon"> Filter </li>
+                                                <li class="filter_heading"><svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M29.815,6.168C29.484,5.448,28.783,5,27.986,5H4.014c-0.797,0-1.498,0.448-1.83,1.168  c-0.329,0.714-0.215,1.53,0.297,2.128c0,0,0.001,0.001,0.001,0.001L12,19.371V28c0,0.369,0.203,0.708,0.528,0.882  C12.676,28.961,12.838,29,13,29c0.194,0,0.387-0.057,0.555-0.168l6-4C19.833,24.646,20,24.334,20,24v-4.629l9.519-11.074  C30.031,7.698,30.145,6.882,29.815,6.168z" id="XMLID_276_"/></svg>  Filter </li>
                                                 <li class="filter_text">
                                                 <a id="sort-by-group">By group</a>
                                                     <ul id="submenu">`

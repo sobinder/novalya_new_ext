@@ -714,9 +714,11 @@ div + .dropBtn {
   margin-top: -17px;
 }
 ul#submenu li{
-  padding: 5px;
-    text-align: center;
-    cursor:pointer
+  padding: 7px;
+  text-align: center;
+  cursor:pointer
+  border-radius: 4px;
+  margin-top: 5px
 }
 
 /* Dropdown Content (Hidden by Default) */
@@ -816,13 +818,9 @@ ul li:hover > ul {
 
 
 
-ul#myDropdown {}
-
 .dropdown-content ul#submenu {
-    border-radius: 4px;
     overflow: hidden;
-    margin-left: -51px;
-    margin-top: 4px;
+    margin-top: 6px;
     background: #fff;
 }
 
@@ -831,21 +829,14 @@ ul#submenu li {
     text-transform: capitalize;
     font-weight: 500;
     background: #fff !important;
+    border-radius: 4px;
 }
-
-ul#submenu li:not(:last-child) {
-    border-bottom: 1px solid #c9c9c9;
-}
-
 button.dropbtn.custom-drop {
     padding: 2px 7px 3px;
     background: #e4e6eb;
     border: navajowhite;
     font-weight: 600;
     border-radius: 3px;
-}
-
-a#sort-by-group {
 }
 
 ul#myDropdown {
@@ -856,7 +847,89 @@ ul#myDropdown {
     min-width: 55px;
     margin-top: 2px;
     padding-bottom: 3px !important;
-    border-radius: 3px;
+}
+button.dropbtn.custom-drop {
+    display: flex;
+    align-items: center;
+    padding: 1px 8px;
+    gap: 4px;
+    margin-top: -5px;
+    border-radius: 20px;
+    border: 1px solid #4098fd;
+    color: #4098fd;
+    background: #fff;
+}
+
+button.dropbtn.custom-drop img {
+    mix-blend-mode: darken;
+}
+
+ul#myDropdown {
+    position: relative;
+    left: 0;
+    min-width: 220px;
+    background: #fff;
+    box-shadow: 0 0 10px rgb(0 0 0 / 25%) !important;
+    padding: 0 !important;
+    border-radius: 4px 4px 0 0;
+}
+li.filter_heading {
+    border-radius: 4px 4px 0 0;
+    background: steelblue;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #fff;
+}
+li.filter_heading svg {
+    width: 20px;
+    fill: #fff;
+}
+
+li.filter_text {
+    padding: 8px 12px;
+    height: auto;
+}
+
+a#sort-by-group:hover {
+    background: #fff !important;
+}
+
+ul#submenu {
+    margin-left: -12px !important;
+    min-width: 220px;
+    border-radius: 0 0 4px 4px !important;
+    padding: 5px 10px 10px;
+    box-shadow: 0 10px 10px rgb(0 0 0 / 25%);
+    box-sizing: border-box;
+    margin-top: 3px !important;
+}
+
+button.dropbtn.custom-drop svg {
+    width: 20px;
+}
+
+a#sort-by-group {
+    color: #646464;
+}
+
+
+#filter-message div {
+    border: 1px solid #4098fd;
+    color: #4098fd;
+    border-radius: 25px;
+    padding: 3px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-transform: capitalize;
+}
+
+span.close-icon.selected-tag {
+    margin-top: -1px;
+    display: block;
 }
 
 /* filter css end */
