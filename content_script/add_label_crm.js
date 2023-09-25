@@ -305,11 +305,12 @@ let AddLabelCRM;
                     if (h1Element.length > 0 && tags_fetch_data.length > 0) {
                         clearInterval(appendSortBtn);
                         let url = chrome.runtime.getURL("assets/image/filter.png");
+                        let url_img2 = chrome.runtime.getURL("assets/image/second2.png");
                         console.log(url);
                         let ddownhtml = `<div class="dropdown custom-filter">
                                             <button class="dropbtn custom-drop"> <img width="20px" heigth="20px" src="${url}" class="filter_icon">Filter</button>
                                             <ul id="myDropdown" class="dropdown-content">
-                                                <li class="filter_heading"> Filter </li>
+                                                <li class="filter_heading"> <img width="20px" heigth="20px" src="${url}" class="filter_icon"> Filter </li>
                                                 <li class="filter_text">
                                                 <a id="sort-by-group">By group</a>
                                                     <ul id="submenu">`
