@@ -712,15 +712,23 @@ div + .dropBtn {
   margin-left: 70px;
   width: 142px;
   margin-top: -17px;
+  height: 250px;
 }
 ul#submenu li{
   padding: 7px;
   text-align: center;
-  cursor:pointer
+  cursor:pointer;
   border-radius: 4px;
   margin-top: 5px
 }
 
+.close-by-group{
+  cursor: pointer;
+  padding: 2px;
+}
+.selected-tag{
+  cursor: default;
+}
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
@@ -932,4 +940,23 @@ span.close-icon.selected-tag {
     display: block;
 }
 
+.custom-scroll{
+	overflow-y: auto!important;
+	overflow-x: hidden!important;
+}
+.custom-scroll::-webkit-scrollbar-track {
+    background-color: #F5F5F5!important;
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 4px;
+    background-color: #F5F5F5!important;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background-color: #7b80cc!important;
+    /* background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent) */
+}
+
 /* filter css end */
+

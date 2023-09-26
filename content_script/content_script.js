@@ -1,917 +1,1147 @@
-/************ADD CSS FOR CONTENT SCRIPT HERE*/
-.add-done-border {
-  border-radius: 10px;
-  margin-top: 10px;
-  border-color: #11a711 !important;
-  border: 2px solid green !important;
+// Add native 'click' and 'change' events to be triggered using jQuery
+let loop1 = 0;
+var loopValue = 0;
+var segementMessage = "";
+let timeOutIdsArray = [];
+let clearMessageInt = [];
+
+// FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
+var processing = false;
+let stoprequest = false;
+
+jQuery.fn.extend({
+    mclick: function () {
+        var click_event = document.createEvent("MouseEvents");
+        click_event.initMouseEvent(
+            "click",
+            true,
+            true,
+            window,
+            0,
+            0,
+            0,
+            0,
+            0,
+            false,
+            false,
+            false,
+            false,
+            0,
+            null
+        );
+        return $(this).each(function () {
+            $(this)[0].dispatchEvent(click_event);
+        });
+    },
+});
+
+// scrap all friend requests
+$.extend($.expr[":"], {
+    containsI: function (elem, i, match, array) {
+        return (
+            (elem.textContent || elem.innerText || "")
+                .toLowerCase()
+                .indexOf((match[3] || "").toLowerCase()) >= 0
+        );
+    },
+});
+jQuery(document).on('keyup', function (evt) {
+    if (evt.keyCode == 27) {
+        $('.hide-by-escape').hide();
+    }
+});
+
+
+document.addEventListener("click", function (event) {
+    var modal = document.getElementById("overlay-assign-labels");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.subject === "addTargetProcess") {
+        //console.log('result', message);
+        chrome.storage.local.get(
+            ["nvFriendReqInputs", "nvAddFriendProcess"],
+            function (result) {
+                console.log(result);
+                if (
+                    typeof result.nvFriendReqInputs != "undefined" &&
+                    result.nvFriendReqInputs != ""
+                ) {
+                    add_friend_settings = result.nvFriendReqInputs;
+                    if (
+                        typeof result.nvAddFriendProcess != "undefined" &&
+                        result.nvAddFriendProcess != "" &&
+                        result.nvAddFriendProcess == "process"
+                    ) {
+                        console.log(add_friend_settings);
+                        extTabId = message.extTabId;
+                        AddTargetFriendNV.startAddingFriend(add_friend_settings, extTabId);
+                        sendResponse({ status: "ok" });
+                    }
+                }
+            }
+        );
+        return true;
+    }
+
+    if (message.subject === "removeRequests") {
+        let loop = 0;
+        setInterval(() => {
+            let selector1 =
+                'div[data-sigil="undoable-action"]:not(".cancel-request")';
+            if ($(selector1).length > 0) {
+                $(selector1)
+                    .first()
+                    .find('button[type="submit"][value="Cancel"]')
+                    .mclick();
+                $(selector1).first().addClass("cancel-request");
+                loop++;
+            } else {
+                $("html, body").animate({ scrollTop: $(document).height() }, 2800);
+            }
+        }, 4000);
+    }
+    
+    if (message.subject === "postBirthday") {
+        setTimeout(() => {
+            $('.xt7dq6l[role="button"]').click();
+        }, 3000);
+
+        var birthdayMessage = message.messageText;
+        setTimeout(() => {
+            var selector =
+                'div[role="presentation"] div[data-lexical-editor="true"][tabindex="0"] p';
+            $(
+                'div[role="presentation"] div[data-lexical-editor="true"][tabindex="0"] p'
+            ).text(birthdayMessage);
+            navigator.clipboard.writeText(birthdayMessage).then(() => {
+                console.log(" Text Copied!!!!");
+                document.execCommand("paste", null, null);
+            });
+
+            var evt = new Event("input", {
+                bubbles: true,
+            });
+            var input = document.querySelector(
+                'div[role="presentation"] div[data-lexical-editor="true"][tabindex="0"] p'
+            );
+            input.innerHTML = birthdayMessage;
+            input.dispatchEvent(evt);
+            $(selector).after(
+                '<span data-text="true">' + birthdayMessage + "</span>"
+            );
+        }, 5000);
+        setTimeout(() => {
+            if ($('div[aria-label="Post"][role="button"]').length > 0) {
+                $('div[aria-label="Post"][role="button"]').mclick();
+            }
+        }, 7000);
+        setTimeout(() => {
+            chrome.runtime.sendMessage({
+                action: "closeTabs",
+            });
+        }, 2000);
+    }
+
+    if (message.subject === "scrapTodayBirthday") {
+        let extBirthdayTabID = message.birthday_tabId;
+        let class_today_heading = 'today_birthday_heading';
+        let class_today_div = 'today_birthday_div';
+        appendHTMLOnBirthday(extBirthdayTabID);
+        let cleartimeout1 = setInterval(() => {
+            $(".xyamay9").find('h2:contains("Today")').addClass(class_today_heading);
+            selector_birthday_fb = $("." + class_today_heading).parents(".xyamay9").addClass(class_today_div);
+            var birtday_response = message.responsedata;
+            var delay = birtday_response.data.time_interval * 60000;
+            var birthday_wish_type = birtday_response.data.type;
+            let proccessed_id = [];
+            var secondChild = $("." + class_today_div).children().eq(1).addClass("bdh-wished");
+
+            $(".total1").text(secondChild.children().length);
+
+            if (secondChild.length > 0) {
+                clearInterval(cleartimeout1);
+                secondChild.children().each(function (index, item) {
+                    if (typeof $(this).find("a").attr("href") != "undefined") {
+                        setTimeout(() => {
+                            var member_url = $(this)
+                                .find("a")
+                                .attr("href")
+                                .split("facebook.com/");
+                            $("#loop1").text(index + 1);
+                            loopValue = parseInt($("#loop1").text(), 10);
+                            member_url_splitid = member_url[1];
+                            if (member_url_splitid.indexOf("profile.php") > -1) {
+                                facebook_member_id = member_url_splitid.split("?id=")[1];
+                            } else {
+                                facebook_member_id = member_url_splitid;
+                            }
+                        
+                            var birthdayMessage = [];
+                            var birthdayMessagetextArray = birtday_response.data.message.Sections;
+
+                            console.log(birthdayMessagetextArray);
+
+                            birthdayMessagetextArray.forEach(function (item, i) {
+                            birthdayMessage_json = birthdayMessagetextArray[i];
+                            birthdayMessage_varient_json = birthdayMessage_json.varient;
+                            birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
+                            var randomIndex2 = Math.floor(
+                            Math.random() * birthdayMessage_varient_array.length
+                            );
+                            birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
+
+                            });
+
+                            birthdayMessage = birthdayMessage.join('');
+                            console.log(birthdayMessage); 
+                            var member_fullname = $(this).find("h2 span").text();
+                            var member_names = member_fullname.split(" ");
+                            birthdayMessage = birthdayMessage.replaceAll(
+                                "[first name]",
+                                member_names[0]
+                            );
+                            birthdayMessage = birthdayMessage.replaceAll(
+                                "[last name]",
+                                member_names[1]
+                            );
+                            if (birthday_wish_type == "message") {
+                                chrome.runtime.sendMessage({
+                                    action: "sendMessageBirthday",
+                                    member_fb_id: facebook_member_id,
+                                    messagtext: birthdayMessage,
+                                },
+                                    function (res15) {
+                                        // body
+                                    }
+                                );
+                            } else {
+                                chrome.runtime.sendMessage({
+                                    action: "postFeedBirthday",
+                                    member_fb_id: facebook_member_id,
+                                    messagtext: birthdayMessage,
+                                },
+                                    function (res15) {
+                                        // body
+                                    }
+                                );
+                            }
+                            if (loopValue + 1 > secondChild.children().length) {
+                                console.log("stooped");
+                                $("#loop1").text(loopValue);
+                                $("#stop_run").text("STOPPED");
+                                $(".loading").remove();
+                                $("h3.title_lg").text("Completed");
+                            }
+                        }, delay * index);
+                        //}, 10000*index)
+                    }
+                });
+            } else {
+                setTimeout(() => {
+                    chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                        // body
+                    });
+                }, 500);
+            }
+        }, 8000);
+        return true;
+    }
+    else if (message.subject === "scrapYesterdayBirthday") {
+        console.log("in the yesterday");
+        let extBirthdayTabID = message.birthday_tabId;
+        appendHTMLOnBirthday(extBirthdayTabID);
+        let cleartimeout2 = setInterval(() => {
+            $(".xyamay9")
+                .find('h2:contains("Recent")')
+                .addClass("yesterday_birthday_heading");
+            selector_birthday_fb = $(".yesterday_birthday_heading")
+                .parents(".xyamay9")
+                .addClass("yesterday_birthday_div");
+            //selector_birthday = $('article').find('h4:containsI("Today")').parent().addClass('today_birthday_div');
+
+            var birtday_response = message.responsedata;
+            var delay = birtday_response.data.time_interval * 60000;
+            var birthday_wish_type = birtday_response.data.type;
+            let proccessed_id = [];
+            var secondChild = $(".yesterday_birthday_div")
+                .children()
+                .eq(1)
+                .addClass("bdh-wished");
+
+            let yesbirthloopval = 0;
+            let facebook_member_ids = [];
+
+            if (secondChild.length > 0) {
+                clearInterval(cleartimeout2);
+                secondChild.children().each(function (index, item) {
+
+                    var scrapedDate = $(this).find(".x78zum5 .x1qughib span")
+                        .eq(1)
+                        .text();
+                    var yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    var yesterdayMonth = yesterday.toLocaleString("default", { month: "long" });
+                    var yesterdayDate = yesterday.getDate();
+
+                    // Get the month and date of the scraped date
+                    var scrapedDateMonth = new Date(scrapedDate).toLocaleString("default", { month: "long" });
+                    var scrapedDateDate = new Date(scrapedDate).getDate();
+                    if (typeof $(this).find("a").attr("href") != "undefined" && yesterdayMonth === scrapedDateMonth && yesterdayDate === scrapedDateDate) {
+                        //setTimeout(() => {
+                        var member_url = $(this)
+                            .find("a")
+                            .attr("href")
+                            .split("facebook.com/");
+                        yesbirthloopval = yesbirthloopval + 1;
+                        member_url_splitid = member_url[1];
+                        if (member_url_splitid.indexOf("profile.php") > -1) {
+                            facebook_member_id = member_url_splitid.split("?id=")[1];
+                        } else {
+                            facebook_member_id = member_url_splitid;
+                        }
+                        var member_fullname = $(this).find("h2 span").text();
+                        facebook_member_ids.push({ 'id': facebook_member_id, 'name': member_fullname });
+                    } else {
+                        yesbirthloopval = yesbirthloopval + 1;
+
+                    }
+                });
+                $(".total1").text(facebook_member_ids.length);
+                facebook_member_ids.forEach((item, index) => {
+                    setTimeout(() => {
+                        loopValue = parseInt($("#loop1").text(), 10);
+                        $("#loop1").text(loopValue + 1);
+                        loopValue = parseInt($("#loop1").text(), 10);
+                        var birthdayMessage = [];
+                        var birthdayMessagetextArray = birtday_response.data.message.Sections;
+
+                        console.log(birthdayMessagetextArray);
+
+                        birthdayMessagetextArray.forEach(function (item, i) {
+                            birthdayMessage_json = birthdayMessagetextArray[i];
+                            birthdayMessage_varient_json = birthdayMessage_json.varient;
+                            birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
+                            var randomIndex2 = Math.floor(
+                                Math.random() * birthdayMessage_varient_array.length
+                            );
+                            birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
+
+                        });
+
+                        birthdayMessage = birthdayMessage.join('');
+                        console.log(birthdayMessage);  
+                        var member_fullname = item.name;
+                        var member_names = member_fullname.split(" ");
+                        birthdayMessage = birthdayMessage.replaceAll(
+                            "[first name]",
+                            member_names[0]
+                        );
+                        birthdayMessage = birthdayMessage.replaceAll(
+                            "[last name]",
+                            member_names[1]
+                        );
+                        if (birthday_wish_type == "message") {
+                            chrome.runtime.sendMessage({
+                                action: "sendMessageBirthday",
+                                member_fb_id: item.id,
+                                messagtext: birthdayMessage,
+                            },
+                                function (res15) {
+                                    // body
+                                }
+                            );
+                        } else {
+                            chrome.runtime.sendMessage({
+                                action: "postFeedBirthday",
+                                member_fb_id: item.id,
+                                messagtext: birthdayMessage,
+                            },
+                                function (res15) {
+                                    // body
+                                }
+                            );
+                        }
+                        if (index === facebook_member_ids.length - 1) {
+                            console.log("stooped");
+                            $("#loop1").text(loopValue);
+                            $("#stop_run").text("STOPPED");
+                            $(".loading").remove();
+                            $("h3.title_lg").text("Completed");
+                        }
+                    }, delay * index);
+                    // }, 10000*index)
+                })
+
+            }
+            else {
+                setTimeout(() => {
+                    chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                        // body
+                    });
+                }, 500);
+            }
+        }, 8000);
+        return true;
+    }
+    else if (message.subject === "scrap2dayagoBirthday") {
+        console.log("in the 2 days ago");
+        let extBirthdayTabID = message.birthday_tabId;
+        appendHTMLOnBirthday(extBirthdayTabID);
+        let cleartimeout3 = setInterval(() => {
+            $(".xyamay9")
+                .find('h2:contains("Recent")')
+                .addClass("yesterday_birthday_heading");
+            selector_birthday_fb = $(".yesterday_birthday_heading")
+                .parents(".xyamay9")
+                .addClass("yesterday_birthday_div");
+            //selector_birthday = $('article').find('h4:containsI("Today")').parent().addClass('today_birthday_div');
+
+            var birtday_response = message.responsedata;
+            var delay = birtday_response.data.time_interval * 60000;
+            var birthday_wish_type = birtday_response.data.type;
+            let proccessed_id = [];
+            var secondChild = $(".yesterday_birthday_div")
+                .children()
+                .eq(1)
+                .addClass("bdh-wished");
+
+            let yesbirthloopval = 0;
+            let facebook_member_ids = [];
+
+            if (secondChild.length > 0) {
+                clearInterval(cleartimeout3);
+                secondChild.children().each(function (index, item) {
+
+                    var scrapedDate = $(this).find(".x78zum5 .x1qughib span")
+                        .eq(1)
+                        .text();
+                    var twodaysago = new Date();
+                    twodaysago.setDate(twodaysago.getDate() - 2);
+                    var twodaysagoMonth = twodaysago.toLocaleString("default", { month: "long" });
+                    var twodaysagoDate = twodaysago.getDate();
+
+                    // Get the month and date of the scraped date
+                    var scrapedDateMonth = new Date(scrapedDate).toLocaleString("default", { month: "long" });
+                    var scrapedDateDate = new Date(scrapedDate).getDate();
+                    if (typeof $(this).find("a").attr("href") != "undefined" && twodaysagoMonth === scrapedDateMonth && twodaysagoDate === scrapedDateDate) {
+                        //setTimeout(() => {
+                        var member_url = $(this)
+                            .find("a")
+                            .attr("href")
+                            .split("facebook.com/");
+                        yesbirthloopval = yesbirthloopval + 1;
+                        member_url_splitid = member_url[1];
+                        if (member_url_splitid.indexOf("profile.php") > -1) {
+                            facebook_member_id = member_url_splitid.split("?id=")[1];
+                        } else {
+                            facebook_member_id = member_url_splitid;
+                        }
+                        var member_fullname = $(this).find("h2 span").text();
+                        facebook_member_ids.push({ 'id': facebook_member_id, 'name': member_fullname });
+                    } else {
+                        yesbirthloopval = yesbirthloopval + 1;
+
+                    }
+                });
+                $(".total1").text(facebook_member_ids.length);
+                facebook_member_ids.forEach((item, index) => {
+                    setTimeout(() => {
+                        loopValue = parseInt($("#loop1").text(), 10);
+                        $("#loop1").text(loopValue + 1);
+                        loopValue = parseInt($("#loop1").text(), 10);
+                        var birthdayMessage = [];
+                        var birthdayMessagetextArray = birtday_response.data.message.Sections;
+
+                        console.log(birtday_response.data);
+
+                        birthdayMessagetextArray.forEach(function (item, i) {
+                        birthdayMessage_json = birthdayMessagetextArray[i];
+                        birthdayMessage_varient_json = birthdayMessage_json.varient;
+                        birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
+                        var randomIndex2 = Math.floor(
+                        Math.random() * birthdayMessage_varient_array.length
+                        );
+                        birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
+
+                        });
+
+                        birthdayMessage = birthdayMessage.join('');
+
+                        console.log(birthdayMessage); 
+                        var member_fullname = item.name;
+                        var member_names = member_fullname.split(" ");
+                        birthdayMessage = birthdayMessage.replaceAll(
+                            "[first name]",
+                            member_names[0]
+                        );
+                        birthdayMessage = birthdayMessage.replaceAll(
+                            "[last name]",
+                            member_names[1]
+                        );
+                        //console.log(birthdayMessage);
+                        if (birthday_wish_type == "message") {
+                            chrome.runtime.sendMessage({
+                                action: "sendMessageBirthday",
+                                member_fb_id: item.id,
+                                messagtext: birthdayMessage,
+                            },
+                                function (res15) {
+                                    // body
+                                }
+                            );
+                        } else {
+                            chrome.runtime.sendMessage({
+                                action: "postFeedBirthday",
+                                member_fb_id: item.id,
+                                messagtext: birthdayMessage,
+                            },
+                                function (res15) {
+                                    // body
+                                }
+                            );
+                        }
+                        if (index === facebook_member_ids.length - 1) {
+                            console.log("stooped");
+                            $("#loop1").text(loopValue);
+                            $("#stop_run").text("STOPPED");
+                            $(".loading").remove();
+                            $("h3.title_lg").text("Completed");
+                        }
+                    }, delay * index);
+                    // }, 10000*index)
+                })
+
+            }
+            else {
+                setTimeout(() => {
+                    chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                        // body
+                    });
+                }, 500);
+            }
+        }, 8000);
+        return true;
+    } 
+    else if (message.subject === "openTheBirthdays") {
+        console.log("open the event message recieved");
+
+        setTimeout(() => {
+            if ($('span:contains(Birthdays)').length > 0) {
+                $('span:contains(Birthdays)').mclick();
+            } else {
+                console.log('not found');
+            }
+            sendResponse({ status: "ok" });
+
+            //chrome.runtime.sendMessage({ action: "birthdaybuttonClicked" })
+        }, 1000);
+        return true;
+    }
+
+    //RECIVED MESSAGE FROM BACKGROUND
+    if (message.subject === "sendMessageFromWindow") {
+        //if ($('.mToken').length > 0 && $('.mToken').text().length > 0) {
+        console.log(message.messageText);
+        $("textarea").html(message.messageText);
+        if (sendMessageEnable) {
+            if ($('button[name="Send"]').length > 0) {
+                $('button[name="Send"]').mclick();
+            } else if ($('input[name="Send"]').length > 0) {
+                $('input[name="Send"]').mclick();
+            }
+            setTimeout(() => {
+                chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                    // body
+                });
+            }, 500);
+        }
+    }
+
+    if (message.subject == "shootMessages") {
+        sendMessageFromMessengers(message.threadId, message.textMessage);
+        return true;
+    }
+
+    if(message.type == "tag_update_done" && message.from == "background"){
+        let response = message.result;
+        console.log(message);
+        if(response != undefined && response != ''){
+            var parsedData = response;
+            // var message = response.message;
+           toastr["success"]('Tag update successfully');
+        } else {
+            toastr["success"]('not found tag update done');
+        }
+       
+        AddLabelCRM.taggeduserapi();
+        selector_members_list = AddLabelCRM.messengersMembersListSelector();
+        AddLabelCRM.messengersCom();
+        $('.hide-by-escape').hide();
+        var currentLocationUrl = window.location.origin;
+        chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
+    }
+});
+
+if (window.location.href.indexOf(my_domain) > -1) {
+    chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {        
+        authToken = res16.authToken;
+        var clearTimeInt = setInterval( () => {
+            if($('.Mui-checked').length == 0) {
+                console.log('Extension Not Installed'); 
+                $('#switch-extension').parent().mclick();
+            } else {
+                console.log('Extension Installed', authToken);
+                $('#download-extension').hide();
+            }
+        }, 1000)
+    });
+
+    //var latest_uploaded_version = $("#latest_version_nvl").attr("value");
+    var latest_uploaded_version = "1.3.4";
+    const extensionVersion = chrome.runtime.getManifest().version;
+    if (latest_uploaded_version <= extensionVersion) {
+        $("#update-extension").css("display", "none");
+    }
+}
+
+$(document).ready(function () {
+    // setTimeout(() => {
+    //     userId = $("#extension_user_id").val();
+    //     chrome.runtime.sendMessage({ action: "sendId", user_id: userId },
+    //         function (res1) {
+    //             // body
+    //         }
+    //     );
+    // }, 2000);
+
+    $(document).on("click", "#stop_run", function () {
+        //$('#stop_run').remove();
+        $(".title_lg").text("Send Message Feature Stopped");
+        $(".loading").remove();
+        extTabId = $(this).attr("data-tabid");
+        AddTargetFriendNV.stopAddFriendProcess(extTabId);
+        stoprequest = true;
+    });
+
+    $(document).on("click", "#refresh_ext", function () {
+        chrome.runtime.sendMessage({ action: "refreshExt" },
+            (res2) => {
+                // body
+            }
+        );
+    });
+
+    $(document).on("click", "#stop_birthday_run", function () {
+        //$('#stop_run').remove();
+        $(".title_lg").text("Send Birthday Wishes Feature Stopped");
+        $(".simple-txt.fs-spacing").text("window close with in few seconds");
+        $(".loading").remove();
+        chrome.runtime.sendMessage({ action: "closeTabs" },
+            (res22) => {
+                //window.close();
+            }
+        );
+    });
+
+    $(document).on("click", "#update_ext", function () {
+        chrome.runtime.sendMessage({ action: "openChromeExtension" }, (res6) => {
+            // body
+        });
+    });
+
+    $(document).on("click", "#submit-campaign", function () {        
+        $("#submit-campaign").prop("disabled", true);
+        $("#submit-campaign").addClass("disabled_cls");        
+        let data = JSON.parse($(this).attr('attr-data'));
+        console.log(data);
+        setTimeout(() => {
+            chrome.runtime.sendMessage({ action: "getCRMSettings", settins:data }, (res7) => {                
+                console.log(res7);
+                let status_api = res7.setting.status;
+                if(status_api == "success") {
+                    toastr["success"]('setting saved successfully! fetching members');
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings"}, (res17) => {                
+                        console.log(res17);
+                        let reponse17 = res17.api_data.data;
+                        let crm_settings = reponse17[0];
+                        console.log(reponse17[0]);
+
+                        let total_memberss = crm_settings.taggedUsers.length;
+                        let html_processing_model = `<section class="main-app">
+                                <div class="overlay-ld">
+                                    <div class="container-ld">
+                                        <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
+                                        <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                                        <h3 class="title_lg">NEXT REQUEST IS SENDING...</h3>
+                                        <div class="loading">
+                                            <span class="fill"></span>
+                                        </div>
+                                        <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${total_memberss}</span></p>
+                                        <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
+                                    </div>
+                                </div>
+                            </section>`;
+                        $("body:not('.process-model-added')").prepend(html_processing_model);
+                        $("body").addClass("process-model-added");
+
+                        setTimeout(() => {
+                            $("#submit-campaign").prop("disabled", false);
+                            $("#submit-campaign").removeClass("disabled_cls");
+                        }, 5000);
+
+                        var selected_group_members = crm_settings.taggedUsers;
+                        const intervalValue = crm_settings.interval;
+                        if (intervalValue == "30-60 sec") {
+                            randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
+                        } else if (intervalValue == "1-3 min") {
+                            randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
+                        } else if (intervalValue == "3-5 min") {
+                            randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
+                        } else if (intervalValue == "5-10 min") {
+                            randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
+                        } else {
+                            randomDelay = 60000;
+                        }
+                        console.log(randomDelay);
+                        selected_group_members.forEach(function (item, i) {
+                        if (i < total_memberss) {
+                            setTimeout(() => {
+                                var thread_id = item.fb_user_id;                            
+                                var crmMessage = [];
+                                var crmMessagetextArray = crm_settings.MessageDatum.Sections;
+                                crmMessagetextArray.forEach(function (item, i) {
+                                crmMessage_json = crmMessagetextArray[i];
+                                crmMessage_varient_json = crmMessage_json.varient;
+                                crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
+                                var randomIndex2 = Math.floor(
+                                    Math.random() * crmMessage_varient_array.length
+                                );
+                                    crmMessage.push(crmMessage_varient_array[randomIndex2]);
+                                });
+
+                                crmMessage = crmMessage.join('');
+
+                                var thread_id = item.fb_user_id;
+                                var member_fullname = item.fb_name;
+                                var member_names = member_fullname.split(" ");
+
+                                console.log(thread_id, '######', crmMessage); 
+
+
+                                crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
+                                crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
+                                chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
+                                    $('#processed_member').text(i + 1);
+                                    if (i === selected_group_members.length - 1) {
+                                        console.log('End of loop reached.');
+                                        $("#stop_crm").text("Close popup");
+                                        $(".loading").remove();
+                                        $("h3.title_lg").text("Completed");
+                                    }
+                                })
+                            }, i * randomDelay)
+                        }
+                    })
+                    });                     
+                } 
+                else {
+                    toastr["error"]('setting not saved successfully!');
+                }
+            });
+        }, 1000);
+    });
+
+    $(document).on("click", "#start-novayla-connect", function () {
+        $("#start-novayla-connect").prop("disabled", true);
+        $("#start-novayla-connect").addClass("disabled_cls");
+        setTimeout(function () {
+            chrome.runtime.sendMessage({ action: "getMessageSections" }, (res6) => {
+                setTimeout(() => {
+                    $("#start-novayla-connect").prop("disabled", false);
+                    $("#start-novayla-connect").removeClass("disabled_cls");
+                }, 5000)
+            });
+        }, 5000);
+    });
+
+    $(document).on("click", "#crm_submit", function () {
+        $("#crm_submit").prop("disabled", true);
+        $("#crm_submit").addClass("disabled_cls");
+        // toastr["error"]('We are working on send message feature!');
+        setTimeout(() => {
+            chrome.runtime.sendMessage({ action: "getCRMMessageSections" }, (res17) => {
+                var total_memberss = res17.api_data.tagged_user.length;
+                let html_processing_model = `<section class="main-app">
+                        <div class="overlay-ld">
+                            <div class="container-ld">
+                                <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
+                                <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                                <h3 class="title_lg">NEXT REQUEST IS SENDING...</h3>
+                                <div class="loading">
+                                    <span class="fill"></span>
+                                </div>
+                                <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${total_memberss}</span></p>
+                                <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
+                            </div>
+                        </div>
+                    </section>`;
+                $("body:not('.process-model-added')").prepend(html_processing_model);
+                $("body").addClass("process-model-added");
+                setTimeout(() => {
+                    $("#crm_submit").prop("disabled", false);
+                    $("#crm_submit").removeClass("disabled_cls");
+                }, 5000);
+
+                var selected_group_members = res17.api_data.tagged_user;
+                const intervalValue = res17.api_data.interval;
+                if (intervalValue == "30-60") {
+                    randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
+                } else if (intervalValue == "1-3") {
+                    randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
+                } else if (intervalValue == "3-5") {
+                    randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
+                } else if (intervalValue == "5-10") {
+                    randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
+                } else {
+                    randomDelay = 60000;
+                }
+
+                // const numberOfReqValue = res17.api_data.norequest;
+                // if (numberOfReqValue != "custom") {
+                //     limit_req = numberOfReqValue;
+                // } else {
+                //     limit_req = settings.custom; // unlimited
+                // }
+
+                selected_group_members.forEach(function (item, i) {
+                    if (i < total_memberss) {
+                        setTimeout(() => {
+                            var thread_id = item.fb_user_id;
+                            console.log(thread_id);   
+                            text_messageArray = res17.api_data.message;
+                            var randomIndex = Math.floor(Math.random() * text_messageArray.length);
+                            text_message = text_messageArray[randomIndex];
+                            var thread_id = item.fb_user_id;
+                            var member_fullname = item.fb_name;
+                            var member_names = member_fullname.split(" ");
+                            var messageText = "";
+                            messageText = text_message.replaceAll("[first name]", member_names[0]);
+                            messageText = messageText.replaceAll("[last name]", member_names[1]); 
+                            chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: messageText, thread_id: thread_id }, (res18) => {
+                                $('#processed_member').text(i + 1);
+                                if (i === selected_group_members.length - 1) {
+                                    console.log('End of loop reached.');
+                                    $("#stop_crm").text("Close popup");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Completed");
+                                }
+                            })
+                        }, i * randomDelay)
+
+                    }
+                })
+            });
+        }, 5000);
+    });
+
+    $(document).on("click", "#stop_crm", function () {
+        window.location.reload();
+
+    });
+
+    // CLICK DELETE BUTTON ON FRIEND REQUEST PAGE
+    chrome.storage.local.get(["requestSettings"], function (result) {
+        console.log(result);
+        if (
+            typeof result.requestSettings != "undefined" &&
+            result.requestSettings != "" && result.requestSettings != null 
+        ) {
+            console.log(result);
+            requestSettings1 = result.requestSettings;
+            console.log(result);
+            if (requestSettings1.reject_status == 1) {
+                $(document).on(
+                    "click",
+                    'div[aria-label="Delete"][role="button"]',
+                    function () {
+                        requestedMemberURL = $(this)
+                            .parent()
+                            .parent()
+                            .find('a[href*="/friends/requests/"]')
+                            .attr("href");
+                        requestedMemberFullName = $(this)
+                            .parent()
+                            .parent()
+                            .find('a[href*="/friends/requests/"]')
+                            .text();
+                        const rArray = requestedMemberURL.split("?profile_id");
+                        var requestedMemberId = rArray[1].replace("=", "");
+                        requestedMember = {
+                            id: requestedMemberId,
+                            name: requestedMemberFullName,
+                        };
+                        chrome.runtime.sendMessage({ action: "deleteRequest", data: requestedMember },
+                            (res7) => {
+                                //alert('yes');
+                                // body
+                            }
+                        );
+                    }
+                );
+            }
+
+            // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
+            console.log(requestSettings1.accept_status);
+            if (requestSettings1.accept_status == 1) {
+                $(document).on(
+                    "click",
+                    'div[aria-label="Confirm"][role="button"]',
+                    function () {
+                        requestedMemberURL = $(this)
+                            .parent()
+                            .parent()
+                            .find('a[href*="/friends/requests/"]')
+                            .attr("href");
+                        requestedMemberFullName = $(this)
+                            .parent()
+                            .parent()
+                            .find('a[href*="/friends/requests/"]')
+                            .text();
+                        const rArray = requestedMemberURL.split("?profile_id");
+                        var requestedMemberId = rArray[1].replace("=", "");
+                        requestedMember = {
+                            id: requestedMemberId,
+                            name: requestedMemberFullName,
+                        };
+                        console.log(requestedMember);
+                        chrome.runtime.sendMessage({ action: "confirmRequest", data: requestedMember },
+                            (res8) => {
+                                // body
+                            }
+                        );
+                    }
+                );
+            }
+        } else {
+            console.log('request setting not saved');
+        }
+    });
+
+    $(document).on("click", "#verifyurl", function () {
+        let group_url_value = $("#group_url_value").val();
+        chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value },
+            (res10) => {
+                let response = res10.groupPageDOM;
+                //let title = $(response).find(`._36rd`).text();
+                let title = $(response).filter("title").text();
+                $("#verifyurl").text("verified");
+                $("#group_name").text("Group Name:- " + title);
+            }
+        );
+    });
+
+    $(document).on("click", "#add-group-btn", function () { 
+        
+        $("#add-group-btn").text('Adding group...');  
+        let group_url_value = window.location.href;
+        if (group_url_value.includes("/things_in_common")) {
+            group_url_value = group_url_value.replace("/things_in_common", "");
+        } else if (group_url_value.includes("members/")) {
+            group_url_value = group_url_value.replace("members/", "members");
+        }
+        chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value }, (res8) => {
+            let response = res8.groupPageDOM;
+            let title = $(response).filter("title").text();
+            chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "member" }, (res9) => {
+                console.log(res9);
+                if (res9.data.status == 'error') {
+                    toastr["error"](res9.data.message);
+                } else {
+                    toastr["success"](res9.data.message);
+                }
+                $("#add-group-btn").text(' + Add this group to Novalya');
+            });
+        })
+    });
+
+    $(document).on("click", "#add-group-btn2", function () {
+        console.log("clicked");
+        let group_url_value = window.location.href;
+         $("#add-group-btn2").text('Adding group...'); 
+        if (group_url_value.includes("things_in_common")) {
+            group_url_value = group_url_value.replace("things_in_common", "");
+            group_url_value = group_url_value + "things_in_common";
+        } else {
+            if (group_url_value.includes("members/")) {
+                group_url_value = group_url_value + "things_in_common";
+            } else {
+                group_url_value = group_url_value + "/things_in_common";
+            }
+
+        }
+        chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value },
+            (res8) => {
+                let response = res8.groupPageDOM;
+                let title = $(response).filter("title").text();
+                console.log(title);
+                chrome.runtime.sendMessage({ action: "addgroupapinew", url: group_url_value, name: title, group_type: "things in common" },
+                    (res9) => {
+                        console.log(res9);
+                        if (res9.data.status == 'error') {
+                            toastr["error"](res9.data.message);
+                        } else {
+                            toastr["success"](res9.data.message);
+                        }
+                        $("#add-group-btn2").text(' + Add this group to Novalya');
+                    });
+
+            })
+
+    });
+
+    $(document).on("click", "#verfiyurlfbgroup", function () {
+        $(this).text("Processing");
+
+        var token = localStorage.getItem('token');
+        console.log(token);
+        let group_url_value = $('input[name="url"]').val();
+        console.log(group_url_value);
+        if (group_url_value == "") {
+            alert(
+                "Facebook group url cannot be blank, checked you are login with facebook"
+            );
+        } else {
+            chrome.runtime.sendMessage({ action: "verifyGroupURL", url: group_url_value },
+                (res8) => {
+                    console.log(res8);
+                    let response = res8.groupPageDOM;
+                    console.log(response);
+                    let title = $(response).filter("title").text();
+                    console.log(title);
+                    $("#group_name").text("Group Name:- " + title + "( VERIFIED )");
+                    $("#verfiyurlfbgroup").text("Saving..");
+                    chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title,token:token },
+                        (res9) => {
+                            console.log(res9);
+                            if (res9.status == "ok") {
+                                $("#group_name").text(
+                                    "Group Name:- " + title + "( " + res9.data.msg + " )"
+                                );
+                                $("#group_name").css("color", "green");
+                                $("#verfiyurlfbgroup").text("Saved");
+                                toastr["success"]('Group added successfully');
+                                // setTimeout(() => {
+                                //     window.location.reload();
+                                //     //window.location.href = window.location.origin+'/connect-group';
+                                // }, 2000);
+                            } else {
+                                $("#group_name").text("Error to saved group");
+                                $("#group_name").css("color", "red");
+                                $("#verfiyurlfbgroup").text("Error");
+                                 toastr["error"]('Error to saved group');
+                            }
+                        }
+                    );
+                }
+            );
+        }
+    });
+
+    // CLICK ON UNFOLLOW AND SENT MESSAGE TO BACKGROUND FOR CANCEL SENT FRIEND REQUESTS
+    $(document).on("click", "#delete_requests", function () {
+        chrome.runtime.sendMessage({ action: "cancelSentFriendRequests" },
+            (res11) => {
+                let response = res11.start;
+                console.log("cancel request sending..");
+            }
+        );
+    });
+});
+
+
+$(document).on("click", ".send_birthday_message", function (event) {    
+    setTimeout(() => {
+        chrome.runtime.sendMessage({ action: "openBirthdayEventNew" });
+        console.log("button clicked");
+    }, 4000);
+});
+
+$(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function() {
+    // Perform your actions here
+    alert("Button with text 'SEND BIRTHDAY MESSAGES' was clicked!");
+  });
+
+function sendMessageFromMessengers(thread_id, templateMessage) {
+    let msgBox = 'div[aria-label="Message"]';
+    var findMsgBox = setInterval(() => {
+        if ($(msgBox).length > 0) {
+            clearInterval(findMsgBox);
+            clickOnElements(msgBox);
+            navigator.clipboard.writeText(templateMessage).then(() => {
+                document.execCommand("paste", null, null);
+            });
+            var findSendButton = setInterval(() => {
+                if (
+                    $('div[aria-label="Press Enter to send"').length > 0 ||
+                    $('div[aria-label="Press enter to send"').length > 0
+                ) {
+                    clearInterval(findSendButton);
+                    $('div[aria-label="Press enter to send"').mclick();
+                    $('div[aria-label="Press Enter to send"').mclick();
+                    setTimeout(() => {
+                        console.log("add close code here -1 ");
+                        chrome.runtime.sendMessage({ action: "closeTabs2" });
+                    }, 200);
+                }
+            }, 100);
+        }
+    }, 100);
+}
+
+// CLICK ON MESSENGER TEXT AREA BOX. (FOR SEND MESSAGES)
+async function clickOnElements(element) {
+    console.log(element);
+    let MouseEvent = document.createEvent("MouseEvents");
+    MouseEvent.initEvent("mouseover", true, true);
+    const over = document.querySelector(element).dispatchEvent(MouseEvent);
+    //await sleep(50);
+    MouseEvent.initEvent("mousedown", true, true);
+    const down = document.querySelector(element).dispatchEvent(MouseEvent);
+    MouseEvent.initEvent("mouseup", true, true);
+    const up = document.querySelector(element).dispatchEvent(MouseEvent);
+    MouseEvent.initEvent("click", true, true);
+    const click = document.querySelector(element).dispatchEvent(MouseEvent);
+    console.log(over, down, up, click);
+
+    if (over) {
+        return new Promise((resolve) => {
+            resolve();
+        });
+    } else {
+        return await clickOnElements(element);
+    }
+}
+
+function appendHTMLOnBirthday(extTabIdOnBirthday) {
+    console.log("appendHTMLOnBirthday is called");
+    let html_processing_model = `<section class="main-app">
+        <div class="overlay-ld">
+            <div class="container-ld">
+                <h3 class="title_lg">BIRTHDAY IS PROCESSING</h3>
+                <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                <h3 class="title_lg">NEXT WISHES IS SENDING...</h3>
+                <div class="loading">
+                    <span class="fill"></span>
+                </div>
+                <p class="simple-txt"><span id="loop1">0</span> WISHES SENT OF <span class="total1"></span></p>
+                <button class="btn__lg gredient-button scl-process-btn" data-tabid="${extTabIdOnBirthday}" type="button" id="stop_birthday_run">CLOSE WINDOW</button>
+            </div>
+        </div>
+    </section>`;
+    $("body:not('.process-model-added')").prepend(html_processing_model);
+    $("body").addClass("process-model-added");
 }
-.scl-label {
-  padding-left: 8px;
-  padding-right: 8px;
-  margin-left: 6px;
-  border-radius: 16px;
-  padding-top: 36px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-  color: white;
-  background-color: #000;
-}
-
-.nov-container-row {
-  width: 250px;
-  height: 250px;
-  background: #6baa6b;
-  margin: 15%;
-  border-radius: 20px;
-  padding: 25px;
-  color: #fff;
-  font-size: 24px;
-}
-
-.nov-processing-model {
-  width: 100% !important;
-  height: 100% !important;
-  background: #e4d9d982 !important;
-  position: fixed;
-  z-index: 9;
-}
-
-/******************************************************overly popup **************/
-
-.main-app {
-  overflow-x: hidden;
-  position: fixed;
-  z-index: 9999;
-}
-
-.container-ld {
-  background: #ecf0f3;
-  border: 0 none;
-  border-radius: 50px;
-  box-shadow: 10px 14px 25px rgb(255 255 255 / 50%);
-  padding: 25px 35px;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 575px;
-  bottom: 5px !important;
-  position: absolute !important;
-  min-height: 435px;
-}
-.loading {
-  width: 450px;
-  border: 2px solid #000;
-  padding: 3px;
-  margin: 0 auto;
-}
-.fill {
-  display: block;
-  min-height: 40px;
-  background: #000;
-  animation: filler 3s ease-in-out infinite;
-}
-@keyframes filler {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 100%;
-  }
-}
-.gredient-button {
-  font-weight: 700;
-  color: white;
-  border: 0 none;
-  font-size: 22px;
-  border-radius: 25px;
-  cursor: pointer;
-  background: linear-gradient(45deg, #400303, #e82c39);
-  font-family: "Nunito", sans-serif;
-  text-transform: inherit;
-  letter-spacing: 1px;
-  padding: 8px 25px;
-  margin: 50px auto 0;
-  min-width: 130px;
-  display: block;
-  text-transform: uppercase;
-}
-.title_lg {
-  font-size: 24px;
-  text-transform: uppercase;
-  color: #000;
-  margin: 0 0 15px;
-  font-weight: bold;
-  text-align: center;
-}
-.simple-txt {
-  font-size: 16px;
-  text-transform: uppercase;
-  color: #000;
-  margin-bottom: 10px;
-  font-weight: bold;
-  text-align: center;
-}
-.fs-spacing {
-  margin: 55px 0 30px;
-}
-.overlay-ld {
-  background: rgb(0 0 0 / 50%);
-  position: fixed;
-  overflow: scroll;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.bdh-wished {
-  border: 2px solid green;
-  margin-bottom: 15px;
-}
-
-.bdh-ald-wished {
-  border: 2px solid red;
-  margin-bottom: 15px;
-}
-
-.working-scl::after {
-  position: absolute;
-  content: "✔" !important;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex !important;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: rgb(255, 255, 255);
-  width: auto;
-  height: auto !important;
-  right: 16px !important;
-  bottom: 44px !important;
-  font-size: 18px !important;
-  line-height: 100% !important;
-  background: transparent;
-  visibility: visible !important;
-}
-.failed-scl::after {
-  position: absolute;
-  content: "!" !important ;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex !important;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: rgb(255, 255, 255);
-  width: auto;
-  height: auto !important;
-  right: 17px;
-  top: 2px !important;
-  font-size: 18px !important;
-  line-height: 100% !important;
-  background: transparent;
-  visibility: visible !important;
-}
-@-webkit-keyframes spinme {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spinme {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-.loading_w_scl::after {
-  position: absolute;
-  content: "" !important;
-  width: auto;
-  height: auto !important;
-  width: 10px;
-  height: 10px !important;
-  line-height: 100% !important;
-  border-radius: 50%;
-  right: 0px;
-
-  bottom: 46px;
-  right: 16px !important;
-
-  visibility: visible !important;
-  background-image: linear-gradient(#0277ff, #0277ff),
-    radial-gradient(circle at top left, transparent 30%, #fff 30%);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  border: solid 2px transparent;
-  -webkit-animation: spinme 3s linear infinite;
-  animation: spinme 3s linear infinite;
-}
-.working-scl:before,
-.loading_w_scl:before {
-  position: absolute;
-  content: "";
-  width: 63px;
-  height: 20px;
-  right: 0px;
-  border-radius: 0 10px;
-  background-color: rgb(2, 119, 255);
-  -webkit-transform: rotate(0deg);
-  -ms-transform: rotate(0deg);
-  transform: rotate(0deg);
-  -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-.failed-scl:before {
-  position: absolute;
-  content: "";
-  width: 63px;
-  height: 20px;
-  right: 0px;
-  border-radius: 0 10px;
-  background-color: rgb(255, 0, 0);
-  -webkit-transform: rotate(0deg);
-  -ms-transform: rotate(0deg);
-  transform: rotate(0deg);
-  -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-div[role="listitem"] {
-  position: relative;
-}
-
-div[role="listitem"]::after {
-  position: absolute;
-  top: -15px;
-  right: 22px !important;
-}
-.loading_w_scl::after {
-  top: 3px !important;
-  bottom: unset !important;
-}
-button#add-group-btn {
-  margin-left:100px;
-  background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,83,121,1) 35%, rgba(0,212,255,1) 100%);
-  border-radius: 7px;
-  border: none;
-  padding-left: 50px;
-  padding-right: 50px;
-  font-size: 15px;
-  border-radius: 9;
-  color: white;
-  margin: 7px;
-  padding: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button#add-group-btn2 {
-  background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,83,121,1) 35%, rgba(0,212,255,1) 100%);
-  border-radius: 7px;
-  border: none;
-  padding-left: 50px;
-  padding-right: 50px;
-  font-size: 15px;
-  border-radius: 9;
-  color: white;
-  margin: 7px;
-  padding: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-input.disabled_cls {
-    background: gray !important;
-    cursor: not-allowed !important;
-}
-
-
-
-
-
-/*  messengers.com css */
-.add-button-container {
-  border:1px solid #f5f5f5;
-  position: absolute;
-  margin-top:-65px;
-  right: 50px !important;
-  width: 90px;
-  float: left;
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(245, 245, 245);
-  border-image: initial;
-}
-.add-button-container span {
-  float: left;
-  display:block;
-  z-index:9;
-  cursor:pointer;
-  width: calc(100% - 6px) !important;
-  padding-bottom: 5px !important;
-  white-space-collapse: collapse;
-  text-wrap: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  padding: 3px;
-  font-weight: bold;
-  text-align: center;
-  color: white !important;
-  font-size: 14px !important;
-  background: rgb(70,130,180);
-}  
-
-#overlay-assign-labels {
-  position: fixed;
-  display: none;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.75);
-  z-index: 9999;
-}
-
-
-#container_assign_labels {
-    position: absolute;
-    top: 100px;
-    margin: auto;
-    float: left;
-    background: white;
-    min-height: 250px;
-    width: 100%;
-    max-width: 376px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-#content-assign-labels {
-    left: 50%;
-    width: auto;
-    height: auto;
-    border-radius:20px;
-}
-
-.novalya-row {
-    width: 100% !important;
-    float: left !important;
-    background: rgb(255, 255, 255) !important;
-}
-
-.modal-heading {
-    border-radius: 20px;
-}
-
-.label-name {
-    width: 70%;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: rgb(125, 110, 110);
-    line-height: 1;
-    padding: 15px 0px;
-    float: left;
-}
-
-
-#content-assign-labels .close-model {
-    float: right;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    color: gray;
-    padding: 5px;
-    margin: 5px 10px;
-}
-
-#content-assign-labels .labels-list-container {
-    position: relative;
-    border: unset;
-    float: left;
-    width: 100%;
-    padding: 0 15px;
-    box-sizing: border-box;
-}
-
-
-.labels-list-container ul {
-    width: 100%;
-    height: auto;
-    float: left;
-    display: none;
-    z-index: 2147483647;
-}
-
-.model-labels-list {
-    display: block !important;
-    height: 300px !important;
-}
-
-.novalya-scroll {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-.label-text-name {
-    display: block;
-    width: 100%;
-    float: right;
-    cursor: pointer;
-    word-break: break-all;
-    padding: 12px 5px;
-}
-
-.labels-list-container ul li {
-    z-index: 2147483647;
-    margin-bottom: 10px;
-    margin-right: 50px;
-    display: flex;
-    align-items: center;
-    height: auto;
-    font-size: 12px !important;
-    line-height: 1 !important;
-    border-radius: 5px !important;
-    padding: 0px 12px !important;
-}
-
-.novalya-btn {
-    display: inline-block;
-    font-weight: 400;
-    text-align: center;
-    white-space-collapse: collapse;
-    text-wrap: nowrap;
-    vertical-align: middle;
-    user-select: none;
-    font-size: 13px;
-    line-height: 1.5;
-    cursor: pointer;
-    border-width: 1px;
-    border-style: solid;
-    border-color: transparent;
-    border-image: initial;
-    padding: 0.375rem 0.75rem;
-    border-radius: 0.25rem;
-    transition: color 0.15s ease-in-out 0s, background-color 0.15s ease-in-out 0s, border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-    color: white !important;
-    margin-left: 117px;
-    margin-top: 10px;
-}
-
-.novalya-btn-primary {
-    background-size: 150% 100%;
-    -moz-transition: background-position 2s;
-    transition: background-position 2s;
-    background: #fff;
-    color: #000 !important;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-#container_assign_labels {
-    border-radius: 5px;
-}
-.row.novalya-row {
-    border-radius: 0 0 5px 5px;
-    background-image: linear-gradient(90deg, #099f69, #0087b5, #195b73 , #000) !important;
-}
-.label-name {
-    text-align: left;
-    padding-left: 15px;
-    color: #fff;
-}
-.close-model {
-    color: #fff !important;
-    opacity: .75;
-    transition: .25s;
-}
-
-.primary_dropdown>label {
-    padding-left: 15px;
-    color: #fff;
-    padding-right: 5px;
-}
-select#mySelect {
-    padding: 4px 20px;
-    transform: translateY(3px);
-    font-weight: 500;
-    width: 63%;
-    margin-left: 5%;
-    border: 1px solid #000;
-    border-radius: 3px;
-    text-transform: uppercase;
-    font-weight: 700;
-    text-align: center;
-}
-.primary_dropdown {
-  border-radius: 5px 5px 0 0;
-    padding-bottom: 35px;
-    background-image: linear-gradient(90deg, #099f69, #0087b5, #195b73 , #000) !important;
-}
-select#mySelect:focus {
-    outline: none;
-}
-.label-text-name {
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 0 BLACK;
-    text-transform: capitalize;
-}
-.row.novalya-row.modal-heading {
-    background: transparent !important;
-}
-.row.novalya-row {
-    background-image: linear-gradient(90deg, #099f69, #0087b5, #195b73 , #000) !important;
-}
-.novalya-btn.novalya-btn-primary.tags-assigning-update {
-    display: block;
-    margin: 0 0 20px;
-}
-.model-labels-list li {
-    border-radius: 5px !important;
-    overflow: hidden !important;
-    width: 100%;
-    box-sizing: border-box;
-}
-#container_assign_labels {
-    position: relative;
-}
-#container_assign_labels::before {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 100%;
-    border: 1px solid #9b9b9b;
-    border-radius: 5px;
-}
-.button_box {
-    position: relative;
-}
-.button_box::after {
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background: #cbcbcb;
-    bottom: 55px;
-    left: 0;
-    content: "";
-}
-
-.processed-member-to-add .add-button-container {
-    position: absolute;
-    right: 0 !important;
-    border-radius: 6px !important;
-    overflow: hidden;
-    width: max-content;
-   /* margin-top: -40px; */
-    /* top: 0px !important; */
-}
-
-.processed-member-to-add .add-button-container span {
-    display: block;
-    min-width: 40px;
-    width: max-content !important;
-    padding: 2px 10px;
-}
-
-.close-model {
-  margin: 0 !important;
-  display: flex;
-  width: 50px;
-  height: 50px;
-  align-items: center;
-  justify-content: center;
-}
-
-.add-button-container.header_button {
-  margin-right: 345px;
-  margin-top: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 1; 
-}
-
-#msg-header{
-  padding-top: 5px !important;
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-  border-radius: 8px !important;
-  height: 30px !important;
-  width: auto !important;
-}
-
- .add-button-container.contact-pop-up-chat-window {
-  transform: translate(32px, 22px);
-  width: 100px;
-  border-radius: 3px !important;
-  height: 21px !important;
-  overflow: hidden;
-  top: 0px !important;
-  margin-top:0px !important;
-  right: -50px !important;
-} 
-
-
-
-/* ------------------------ custom toastr---------------------- */
-
-
-body {
-  font-family: Arial, sans-serif;
-  /* text-align: center; */
-}
-
-.custom-toastr {
-  position: fixed;
-  top: 20px;
-  right: 20px;
- 
-  color: #fff;
-  border-radius: 5px;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  display: none;
-  z-index: 1000;
-}
-
-.toastr-content {
-  display: flex;
-  align-items: center;
-}
-
-.toastr-message {
-  margin-left: 10px;
-}
-
-.fa {
-  font-size: 20px;
-  margin-right: 10px;
-}
-
-.success-color{
-  background-color: #51a351;
-}
-
-.error-color{
-  background-color: #bd362f;
-}
-
-.info-color{
-  background-color: #f89406;
-}
-
-#customToastr{
-  padding: 10px;
-}
-
-button#stop_run {
-  margin-right: 15px;
-}
-
-* filter css start */
-/* Dropdown Button */
-.dropbtn {
-  background-color: #3498DB;
-  color: white;
-  padding: 2px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  display: inline-block;
-  margin-left: 93px !important;
-  position: absolute;
-  margin-bottom: 51px;
-  margin-top: 18px;
-  padding: 3px;
-}
-
-div + .dropBtn {
-  position: relative;
-}
-#submenu {
-  background: white;
-  margin-left: 70px;
-  width: 142px;
-  margin-top: -17px;
-}
-ul#submenu li{
-  padding: 7px;
-  text-align: center;
-  cursor:pointer
-  border-radius: 4px;
-  margin-top: 5px
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  left: 50px;
-  top: 1px;
-  background-color: #f1f1f1;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 99999 !important;
-  font-size: 12px;
-  padding: 0px !important;
-  min-width: 70px;
-}
-.dropdown-content #submenu{
-  display: none;
-  position: absolute;
-}
-
-ul li:hover > ul {
-  display: inherit;
-}
-
-
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  color: black;
-  padding: 1px;
-  text-decoration: none !important;
-  display: block;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
-
-#filter-message p{
-  padding: 10px;
-  font-size: 12px;
-  font-weight: 700;
-}
-#filter-message div{
-  width: fit-content;
-  padding: 3px;
-  border: 2px solid #db8134;
-  margin-left: 10px;
-  font-weight:700;
-}
-.close-filter-button{
-  padding: 13px;
-    cursor: pointer;
-    border: unset !important;;
-}
-
-
-
-/* Styles for the loader */
-/* Styles for the content div */
-.sort-by-selected-tag {
-  position: relative; /* Ensure the overlay is positioned relative to this div */
-}
-
-/* Styles for the overlay */
-.overlay {
-  position: absolute; /* Position the overlay absolutely within the content div */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.057); /* Semi-transparent black background */
-  display: none; /* Initially hidden */
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Ensure it's above other content */
-}
-
-/* Styles for the loader */
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 2s linear infinite;
-  margin-left: 50%;
-  margin-top: 50%;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-
-
-.dropdown-content ul#submenu {
-    overflow: hidden;
-    margin-top: 6px;
-    background: #fff;
-}
-
-ul#submenu li {
-    color: #fff;
-    text-transform: capitalize;
-    font-weight: 500;
-    background: #fff !important;
-    border-radius: 4px;
-}
-button.dropbtn.custom-drop {
-    padding: 2px 7px 3px;
-    background: #e4e6eb;
-    border: navajowhite;
-    font-weight: 600;
-    border-radius: 3px;
-}
-
-ul#myDropdown {
-    box-shadow: none !important;
-    padding: 0px 5px !important;
-    font-weight: 600;
-    background: #e4e6eb;
-    min-width: 55px;
-    margin-top: 2px;
-    padding-bottom: 3px !important;
-}
-button.dropbtn.custom-drop {
-    display: flex;
-    align-items: center;
-    padding: 1px 8px;
-    gap: 4px;
-    margin-top: -5px;
-    border-radius: 20px;
-    border: 1px solid #4098fd;
-    color: #4098fd;
-    background: #fff;
-}
-
-button.dropbtn.custom-drop img {
-    mix-blend-mode: darken;
-}
-
-ul#myDropdown {
-    position: relative;
-    left: 0;
-    min-width: 220px;
-    background: #fff;
-    box-shadow: 0 0 10px rgb(0 0 0 / 25%) !important;
-    padding: 0 !important;
-    border-radius: 4px 4px 0 0;
-}
-li.filter_heading {
-    border-radius: 4px 4px 0 0;
-    background: steelblue;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #fff;
-}
-li.filter_heading svg {
-    width: 20px;
-    fill: #fff;
-}
-
-li.filter_text {
-    padding: 8px 12px;
-    height: auto;
-}
-
-a#sort-by-group:hover {
-    background: #fff !important;
-}
-
-ul#submenu {
-    margin-left: -12px !important;
-    min-width: 220px;
-    border-radius: 0 0 4px 4px !important;
-    padding: 5px 10px 10px;
-    box-shadow: 0 10px 10px rgb(0 0 0 / 25%);
-    box-sizing: border-box;
-    margin-top: 3px !important;
-}
-
-button.dropbtn.custom-drop svg {
-    width: 20px;
-}
-
-a#sort-by-group {
-    color: #646464;
-}
-
-/* filter css end */
