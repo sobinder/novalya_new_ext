@@ -1070,7 +1070,6 @@ button#add-button {
   color: red;
 }
 
-
 .date_time_div{
   margin-left: 13px;
 }
@@ -1078,4 +1077,21 @@ button#add-button {
   cursor: pointer;
 }
 
+.notes_div_icon {
+    order: 4;
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    height: 30px;
+}
+
+.add-button-container.header_button {
+    width: max-content;
+    min-width: 90px;
+    margin-right: 0;
+    border: none;
+}
+#facebook .system-fonts--body a .notes_div_icon {
+    height: 48px !important;
+}
 /* ---------------------- notes css end---------------- */
