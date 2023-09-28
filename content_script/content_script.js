@@ -696,7 +696,7 @@ $(document).ready(function () {
                         }, 5000);
 
                         var selected_group_members = crm_settings.taggedUsers;
-                        const intervalValue = crm_settings.interval;
+                        const intervalValue = crm_settings.time_interval;
                         console.log(intervalValue); 
                         if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                             randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
@@ -800,7 +800,7 @@ $(document).ready(function () {
                 }, 5000);
 
                 var selected_group_members = res17.api_data.tagged_user;
-                const intervalValue = res17.api_data.interval; 
+                const intervalValue = res17.api_data.time_interval; 
                 console.log(intervalValue); 
                 if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                     randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
