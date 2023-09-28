@@ -992,6 +992,7 @@ let AddLabelCRM;
         currentProfile: function () {
             console.log("current  profile is called");
             var notes_icon = `<div class = "notes_div_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
+
             var clearMessageInt = setInterval(() => {
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
                     var user_id = res16.user_id;
@@ -1026,15 +1027,17 @@ let AddLabelCRM;
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                 const addTagButton = `
-                                                <div id="msg-header" class="add-button-container header_button" style="${style}">
-                                                    <span class="add-icon" style="${style}">${filteredTags[0].name}</span>
-                                                </div>`;
-                                $(".x1u998qt a").append(addTagButton);
+                                            <div id="current_profile_tags" class="add-button-container " style="${style}">
+                                                <span class="add-icon" style="${style}">${filteredTags[0].name}</span>
+                                            </div>`;
+                                if ($("#current_profile_tags").length === 0) {
+                                    $(".x5oxk1f.xym1h4x").append(addTagButton);
+                                    // $(".x9a2f9n").append(addTagButton);
+                                }
+
                             } else {
-                                $(".x1u998qt a").append(add_label_button);
-                            }
-                            if ($(".x1u998qt a .post").length === 0) {
-                                $(".x1u998qt a").append(notes_icon);
+                                $(".x5oxk1f.xym1h4x").append(add_label_button);
+                                // $(".x9a2f9n").append(add_label_button);
                             }
                         }, 2000);
                     } else {

@@ -331,6 +331,18 @@ input.disabled_cls {
   background: rgb(70,130,180);
 }  
 
+#current_profile_tags {	
+  margin-top: 0px !important;	
+  position: static !important;	
+  right: 0 !important;	
+  margin-left: 12px;	
+  height: 28px;	
+  /* margin-: 422px; */	
+}	
+i.fa.fa-pencil {	
+  color: #572f5b;	
+}
+
 #overlay-assign-labels {
   position: fixed;
   display: none;
@@ -960,3 +972,110 @@ span.close-icon.selected-tag {
 
 /* filter css end */
 
+/* ---------------------notes modal ---------------------- */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 580px;
+  height: 408px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 26px;
+}
+
+#notes-textarea {
+  width: 655px;
+  height: 102px;
+  border-radius: 4px
+  
+}
+
+textarea {
+  resize: none;
+}
+
+.note-item {
+  display: block;
+  border: 1px solid #cbcbcb;
+  margin-top: 15px;
+  padding: 9px;
+  width: 330px;
+  border-radius: 5px;
+}
+
+.notes_container_div {
+  height: 215px;
+  overflow-x: auto;
+  
+}
+.notes_container{
+  display: flex;
+  align-items: center;
+}
+
+.note-item {
+  /* display: flex; */
+  /* Use flexbox to place elements in a row */
+  /* align-items: center; */
+  /* Vertically align items in the center */
+  margin-bottom: 10px;
+  /* Add some margin between note items */
+}
+
+.editable_input {
+  width: 320px;
+  height: 24px;
+}
+
+.edit-icon,
+.delete-icon,
+.save-icon {
+  cursor: pointer;
+  /* Add a cursor pointer to indicate interactivity */
+  font-size: 21px;
+  margin-left: 10px;
+}
+
+button#add-button {
+     border: none;
+    padding-right: 25px;
+    padding-bottom: 6px;
+    padding-left: 25px;
+    padding-top: 6px;
+    background-color: #00ffaf;
+    border-radius: 6px;
+    margin-top: 12px;
+}
+.delete-icon{
+  color: red;
+}
+
+
+.date_time_div{
+  margin-left: 13px;
+}
+.notes_div_icon{
+  cursor: pointer;
+}
+
+/* ---------------------- notes css end---------------- */
