@@ -24,7 +24,7 @@ let AddLabelCRM;
                 $this.onInitMethods();
             });
 
-           
+
         },
         onInitMethods: function () {
             $("body").append(`
@@ -313,21 +313,21 @@ let AddLabelCRM;
                                                 <a id="sort-by-group">By group</a>
                                                     <ul id="submenu" class="custom-scroll">`
 
-                                        for (i = 0; i < tags_fetch_data.length; i++) {
-                                            var style = '';
-                                            style = `style = "background:` + tags_fetch_data[i].custom_color + ` !important"`;
+                        for (i = 0; i < tags_fetch_data.length; i++) {
+                            var style = '';
+                            style = `style = "background:` + tags_fetch_data[i].custom_color + ` !important"`;
 
-                                            ddownhtml += ` <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color sortByTag' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
-                                            ddownhtml += `>${tags_fetch_data[i].name}</li>`;
-                                        }
-                                        ddownhtml += `</ul>
+                            ddownhtml += ` <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color sortByTag' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
+                            ddownhtml += `>${tags_fetch_data[i].name}</li>`;
+                        }
+                        ddownhtml += `</ul>
                                                         </li>
-                                                       
+                                                        <li class="filter_text"><a id="unread">Unread</a></li>
                                                     </ul>
                                                 </div>`;
 
-                                                // <li><a id="unread">Unread</a></li>
-                                                // <li><a id="not-replied">Not replied</a></li>
+
+                        // <li><a id="not-replied">Not replied</a></li>
 
                         // Create a jQuery element from the HTML
                         const dropdownMenuElement = $(ddownhtml);
@@ -337,7 +337,7 @@ let AddLabelCRM;
                     }
                 }, 2000);
             };
-            
+
             $(document).on("click", '.dropbtn', function () {
                 document.getElementById("myDropdown").classList.toggle("show");
                 let submenu = document.getElementById("submenu");
@@ -351,21 +351,27 @@ let AddLabelCRM;
                 $('#submenu').toggle();
             });
 
-            $(document).on('click', '.sortByTag', function () {
+            $(document).on('click', '.sortByTag', async function () {
                 const id = $(this).attr('tag-id');
                 const name = $(this).text().trim();
+                
+                if (listItems.length > 0) {
+                    await $this.revertByGroupFilter();
+                }
+            
                 const spanElement = `
-                  <div id="filter-message">
-                    <p>Message</p>
-                    <div>
-                      <span class="close-icon selected-tag" tag-id="${id}">
-                        ${name}
-                      </span>
-                      <span class="close-by-group">X</span>
-                    </div>
-                  </div>`;
-
+                    <div id="filter-message">
+                        <p>Message</p>
+                        <div>
+                            <span class="close-icon selected-tag" tag-id="${id}">
+                                ${name}
+                            </span>
+                            <span class="close-by-group">X</span>
+                        </div>
+                    </div>`;
+            
                 const $filterMessage = $('#filter-message');
+                
                 if ($filterMessage.length === 0) {
                     // Append the filter message if it doesn't exist
                     $('.custom-filter').parent().append(spanElement);
@@ -375,37 +381,134 @@ let AddLabelCRM;
                     $selectedTag.attr('tag-id', id);
                     $selectedTag.text(name);
                 }
+            
                 let loader = `<div id="overlay" class="overlay">
-                                    <div class="loader"></div>
-                                </div>`;
-                $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader); 
+                                <div class="loader"></div>
+                             </div>`;
                 
-               $this.sortMessengerComMembers(id);
-               $this.closefilterAfterSelect();
+                if ($('#overlay').length == 0) {
+                    $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
+                }
+            
+                await $this.sortMessengerComMembers(id);
+                $this.closefilterAfterSelect();
             });
+            
+
+            // $(document).on('click', '.sortByTag', function () {
+            //     const id = $(this).attr('tag-id');
+            //     const name = $(this).text().trim();
+            //     if(listItems.length > 0){
+            //         $this.revertByGroupFilter();
+            //     }
+
+            //     const spanElement = `
+            //       <div id="filter-message">
+            //         <p>Message</p>
+            //         <div>
+            //           <span class="close-icon selected-tag" tag-id="${id}">
+            //             ${name}
+            //           </span>
+            //           <span class="close-by-group">X</span>
+            //         </div>
+            //       </div>`;
+
+            //     const $filterMessage = $('#filter-message');
+            //     if ($filterMessage.length === 0) {
+            //         // Append the filter message if it doesn't exist
+            //         $('.custom-filter').parent().append(spanElement);
+            //     } else {
+            //         // Update the existing filter message
+            //         const $selectedTag = $('.selected-tag');
+            //         $selectedTag.attr('tag-id', id);
+            //         $selectedTag.text(name);
+            //     }
+            //     let loader = `<div id="overlay" class="overlay">
+            //                         <div class="loader"></div>
+            //                     </div>`;
+            //     if($('#overlay').length == 0){
+            //         $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
+            //     }                
+                
+
+            //     $this.sortMessengerComMembers(id);
+            //     $this.closefilterAfterSelect();
+            // });
 
             $(document).on('click', '.close-by-group', function () {
                 $this.revertByGroupFilter();
             });
 
-            var scrollId = setInterval(()=>{
-                let ContainerDiv = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                if(ContainerDiv != null){
-                    parentContainerDiv = ContainerDiv.parentNode.parentNode;
-                    clearInterval(scrollId);
-                    let parentContainerDivClass = parentContainerDiv.classList.value
-                    $('.' + parentContainerDivClass).on('scroll',function(){
-                        // Get the current scroll position
-                        let selectedTag = $('.selected-tag').attr('tag-id');
-                        if(selectedTag){
-                            //console.log(selectedTag);
-                           $this.sortMessengerComMembers(selectedTag);
-                        }
-                    });
-                }
-            },1000);
-            
+            // Define a variable to store the previous event listener function
+            // let previousScrollListener;
+            // let prevScrollPos =  document.querySelector('div.sort-by-selected-tag').pageYOffset;
 
+            // var scrollId = setInterval(() => {
+            //     const targetDiv = document.querySelector('div.sort-by-selected-tag');
+            //     if (targetDiv) {
+            //         targetParentDiv = targetDiv.parentNode;
+
+            //         // Remove the previous scroll event listener if it exists
+            //         if (previousScrollListener) {
+            //         targetParentDiv.removeEventListener('scroll', previousScrollListener);
+            //         }
+            //         clearInterval(scrollId);
+            //         // Define the new scroll event listener function
+            //         const scrollListener = function(event) {
+            //             let currentScrollPos =  document.querySelector('div.sort-by-selected-tag').pageYOffset;
+            //             if (prevScrollPos < currentScrollPos) {
+            //                 let selectedTag = $('.selected-tag').attr('tag-id');
+            //                 if (selectedTag) {
+            //                     $this.sortMessengerComMembers(selectedTag);
+            //                 }
+            //             }
+            //         };
+            //         // Add the new scroll event listener
+            //         targetParentDiv.addEventListener('scroll', scrollListener);
+            //         // Store the new event listener function as the previous one
+            //         previousScrollListener = scrollListener;
+            //         prevScrollPos = currentScrollPos;
+            //     }
+            // }, 2000);
+
+            let previousScrollListener;
+            let prevScrollPos = 0;
+            var scrollId = setInterval(() => {
+                const targetDiv = document.querySelector('div.sort-by-selected-tag');
+                if (targetDiv) {
+                    targetParentDiv = targetDiv.parentNode;
+
+                    // Remove the previous scroll event listener if it exists
+                    if (previousScrollListener) {
+                        targetParentDiv.removeEventListener('scroll', previousScrollListener);
+                    }
+                    clearInterval(scrollId);
+
+                    // Define the new scroll event listener function
+                    const scrollListener = function (event) {
+                        let currentScrollPos = targetParentDiv.scrollTop;
+                        if (prevScrollPos < currentScrollPos) {
+                            let selectedTag = $('.selected-tag').attr('tag-id');
+                            if (selectedTag) {
+                                $this.sortMessengerComMembers(selectedTag);
+                            }
+                        }
+                        prevScrollPos = currentScrollPos;
+                    };
+
+                    // Add the new scroll event listener
+                    targetParentDiv.addEventListener('scroll', scrollListener);
+                    // Store the new event listener function as the previous one
+                    previousScrollListener = scrollListener;
+                }
+            }, 2000);
+
+
+            // filter for unread
+            $(document).on('click', '#unread', function () {
+                console.log('unread');
+            })
+            //
             //end messenger filter
 
         },
@@ -438,6 +541,7 @@ let AddLabelCRM;
                             // console.log(selector_members_list);
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
+                                // $('.processed-member-to-add:eq(0)').parent().parent().addClass('main-filter-div');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
@@ -467,7 +571,7 @@ let AddLabelCRM;
                                     if (fb_user === item.fb_user_id) {
 
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-                                        
+
                                         if (filteredTags.length > 0) {
                                             $(this).attr('tag-id', filteredTags[0].id)
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -627,10 +731,10 @@ let AddLabelCRM;
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
                             }
-                             
-                             let filteredTags = userTagsArray
+
+                            let filteredTags = userTagsArray
                                 .filter(item => fb_user === item.fb_user_id)
-                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean); 
+                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean);
                             // console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -745,96 +849,174 @@ let AddLabelCRM;
         },
         sortMessengerComMembers: function (selectedTag) {
             //console.log(selectedTag);
-            $('#overlay').show();
+
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
 
             Array.from(lists).forEach((item) => {
                 // Check if the item's parent does not contain the "sort-proceed" class
                 if (!item.parentNode.classList.contains('sort-proceed')) {
-                  listItems.push(item);
+                    listItems.push(item.parentNode);
                 }
             });
-              
-            let newlistItem = Array.from(lists).map((item) => {
-                item.parentNode.classList.add('sort-proceed');
-                return item.parentNode;
+
+            console.log(listItems);
+            let newlistItem = [];
+            Array.from(lists).map((item) => {
+                //if (!item.parentNode.classList.contains('sort-proceed')) {
+                    newlistItem.push(item.parentNode);
+                    item.parentNode.classList.add('sort-proceed');
+                    
+               // }
             });
 
-            const filteredItems = Array.from(newlistItem).filter(item => {
-                const childElement = item.querySelector('[tag-id]');
-                if (childElement) {
-                    return childElement.getAttribute('tag-id') === selectedTag;
-                }
-                return false; 
-            });
-
-            // Sort the filtered elements based on their content
-            filteredItems.sort((a, b) => {
-                const aValue = a.textContent.trim();
-                const bValue = b.textContent.trim();
-                return aValue.localeCompare(bValue);
-            });
-
-            // Get the parent container
-            const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
-            parentContainer.classList.add('sort-filter-class')
-
-            if (parentContainer) {
-                const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
-                const firstChildParent = firstChild.parentNode;
-                filteredItems.forEach(item => {
-                    parentContainer.insertBefore(item, firstChildParent);
+            // console.log('newlistItem');
+            // console.log(newlistItem);
+            if(newlistItem.length > 0){
+                $('#overlay').show();
+                const filteredItems = Array.from(newlistItem).filter(item => {
+                    const childElement = item.querySelector('[tag-id]');
+                    if (childElement) {
+                        if (childElement.getAttribute('tag-id') == selectedTag) {
+                            return childElement;
+                        }
+                    }
+                    return false;
                 });
+
+                // Reverse the filteredItems array
+                //console.log(filteredItems);
+                //Sort the filtered elements based on their content
+                filteredItems.sort((a, b) => {
+                    const aValue = a.textContent.trim();
+                    const bValue = b.textContent.trim();
+                    return aValue.localeCompare(bValue);
+                });
+ 
+                //  const time = ["s", "m", "h", "d", "w"];
+ 
+                // filteredItems.sort((a, b) => {
+                //     let aTextElement = a.querySelectorAll('.html-span [dir="auto"]');
+                //     if(aTextElement.length > 0){
+                //         aTextElement = aTextElement[1].innerText
+                //     }
+                //     let bTextElement = b.querySelectorAll('.html-span [dir="auto"]');
+                //     if(bTextElement.length > 0){
+                //         bTextElement = bTextElement[1].innerText
+                //     }
+    
+                //     // Extract the unit (m, h, d, or w)
+                //     const aUnit = aTextElement.replace(/\d+/g, '');
+                //     const bUnit = aTextElement.replace(/\d+/g, '');
+    
+                //     // Extract the number 
+                //     const aNumber = aTextElement.replace ( /[^\d.]/g, '' );
+                //     const bNumber = bTextElement.replace ( /[^\d.]/g, '' );
+                
+                //     console.log(aTextElement);
+                //     console.log(aUnit);
+                //     console.log(aNumber);
+                //     console.log('next');
+                //     console.log(bTextElement);
+                //     console.log(bUnit);
+                //     console.log(bNumber);
+    
+    
+                // });
+ 
+ 
+                //console.log(filteredItems);
+    
+                const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+                parentContainer.classList.add('sort-filter-class')
+    
+                if (parentContainer) {
+                    const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
+                    const firstChildParent = firstChild.parentNode;
+                    filteredItems.forEach(item => {
+                        parentContainer.insertBefore(item, firstChildParent);
+                    });
+                }
+                setTimeout(() => {
+                    $('#overlay').hide();
+                }, 1000);
             }
-            setTimeout(()=>{
-                $('#overlay').hide();
-            },1000);
-            
         },
-        revertByGroupFilter: function () {
+        revertByGroupFilter: async function () {
             $('#overlay').show();
             $('#filter-message').remove();
-           filteredlists = Array.from(listItems).map(item=>item);
+            
+            const filteredlists = Array.from(listItems).map(item => item);
             filteredlists.sort((a, b) => {
                 const aValue = a.textContent.trim().toLowerCase();
                 const bValue = b.textContent.trim().toLowerCase();
                 return aValue.localeCompare(bValue);
             });
-            filteredlists.forEach(li => li.remove());
-            let getFirstChildInterval = setInterval(() => {
-                const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
-                if (firstChild) {
-                    $('#overlay').show();
-                    clearInterval(getFirstChildInterval);
-                    const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+        
+            for (const li of filteredlists) {
+                if (li.parentElement.classList.contains('sort-proceed')) {
+                    li.parentElement.remove();
+                }
+            }
+        
+            const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+            if (firstChild != null) {
+                const parentContainer = firstChild.parentNode.parentNode;
+                if (parentContainer) {
+                    const firstChildParent = firstChild.parentNode;
+                    listItems.forEach(item => {
+                        parentContainer.insertBefore(item, firstChildParent);
+                    });
+                    setTimeout(() => {
+                        $('#overlay').hide();
+                    }, 1000);
+                } else {
+                    const parentContainer = document.querySelector('div.sort-filter-class');
                     if (parentContainer) {
-                        console.log('if')
-                        const firstChildParent = firstChild.parentNode;
-                        listItems.forEach(item => {
-                            parentContainer.insertBefore(item, firstChildParent);
-                        });
-                        setTimeout(()=>{
-                            $('#overlay').hide();
-                        },1000);
-                    }else{  
-                        console.log('else')
-                        const parentContainer = document.querySelector('div.sort-filter-class');
                         if (parentContainer) {
-                            clearInterval(getFirstChildInterval);
-                            if(parentContainer){
-                                listItems.forEach(item => {
-                                    parentContainer.prepend(item);
-                                });
+                            listItems.forEach(item => {
+                                parentContainer.prepend(item);
+                            });
+                        }
+                    }
+                    setTimeout(() => {
+                        $('#overlay').hide();
+                    }, 1000);
+                }
+            } else {
+                const getFirstChildInterval = async () => {
+                    const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+                    if (firstChild != null) {
+                        clearInterval(getFirstChildInterval);
+                        const parentContainer = firstChild.parentNode.parentNode;
+                        if (parentContainer) {
+                            const firstChildParent = firstChild.parentNode;
+                            listItems.forEach(item => {
+                                parentContainer.insertBefore(item, firstChildParent);
+                            });
+                            setTimeout(() => {
+                                $('#overlay').hide();
+                            }, 1000);
+                        } else {
+                            const parentContainer = document.querySelector('div.sort-filter-class');
+                            if (parentContainer) {
+                                clearInterval(getFirstChildInterval);
+                                if (parentContainer) {
+                                    listItems.forEach(item => {
+                                        parentContainer.prepend(item);
+                                    });
+                                }
+                                setTimeout(() => {
+                                    $('#overlay').hide();
+                                }, 1000);
                             }
                         }
-                        setTimeout(()=>{
-                            $('#overlay').hide();
-                        },1000);
                     }
-                }
-                
-            }, 2000); 
+                };
+        
+                setInterval(getFirstChildInterval, 2000);
+            }
         },
+
         closefilterAfterSelect() {
             var dropdowns = document.getElementsByClassName("dropdown-content");
             var i;
@@ -845,7 +1027,6 @@ let AddLabelCRM;
                 }
             }
         },
-        
     };
     AddLabelCRM.initilaize();
 })(jQuery);

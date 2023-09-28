@@ -800,7 +800,7 @@ ul li:hover > ul {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.057); /* Semi-transparent black background */
+  background-color: rgba(0, 0, 0, 0.434); /* Semi-transparent black background */
   display: none; /* Initially hidden */
   justify-content: center;
   align-items: center;
@@ -900,7 +900,7 @@ li.filter_text {
     height: auto;
 }
 
-a#sort-by-group:hover {
+a#sort-by-group:hover,a#unread:hover {
     background: #fff !important;
 }
 
@@ -918,7 +918,7 @@ button.dropbtn.custom-drop svg {
     width: 20px;
 }
 
-a#sort-by-group {
+a#sort-by-group,a#unread {
     color: #646464;
 }
 
