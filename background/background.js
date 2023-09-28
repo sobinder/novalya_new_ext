@@ -750,6 +750,104 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if(message.action == "get_all_notes"){
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+            };
+    
+            fetch("https://novalyabackend.novalya.com/user/api/note", requestOptions)
+            .then(response => response.json())
+            .then((result) => {
+                console.log(result)
+                sendResponse({ api_data: result , user_id: user_id});
+            })
+            .catch(error => console.log('error', error));
+            return true;
+    }
+
+    if(message.action =="add_Notes"){
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer "+token);
+        var raw = JSON.stringify({
+          "description": message.description,
+          "fb_user_id": message.fb_user_id,
+          "user_id": user_id
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("https://novalyabackend.novalya.com/user/api/note", requestOptions)
+          .then(response => response.json())
+          .then(result => { console.log(result); sendResponse({status : "note added" , result: result})})
+          .catch(error => console.log('error', error));
+        return true;
+    }
+
+    if(message.action == "edit_notes"){
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer "+token);
+        var raw = JSON.stringify({
+          "description": message.description,
+          "fb_user_id": message.fb_user_id,
+          "user_id": user_id
+        });
+
+        var requestOptions = {
+          method: 'PATCH',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
+          .then(response => response.json())
+          .then(result => { console.log(result); sendResponse({status : "note updated"})})
+          .catch(error => {
+            console.log('error', error);
+            sendResponse({status : "Error"})
+        });
+        return true;
+    }
+
+    if(message.action == "delete_note"){
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            redirect: 'follow'
+            };
+    
+            fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
+            .then(response => response.json())
+            .then((result) => {
+                console.log(result)
+                sendResponse({ status: "note deleted"});
+            })
+            .catch((error) => {
+                console.log('error', error)
+                sendResponse({ status: "error"});
+            });
+            return true;
+    }
+
 });
 var currentDate = getCurrentDate();
 

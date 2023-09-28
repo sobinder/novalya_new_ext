@@ -56,7 +56,8 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "assets/image/filter.png"
+                "assets/image/filter.png",
+                "assets/images/post.png"
             ],
             "matches": [
                 "<all_urls>"
