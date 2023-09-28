@@ -240,14 +240,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         //}, 10000*index)
                     }
                 });
-            } else {
-                setTimeout(() => {
-                    chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
-                        // body
-                    });
-                }, 500);
             }
-        }, 8000);
+            // else {
+            //     setTimeout(() => {
+            //         chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+            //             // body
+            //         });
+            //     }, 500);
+            // }
+        }, 2000);
         return true;
     }
     else if (message.subject === "scrapYesterdayBirthday") {
@@ -538,7 +539,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             sendResponse({ status: "ok" });
 
             //chrome.runtime.sendMessage({ action: "birthdaybuttonClicked" })
-        }, 1000);
+        }, 7000);
         return true;
     }
 
@@ -696,13 +697,14 @@ $(document).ready(function () {
 
                         var selected_group_members = crm_settings.taggedUsers;
                         const intervalValue = crm_settings.interval;
-                        if (intervalValue == "30-60 sec") {
+                        console.log(intervalValue); 
+                        if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                             randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
-                        } else if (intervalValue == "1-3 min") {
+                        } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
                             randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
-                        } else if (intervalValue == "3-5 min") {
+                        } else if (intervalValue == "3-5 min" || intervalValue == "3-5 Min") {
                             randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
-                        } else if (intervalValue == "5-10 min") {
+                        } else if (intervalValue == "5-10 min" || intervalValue == "5-10 Min") {
                             randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
                         } else {
                             randomDelay = 60000;
@@ -798,19 +800,20 @@ $(document).ready(function () {
                 }, 5000);
 
                 var selected_group_members = res17.api_data.tagged_user;
-                const intervalValue = res17.api_data.interval;
-                if (intervalValue == "30-60") {
+                const intervalValue = res17.api_data.interval; 
+                console.log(intervalValue); 
+                if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                     randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
-                } else if (intervalValue == "1-3") {
+                } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
                     randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
-                } else if (intervalValue == "3-5") {
+                } else if (intervalValue == "3-5 min" || intervalValue == "3-5 Min") {
                     randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
-                } else if (intervalValue == "5-10") {
+                } else if (intervalValue == "5-10 min" || intervalValue == "5-10 Min") {
                     randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
                 } else {
                     randomDelay = 60000;
                 }
-
+                console.log(randomDelay);
                 // const numberOfReqValue = res17.api_data.norequest;
                 // if (numberOfReqValue != "custom") {
                 //     limit_req = numberOfReqValue;
