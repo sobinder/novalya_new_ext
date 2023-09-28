@@ -596,16 +596,17 @@ if (window.location.href.indexOf(my_domain) > -1) {
             } else {
                 console.log('Extension Installed', authToken);
                 $('#download-extension').hide();
+                //var latest_uploaded_version = $("#latest_version_nvl").attr("value");
+                var latest_uploaded_version = "1.3.5";
+                const extensionVersion = chrome.runtime.getManifest().version;
+                if (latest_uploaded_version <= extensionVersion) {
+                    $("#update-extension").hide();
+                } else {
+                  $("#update-extension").show();
+                }
             }
         }, 1000)
     });
-
-    //var latest_uploaded_version = $("#latest_version_nvl").attr("value");
-    var latest_uploaded_version = "1.3.4";
-    const extensionVersion = chrome.runtime.getManifest().version;
-    if (latest_uploaded_version <= extensionVersion) {
-        $("#update-extension").css("display", "none");
-    }
 }
 
 $(document).ready(function () {
@@ -1052,7 +1053,7 @@ $(document).ready(function () {
     });
 
     // CLICK ON UNFOLLOW AND SENT MESSAGE TO BACKGROUND FOR CANCEL SENT FRIEND REQUESTS
-    $(document).on("click", "#delete_requests", function () {
+    $(document).on("click", "#delete_pending_request", function () {
         chrome.runtime.sendMessage({ action: "cancelSentFriendRequests" },
             (res11) => {
                 let response = res11.start;
