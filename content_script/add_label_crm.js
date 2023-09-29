@@ -193,6 +193,7 @@ let AddLabelCRM;
                 } else if (window.location.pathname.indexOf('/friends') == -1) {
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
                 }
+                
                 console.log(cliked_Fb_Id);
 
                 var notes_modal = `<div id="notes-modal" class="modal">
@@ -844,7 +845,7 @@ let AddLabelCRM;
                                     $(this).append(add_label_button);
                                 }
 
-                                console.log(userTagsArray);
+                                // console.log(userTagsArray);
                                 userTagsArray.forEach((item) => {
                                     if (fb_user === item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);

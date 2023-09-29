@@ -1094,4 +1094,10 @@ button#add-button {
 #facebook .system-fonts--body a .notes_div_icon {
     height: 48px !important;
 }
+
+div#bottom_note_icon {
+  order: unset;
+  transform: translate(-6px, -3px);
+}
+
 /* ---------------------- notes css end---------------- */
