@@ -930,7 +930,9 @@ let AddLabelCRM;
 
         },
         messageComHeader: function () {
-            var notes_icon = `<div class = "notes_div_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
+            var notes_icon1 = `<div class = "notes_div_icon" id ="header_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
+ 
+            var notes_icon2 = `<div class = "notes_div_icon" id ="bottom_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
             var clearMessageInt = setInterval(() => {
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
                     var user_id = res16.user_id;
@@ -969,7 +971,7 @@ let AddLabelCRM;
                                 $(".x1u998qt a").append(add_label_button);
                             }
                             if ($(".x1u998qt a .post").length === 0) {
-                                $(".x1u998qt a").append(notes_icon);
+                                $(".x1u998qt a").append(notes_icon1);
                             }
                         }, 2000);
                     }
@@ -982,7 +984,7 @@ let AddLabelCRM;
             setTimeout(() => {
                 setInterval(()=>{
                     if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
-                        $(".x6prxxf .xw2csxc").before(notes_icon);
+                        $(".x6prxxf .xw2csxc").before(notes_icon2);
                     }
                    
                 },1000)
@@ -991,7 +993,7 @@ let AddLabelCRM;
         },
         currentProfile: function () {
             console.log("current  profile is called");
-            var notes_icon = `<div class = "notes_div_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
+            var notes_icon = `<div class = "notes_div_icon" id="current_profile_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
 
             var clearMessageInt = setInterval(() => {
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {

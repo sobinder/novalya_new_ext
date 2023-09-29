@@ -60,20 +60,18 @@ let group_url_value = window.location.href ;
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
 
-      const intervalValue = settings[0].time_interval;
-      console.log(intervalValue); 
-      if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
-          randomDelay = (Math.floor(Math.random() * 30) + 30) * 1000;
-      } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
-          randomDelay = (Math.floor(Math.random() * 60) + 180) * 1000;
-      } else if (intervalValue == "3-5 min" || intervalValue == "3-5 Min") {
-          randomDelay = (Math.floor(Math.random() * 180) + 300) * 1000;
-      } else if (intervalValue == "5-10 min" || intervalValue == "5-10 Min") {
-          randomDelay = (Math.floor(Math.random() * 300) + 600) * 1000;
+      const intervalValue = settings[0].interval;
+    if (intervalValue == "30-60") {
+          randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
+      } else if (intervalValue == "1-3") {
+          randomDelay = Math.floor(Math.random() * (180000 - 60000 + 1)) + 60000;
+      } else if (intervalValue == "3-5") {
+          randomDelay = Math.floor(Math.random() * (300000 - 180000 + 1)) + 180000;
+      } else if (intervalValue == "5-10") {
+          randomDelay = Math.floor(Math.random() * (600000 - 300000 + 1)) + 300000;
       } else {
           randomDelay = 60000;
       }
-      console.log(randomDelay);
 
       const numberOfReqValue = settings[0].norequest;
       if (numberOfReqValue != "custom") {
