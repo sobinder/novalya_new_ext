@@ -1095,8 +1095,6 @@ let AddLabelCRM;
             });
         },
         sortMessengerComMembers: function (selectedTag) {
-            //console.log(selectedTag);
-
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
 
             Array.from(lists).forEach((item) => {
@@ -1106,18 +1104,12 @@ let AddLabelCRM;
                 }
             });
 
-            console.log(listItems);
             let newlistItem = [];
             Array.from(lists).map((item) => {
-                //if (!item.parentNode.classList.contains('sort-proceed')) {
-                    newlistItem.push(item.parentNode);
-                    item.parentNode.classList.add('sort-proceed');
-                    
-               // }
+                newlistItem.push(item.parentNode);
+                item.parentNode.classList.add('sort-proceed');
             });
 
-            // console.log('newlistItem');
-            // console.log(newlistItem);
             if(newlistItem.length > 0){
                 $('#overlay').show();
                 const filteredItems = Array.from(newlistItem).filter(item => {
@@ -1131,46 +1123,16 @@ let AddLabelCRM;
                 });
 
                 // Reverse the filteredItems array
+                //filteredItems.reverse();
                 //console.log(filteredItems);
                 //Sort the filtered elements based on their content
-                filteredItems.sort((a, b) => {
-                    const aValue = a.textContent.trim();
-                    const bValue = b.textContent.trim();
-                    return aValue.localeCompare(bValue);
-                });
- 
-                //  const time = ["s", "m", "h", "d", "w"];
- 
                 // filteredItems.sort((a, b) => {
-                //     let aTextElement = a.querySelectorAll('.html-span [dir="auto"]');
-                //     if(aTextElement.length > 0){
-                //         aTextElement = aTextElement[1].innerText
-                //     }
-                //     let bTextElement = b.querySelectorAll('.html-span [dir="auto"]');
-                //     if(bTextElement.length > 0){
-                //         bTextElement = bTextElement[1].innerText
-                //     }
-    
-                //     // Extract the unit (m, h, d, or w)
-                //     const aUnit = aTextElement.replace(/\d+/g, '');
-                //     const bUnit = aTextElement.replace(/\d+/g, '');
-    
-                //     // Extract the number 
-                //     const aNumber = aTextElement.replace ( /[^\d.]/g, '' );
-                //     const bNumber = bTextElement.replace ( /[^\d.]/g, '' );
-                
-                //     console.log(aTextElement);
-                //     console.log(aUnit);
-                //     console.log(aNumber);
-                //     console.log('next');
-                //     console.log(bTextElement);
-                //     console.log(bUnit);
-                //     console.log(bNumber);
-    
-    
+                //     const aValue = a.textContent.trim();
+                //     const bValue = b.textContent.trim();
+                //     return aValue.localeCompare(bValue);
                 // });
- 
- 
+                // console.log(filteredItems);
+                
                 //console.log(filteredItems);
     
                 const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
@@ -1179,8 +1141,20 @@ let AddLabelCRM;
                 if (parentContainer) {
                     const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
                     const firstChildParent = firstChild.parentNode;
-                    filteredItems.forEach(item => {
-                        parentContainer.insertBefore(item, firstChildParent);
+                    let lastInsertedItem = null;
+
+                    filteredItems.forEach((item, index) => {
+                        if (index === 0) {
+                            // Insert the first item before firstChildParent
+                            parentContainer.insertBefore(item, firstChildParent);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        } else {
+                            // Insert subsequent items after the last inserted item
+                            parentContainer.insertBefore(item, lastInsertedItem.nextSibling);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        }
                     });
                 }
                 setTimeout(() => {
