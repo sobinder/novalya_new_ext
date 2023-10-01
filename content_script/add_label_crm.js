@@ -757,7 +757,7 @@ let AddLabelCRM;
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('messenger') > -1) {
                             //console.log("hello running")
                             processing = true;
-                            var add_label_button = '<div class="add-button-container"><span class="add-icon">+</span>';
+                            var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon" >+</span>';
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             // console.log(selector_members_list);

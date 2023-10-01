@@ -317,8 +317,9 @@ input.disabled_cls {
   display:block;
   z-index:9;
   cursor:pointer;
-  width: calc(100% - 6px) !important;
-  padding-bottom: 5px !important;
+  /* width: calc(100% - 6px) !important; */
+  width: 160px !important;
+  padding-bottom: 4px !important;
   white-space-collapse: collapse;
   text-wrap: nowrap;
   text-overflow: ellipsis;
@@ -330,6 +331,13 @@ input.disabled_cls {
   font-size: 14px !important;
   background: rgb(70,130,180);
 }  
+
+#add-icon{
+  width:100px !important;
+  float: right!important;
+  cursor:pointer!important;
+}
+
 
 #current_profile_tags {	
   margin-top: 0px !important;	
@@ -584,15 +592,19 @@ select#mySelect:focus {
     right: 0 !important;
     border-radius: 6px !important;
     overflow: hidden;
-    width: max-content;
+    width: 160px;
+    /* width: max-content; */
    /* margin-top: -40px; */
     /* top: 0px !important; */
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .processed-member-to-add .add-button-container span {
     display: block;
     min-width: 40px;
-    width: max-content !important;
+    width: 95% !important;
     padding: 2px 10px;
 }
 
