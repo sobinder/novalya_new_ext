@@ -520,6 +520,7 @@ i.fa.fa-pencil {
     padding-left: 15px;
     color: #fff;
     padding-right: 5px;
+    display: none;
 }
 select#mySelect {
     padding: 4px 20px;
@@ -532,11 +533,12 @@ select#mySelect {
     text-transform: uppercase;
     font-weight: 700;
     text-align: center;
+    display: none;
 }
 .primary_dropdown {
   border-radius: 5px 5px 0 0;
     padding-bottom: 60px;
-    background-image: linear-gradient(90deg, #099f69, #0087b5, #195b73 , #000) !important;
+    background-image: linear-gradient(90deg, #099f69, #0087b5, #195b73 , #000) !important;    
 }
 select#mySelect:focus {
     outline: none;

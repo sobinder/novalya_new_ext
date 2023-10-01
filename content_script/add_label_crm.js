@@ -492,7 +492,8 @@ let AddLabelCRM;
                     <div class="close-model">X</div>
                 </div>
                 <div class = "primary_dropdown">
-                
+                <label for="mySelect">Select Primary:</label>                 
+                <select id="mySelect"> ${options2}</select>
                 </div>
                 <div class="row novalya-row"> 
                     <div class="labels-list-container">
