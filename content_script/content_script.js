@@ -592,18 +592,17 @@ if (window.location.href.indexOf(my_domain) > -1) {
         authToken = res16.authToken;
         var clearTimeInt = setInterval( () => {
             if($('.Mui-checked').length == 0) {
-                console.log('Extension Not Installed'); 
                 $('#switch-extension').parent().mclick();
             } else {
-                console.log('Extension Installed', authToken);
                 $('#download-extension').hide();
-                //var latest_uploaded_version = $("#latest_version_nvl").attr("value");
-                var latest_uploaded_version = "1.3.5";
+                var latest_uploaded_version = $("#update-extension-bar").attr("data-version");
                 const extensionVersion = chrome.runtime.getManifest().version;
                 if (latest_uploaded_version <= extensionVersion) {
                     $("#update-extension").hide();
+                    $("#update-extension-bar").hide();
                 } else {
-                  $("#update-extension").show();
+                    $("#update-extension").show();
+                    $("#update-extension-bar").show();
                 }
             }
         }, 1000)

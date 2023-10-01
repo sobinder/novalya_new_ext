@@ -34,6 +34,9 @@ let AddLabelCRM;
                         </div>
                     </div>`);
             $this.taggeduserapi();
+            $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function() {      
+                $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);      
+            });
             selector_members_list = $this.messengersMembersListSelector();
             setTimeout(function () {
                 processing = false;
@@ -489,8 +492,7 @@ let AddLabelCRM;
                     <div class="close-model">X</div>
                 </div>
                 <div class = "primary_dropdown">
-                <label for="mySelect">Select Primary:</label>                 
-                <select id="mySelect"> ${options2}</select>
+                
                 </div>
                 <div class="row novalya-row"> 
                     <div class="labels-list-container">
