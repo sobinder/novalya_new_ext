@@ -548,10 +548,11 @@ let AddLabelCRM;
                         ddownhtml += `</ul>
                                                         </li>
                                                         <li class="filter_text"><a id="unread">Unread</a></li>
+                                                        
                                                     </ul>
                                                 </div>`;
 
-
+                        //<li class="filter_text"><a id="not-replied">Not replied</a></li>
                         // <li><a id="not-replied">Not replied</a></li>
 
                         // Create a jQuery element from the HTML
@@ -579,7 +580,6 @@ let AddLabelCRM;
             $(document).on('click', '.sortByTag', async function () {
                 const id = $(this).attr('tag-id');
                 const name = $(this).text().trim();
-                
                 if (listItems.length > 0) {
                     await $this.revertByGroupFilter();
                 }
@@ -619,83 +619,11 @@ let AddLabelCRM;
                 $this.closefilterAfterSelect();
             });
             
-
-            // $(document).on('click', '.sortByTag', function () {
-            //     const id = $(this).attr('tag-id');
-            //     const name = $(this).text().trim();
-            //     if(listItems.length > 0){
-            //         $this.revertByGroupFilter();
-            //     }
-
-            //     const spanElement = `
-            //       <div id="filter-message">
-            //         <p>Message</p>
-            //         <div>
-            //           <span class="close-icon selected-tag" tag-id="${id}">
-            //             ${name}
-            //           </span>
-            //           <span class="close-by-group">X</span>
-            //         </div>
-            //       </div>`;
-
-            //     const $filterMessage = $('#filter-message');
-            //     if ($filterMessage.length === 0) {
-            //         // Append the filter message if it doesn't exist
-            //         $('.custom-filter').parent().append(spanElement);
-            //     } else {
-            //         // Update the existing filter message
-            //         const $selectedTag = $('.selected-tag');
-            //         $selectedTag.attr('tag-id', id);
-            //         $selectedTag.text(name);
-            //     }
-            //     let loader = `<div id="overlay" class="overlay">
-            //                         <div class="loader"></div>
-            //                     </div>`;
-            //     if($('#overlay').length == 0){
-            //         $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
-            //     }                
-                
-
-            //     $this.sortMessengerComMembers(id);
-            //     $this.closefilterAfterSelect();
-            // });
-
             $(document).on('click', '.close-by-group', function () {
                 $this.revertByGroupFilter();
             });
 
             // Define a variable to store the previous event listener function
-            // let previousScrollListener;
-            // let prevScrollPos =  document.querySelector('div.sort-by-selected-tag').pageYOffset;
-
-            // var scrollId = setInterval(() => {
-            //     const targetDiv = document.querySelector('div.sort-by-selected-tag');
-            //     if (targetDiv) {
-            //         targetParentDiv = targetDiv.parentNode;
-
-            //         // Remove the previous scroll event listener if it exists
-            //         if (previousScrollListener) {
-            //         targetParentDiv.removeEventListener('scroll', previousScrollListener);
-            //         }
-            //         clearInterval(scrollId);
-            //         // Define the new scroll event listener function
-            //         const scrollListener = function(event) {
-            //             let currentScrollPos =  document.querySelector('div.sort-by-selected-tag').pageYOffset;
-            //             if (prevScrollPos < currentScrollPos) {
-            //                 let selectedTag = $('.selected-tag').attr('tag-id');
-            //                 if (selectedTag) {
-            //                     $this.sortMessengerComMembers(selectedTag);
-            //                 }
-            //             }
-            //         };
-            //         // Add the new scroll event listener
-            //         targetParentDiv.addEventListener('scroll', scrollListener);
-            //         // Store the new event listener function as the previous one
-            //         previousScrollListener = scrollListener;
-            //         prevScrollPos = currentScrollPos;
-            //     }
-            // }, 2000);
-
             let previousScrollListener;
             let prevScrollPos = 0;
             var scrollId = setInterval(() => {
@@ -717,6 +645,9 @@ let AddLabelCRM;
                             if (selectedTag) {
                                 $this.sortMessengerComMembers(selectedTag);
                             }
+                            if($('.selected-tag').text().trim() == 'Unread'){
+                                $this.sortMemberUnread();
+                            }
                         }
                         prevScrollPos = currentScrollPos;
                     };
@@ -728,14 +659,38 @@ let AddLabelCRM;
                 }
             }, 2000);
 
-
             // filter for unread
-            $(document).on('click', '#unread', function () {
-                console.log('unread');
-            })
-            //
-            //end messenger filter
+            $(document).on('click', '#unread',async function () {
+                const spanElement = `
+                <div id="filter-message">
+                    <p>Message</p>
+                    <div>
+                        <span class="close-icon selected-tag">Unread</span>
+                        <span class="close-by-group">X</span>
+                    </div>
+                </div>`;
 
+                const $filterMessage = $('#filter-message');
+                if ($filterMessage.length === 0) {
+                    $('.custom-filter').parent().append(spanElement);
+                } else {
+                    const $selectedTag = $('.selected-tag');
+                    $selectedTag.removeAttr('tag-id')
+                    $selectedTag.text('Unread');
+                }
+                let loader = `<div id="overlay" class="overlay">
+                                <div class="loader"></div>
+                             </div>`;
+                
+                if ($('#overlay').length == 0) {
+                    $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
+                }
+            
+                await $this.sortMemberUnread();
+                $this.closefilterAfterSelect();
+            });
+            
+            //end messenger filter
         },
         sendMessageforSingleUsers: function (fb_user_id) {
             return new Promise((resolve, reject) => {
@@ -1254,6 +1209,64 @@ let AddLabelCRM;
                 }
             }
         },
+
+        sortMemberUnread(){
+            lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+            Array.from(lists).forEach((item) => {
+                if (!item.parentNode.classList.contains('sort-proceed')) {
+                    listItems.push(item.parentNode);
+                }
+            });
+
+            let newlistItem = [];
+            Array.from(lists).map((item) => {
+                newlistItem.push(item.parentNode);
+                item.parentNode.classList.add('sort-proceed');
+            });
+
+            if(newlistItem.length > 0){
+                $('#overlay').show();
+                const filteredItems = Array.from(newlistItem).filter(item => {
+                    let rowElement = item.querySelector('div[role="gridcell"]')
+                    const classelement = 'xzsf02u';
+                    if (rowElement != null) {
+                        let parentHtmlElement =  rowElement.querySelector('div.html-div');
+                        if(parentHtmlElement != null){
+                            childElement = parentHtmlElement.querySelector('.html-span span');
+                            if (childElement != null && childElement.classList.contains(classelement)) {
+                                // The class 'xzsf02u' is present in childElement's class list
+                                return childElement;
+                            } 
+                        }
+                    }
+                    return false;
+                });
+
+                const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+                parentContainer.classList.add('sort-filter-class')
+
+                if (parentContainer) {
+                    const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
+                    const firstChildParent = firstChild.parentNode;
+                    let lastInsertedItem = null;
+
+                    filteredItems.forEach((item, index) => {
+                        if (index === 0) {
+                            parentContainer.insertBefore(item, firstChildParent);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        } else {
+                            parentContainer.insertBefore(item, lastInsertedItem.nextSibling);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        }
+                    });
+                }
+                setTimeout(() => {
+                    $('#overlay').hide();
+                }, 1000);
+            }
+        }
     };
     AddLabelCRM.initilaize();
 })(jQuery);
