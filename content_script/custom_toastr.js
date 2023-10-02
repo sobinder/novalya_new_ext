@@ -14,18 +14,20 @@ function showCustomToastr(type, message, timeout, showCountdown, fixToastr, show
   toastrContent.className = 'toastr-content';
 
   // Create the icon element
-  const toastrIcon = document.createElement('i');
+  const toastrIcon = document.createElement('img');
   toastrIcon.id = 'toastrIcon';
+  toastrIcon.src = `${chrome.runtime.getURL('assets/images/loading-forever.gif')}`;
+  toastrIcon.alt = 'Toastr Icon';
 
   // Set the class name based on the type
   if (type === 'success') {
-    toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
+    // toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
     customToastr.classList.add('success-color');
   } else if (type === 'error') {
-    toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
+    // toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
     customToastr.classList.add('error-color');
   } else {
-    toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
+    // toastrIcon.className = 'fa fa-circle-o-notch fa-spin'; // Use 'fas' for Font Awesome Solid icons
     customToastr.classList.add('info-color');
   }
 

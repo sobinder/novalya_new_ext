@@ -57,7 +57,8 @@
         {
             "resources": [
                 "assets/image/filter.png",
-                "assets/images/post.png"
+                "assets/images/post.png",
+                "assets/images/loading-forever.gif"
             ],
             "matches": [
                 "<all_urls>"

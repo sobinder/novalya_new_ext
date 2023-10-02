@@ -55,23 +55,25 @@ let group_url_value = window.location.href ;
 
     startAddingFriend: function (settings, extTabId) {
       // $this.addProgressModel(extTabId);
-      showCustomToastr('info', '“Novalya is doing its magic”', 1000 , true  , true , true );
+     
       processing_status = "running";
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
 
       const intervalValue = settings[0].interval;
     if (intervalValue == "30-60") {
-          randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
+          randomDelay = Math.floor(Math.random() * 31) * 1000 + 30000; ;
       } else if (intervalValue == "1-3") {
-          randomDelay = Math.floor(Math.random() * (180000 - 60000 + 1)) + 60000;
+          randomDelay = Math.floor(Math.random() * 121) * 1000 + 60000;;
       } else if (intervalValue == "3-5") {
-          randomDelay = Math.floor(Math.random() * (300000 - 180000 + 1)) + 180000;
+          randomDelay = Math.floor(Math.random() * 121) * 1000 + 180000;;
       } else if (intervalValue == "5-10") {
-          randomDelay = Math.floor(Math.random() * (600000 - 300000 + 1)) + 300000;
+          randomDelay = Math.floor(Math.random() * 301) * 1000 + 300000;;
       } else {
           randomDelay = 60000;
       }
+
+      console.log(randomDelay);
 
       const numberOfReqValue = settings[0].norequest;
       if (numberOfReqValue != "custom") {
@@ -79,6 +81,8 @@ let group_url_value = window.location.href ;
       } else {
         limit_req = settings[0].custom; // unlimited
       }
+      showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit_req, 1000, true, true, true);
+
       console.log(settings[0].keyword);
       const keywordTypeValue = settings[0].keyword;
       const negative_keyword = settings[0].negative_keyword;
@@ -125,11 +129,17 @@ let group_url_value = window.location.href ;
       if (stoprequest == false) {
         loop2 = loop1;
         $("#loop1").text(loop2 + 1);
+       
         selector_for_validclass =
           'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed):eq(0)';
         //console.log('Length of main selector', $(selector_for_validclass).length);
         if ($(selector_for_validclass).length > 0 && loop1 < limit_req) {
-          
+       
+          var incrementedLoop = loop2 + 1;
+          if(loop2 + 1 == limit_req){
+
+            $("#toastrMessage").text("Limit Exceeded Process Completed");
+          }
           btnText = $(selector_for_validclass).find(
             'div[aria-label="Add Friend"]:containsI("Add Friend")'
           );
@@ -143,7 +153,10 @@ let group_url_value = window.location.href ;
           //console.log('btnText.length', btnText.length);
 
           if (btnText.length == 1) {
-           
+            $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
+            var incrementedLoop = loop2 + 1;
+          
+
             // positive keywords
             validKeyword = true;
             if (keywordTypeValue != "") {
@@ -292,7 +305,7 @@ let group_url_value = window.location.href ;
                     //console.log(segementMessage);
                     showCustomToastr('success', 'Friend Request Sent', 5000 , false );
                     btnText.click(); 
-                    showCustomToastr('success', 'Message Sending Start', 5000 , true );                   
+                    showCustomToastr('success', 'Message Sending Start', 10000 , true );                   
                     setTimeout(() => {
                       // --------------------------------------
                       $this.closeWarningPopup();                      
@@ -306,7 +319,7 @@ let group_url_value = window.location.href ;
                             "[last name]",
                             member_names[1]
                           );
-                          showCustomToastr('success', 'Message Sent Successfully', 5000,false );
+                         
                           chrome.runtime.sendMessage(
                             {
                               action: "sendMessageToMember",
@@ -320,6 +333,13 @@ let group_url_value = window.location.href ;
                                 $(".working-scl").removeClass("loading_w_scl");
                               }, 500);
 
+                              if(loop2 + 1 == limit_req){
+                                $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                              }
+                              setTimeout(() => {
+                                showCustomToastr('success', 'Message Sent Successfully', 5000, false );
+                              }, 2000);
+                            
                               loop1++;
                               $this.checkValidUsers(
                                 randomDelay,
@@ -450,6 +470,7 @@ let group_url_value = window.location.href ;
             $("#stop_run").text("STOPPED");
             $(".loading").remove();
             $("h3.title_lg").text("Limit Exceed");
+            chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
           }
         }
       }

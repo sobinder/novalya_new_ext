@@ -621,7 +621,7 @@ $(document).ready(function () {
 
     $(document).on("click", "#stop_run", function () {
         //$('#stop_run').remove();
-        $(".title_lg").text("Send Message Feature Stopped");
+        $("#toastrMessage").text("Send Message Feature Stopped");
         $(".loading").remove();
         extTabId = $(this).attr("data-tabid");
         AddTargetFriendNV.stopAddFriendProcess(extTabId);

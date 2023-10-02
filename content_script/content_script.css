@@ -1112,5 +1112,12 @@ div#bottom_note_icon {
   order: unset;
   transform: translate(-6px, -3px);
 }
+#customToastr0{
+  background-color: #385898;
+}
 
 /* ---------------------- notes css end---------------- */
+
+#toastrIcon{
+  width: 20px;
+}

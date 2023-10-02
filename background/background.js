@@ -394,7 +394,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action == "closeTabs") {
         setTimeout(() => {
             chrome.tabs.remove(sender.tab.id);
-        }, 15000);
+        }, 7000);
         sendResponse({ status: true });
         return true;
     } 
