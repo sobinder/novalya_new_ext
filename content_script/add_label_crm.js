@@ -578,6 +578,7 @@ let AddLabelCRM;
             });
 
             $(document).on('click', '.sortByTag', async function () {
+                $('#overlay').show();
                 const id = $(this).attr('tag-id');
                 const name = $(this).text().trim();
                 if (listItems.length > 0) {
@@ -606,16 +607,42 @@ let AddLabelCRM;
                     $selectedTag.attr('tag-id', id);
                     $selectedTag.text(name);
                 }
-            
-                let loader = `<div id="overlay" class="overlay">
-                                <div class="loader"></div>
-                             </div>`;
-                
-                if ($('#overlay').length == 0) {
-                    $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
-                }
-            
-                await $this.sortMessengerComMembers(id);
+        
+                const scrollIntervalId = setInterval(()=>{
+                    const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+                    if(rowToScroll){
+                        $('#overlay').show();
+                        const parentContainer = rowToScroll.parentNode.parentNode;
+                        const parentContainerClass = parentContainer.classList.value;
+                        clearInterval(scrollIntervalId);
+                        let cheight = 600;
+                        const maxIterations = 6;
+                        let currentIteration = 0;
+                        intervalId = setInterval(async() => {
+                            $('#overlay').show();
+                            currentIteration++;
+                           // console.log(currentIteration);
+                            $('.' + parentContainerClass).animate(
+                                { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
+                                1000
+                            );
+                            cheight = cheight + 600;
+                            await $this.sortMessengerComMembers(id);
+                            if (currentIteration >= maxIterations) {
+                              clearInterval(intervalId);
+                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                              setTimeout(()=>{
+                                $('#overlay').hide();
+                              },1000);
+                            }
+                        }, 2000);
+                    }else{
+                        $('#overlay').hide(); 
+                    }
+                },2000);
+                setTimeout(()=>{
+                    $('#overlay').hide();
+                },2000);
                 $this.closefilterAfterSelect();
             });
             
@@ -629,6 +656,7 @@ let AddLabelCRM;
             var scrollId = setInterval(() => {
                 const targetDiv = document.querySelector('div.sort-by-selected-tag');
                 if (targetDiv) {
+                  
                     targetParentDiv = targetDiv.parentNode;
 
                     // Remove the previous scroll event listener if it exists
@@ -655,12 +683,13 @@ let AddLabelCRM;
                     // Add the new scroll event listener
                     targetParentDiv.addEventListener('scroll', scrollListener);
                     // Store the new event listener function as the previous one
-                    previousScrollListener = scrollListener;
+                    previousScrollListener = scrollListener;  
                 }
             }, 2000);
 
             // filter for unread
             $(document).on('click', '#unread',async function () {
+                $('#overlay').show();
                 const spanElement = `
                 <div id="filter-message">
                     <p>Message</p>
@@ -678,15 +707,40 @@ let AddLabelCRM;
                     $selectedTag.removeAttr('tag-id')
                     $selectedTag.text('Unread');
                 }
-                let loader = `<div id="overlay" class="overlay">
-                                <div class="loader"></div>
-                             </div>`;
-                
-                if ($('#overlay').length == 0) {
-                    $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag').prepend(loader);
-                }
-            
-                await $this.sortMemberUnread();
+
+                const scrollIntervalId = setInterval(()=>{
+                    $('#overlay').show();
+                    const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+                    if(rowToScroll){
+                        $('#overlay').show();
+                        const parentContainer = rowToScroll.parentNode.parentNode;
+                        const parentContainerClass = parentContainer.classList.value;
+                        clearInterval(scrollIntervalId);
+                        let cheight = 600;
+                        const maxIterations = 6;
+                        let currentIteration = 0;
+                        intervalId = setInterval(async() => {
+                            currentIteration++;
+                            //console.log(currentIteration);
+                            $('.' + parentContainerClass).animate(
+                                { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
+                                1000
+                            );
+                            cheight = cheight + 600;
+                            await $this.sortMemberUnread();
+                            if (currentIteration >= maxIterations) {
+                              clearInterval(intervalId);
+                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                              setTimeout(()=>{
+                                $('#overlay').hide();
+                              },2000);
+                            }
+                        }, 2000);
+                    }else{
+                        $('#overlay').hide();
+                    }
+                },2000);
+
                 $this.closefilterAfterSelect();
             });
             
@@ -722,6 +776,16 @@ let AddLabelCRM;
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
                                 // $('.processed-member-to-add:eq(0)').parent().parent().addClass('main-filter-div');
+
+                                let loader = `<div id="overlay" class="overlay">
+                                    <div class="loader"></div>
+                                </div>`;
+                
+                                if ($('#overlay').length == 0) {
+                                    $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
+                                    $('div[aria-label="Chats"]').prepend(loader);
+                                }
+
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
@@ -1072,7 +1136,7 @@ let AddLabelCRM;
             });
 
             if(newlistItem.length > 0){
-                $('#overlay').show();
+                // $('#overlay').show();
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     const childElement = item.querySelector('[tag-id]');
                     if (childElement) {
@@ -1083,19 +1147,6 @@ let AddLabelCRM;
                     return false;
                 });
 
-                // Reverse the filteredItems array
-                //filteredItems.reverse();
-                //console.log(filteredItems);
-                //Sort the filtered elements based on their content
-                // filteredItems.sort((a, b) => {
-                //     const aValue = a.textContent.trim();
-                //     const bValue = b.textContent.trim();
-                //     return aValue.localeCompare(bValue);
-                // });
-                // console.log(filteredItems);
-                
-                //console.log(filteredItems);
-    
                 const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
                 parentContainer.classList.add('sort-filter-class')
     
@@ -1118,9 +1169,9 @@ let AddLabelCRM;
                         }
                     });
                 }
-                setTimeout(() => {
-                    $('#overlay').hide();
-                }, 1000);
+                // setTimeout(() => {
+                //     $('#overlay').hide();
+                // }, 1000);
             }
         },
         revertByGroupFilter: async function () {
@@ -1198,7 +1249,6 @@ let AddLabelCRM;
                 setInterval(getFirstChildInterval, 2000);
             }
         },
-
         closefilterAfterSelect() {
             var dropdowns = document.getElementsByClassName("dropdown-content");
             var i;
@@ -1209,7 +1259,6 @@ let AddLabelCRM;
                 }
             }
         },
-
         sortMemberUnread(){
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             Array.from(lists).forEach((item) => {
@@ -1225,7 +1274,6 @@ let AddLabelCRM;
             });
 
             if(newlistItem.length > 0){
-                $('#overlay').show();
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     let rowElement = item.querySelector('div[role="gridcell"]')
                     const classelement = 'xzsf02u';
@@ -1249,7 +1297,6 @@ let AddLabelCRM;
                     const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
                     const firstChildParent = firstChild.parentNode;
                     let lastInsertedItem = null;
-
                     filteredItems.forEach((item, index) => {
                         if (index === 0) {
                             parentContainer.insertBefore(item, firstChildParent);
@@ -1262,11 +1309,9 @@ let AddLabelCRM;
                         }
                     });
                 }
-                setTimeout(() => {
-                    $('#overlay').hide();
-                }, 1000);
             }
-        }
+        },
+
     };
     AddLabelCRM.initilaize();
 })(jQuery);
