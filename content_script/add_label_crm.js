@@ -578,7 +578,6 @@ let AddLabelCRM;
             });
 
             $(document).on('click', '.sortByTag', async function () {
-                $('#overlay').show();
                 const id = $(this).attr('tag-id');
                 const name = $(this).text().trim();
                 if (listItems.length > 0) {
@@ -616,7 +615,7 @@ let AddLabelCRM;
                         const parentContainerClass = parentContainer.classList.value;
                         clearInterval(scrollIntervalId);
                         let cheight = 600;
-                        const maxIterations = 6;
+                        const maxIterations = 10;
                         let currentIteration = 0;
                         intervalId = setInterval(async() => {
                             $('#overlay').show();
@@ -636,12 +635,7 @@ let AddLabelCRM;
                               },1000);
                             }
                         }, 2000);
-                    }else{
-                        $('#overlay').hide(); 
                     }
-                },2000);
-                setTimeout(()=>{
-                    $('#overlay').hide();
                 },2000);
                 $this.closefilterAfterSelect();
             });
@@ -717,7 +711,7 @@ let AddLabelCRM;
                         const parentContainerClass = parentContainer.classList.value;
                         clearInterval(scrollIntervalId);
                         let cheight = 600;
-                        const maxIterations = 6;
+                        const maxIterations = 10;
                         let currentIteration = 0;
                         intervalId = setInterval(async() => {
                             currentIteration++;
