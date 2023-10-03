@@ -192,9 +192,72 @@ let AddLabelCRM;
                 var cliked_Fb_Id = '';
                 if (pathname.indexOf('profile.php') > -1) {
                     cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
-
                 } else if (window.location.pathname.indexOf('/friends') == -1) {
+                    console.log("here");
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
+                    if(cliked_Fb_Id === undefined){
+                        var alphaFbId = window.location.pathname.split('/')[1].toString();
+                        console.log(alphaFbId);
+                        getNumericID(alphaFbId)
+                        .then(function(response) {
+                           console.log(response.userID);
+                           cliked_Fb_Id = response.userID;
+                           var notes_modal = `<div id="notes-modal" class="modal">
+                           <div class="modal-content">
+                           <input id="fb_id_for_notes" type="hidden" value="`+ cliked_Fb_Id + `">
+                               <span class="close">&times;</span>
+                               <h1 style="margin-bottom: 15px">Notes</h1>
+                               <textarea id="notes-textarea" placeholder="Enter your notes here..."></textarea>
+                               <button id="add-button">+ Add</button>
+                            <div class="notes_container_div">
+                                  
+                           </div>
+                       </div>`;
+                           $('body').append($(notes_modal));
+           
+                           chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
+                               var all_data_array = res.api_data;
+                               console.log(all_data_array);
+                               filteredArray = all_data_array.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
+                               console.log(filteredArray);
+           
+                               filteredArray.forEach(item => {
+           
+                                   var date_time =  new Date(item.updatedAt);
+                                   var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                                   var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+                                   var append_notes = ` <div class="notes_container row">
+                                   <div class="note-item row" note_id = ${item.id}>
+                                       <span class="editable_notes">${item.description}</span>
+                                       <input class="editable_input" note_id = ${item.id}  type="text" style="display:none;">
+                                       
+                                   </div>
+                                   <div class="date_time_div">
+                                   <span class="date_time">${date} ${time}</span>
+                                   </div>  
+                                   <div class="icons_div">
+                                       <span class="edit-icon">&#9998;</span> <!-- Edit icon -->
+                                       <span class="save-icon" style="display:none;">&#128190;</span> <!-- Save icon -->
+                                       <span class="delete-icon">🗑️</span> <!-- Delete icon -->
+                                       <!--  <span class="delete-icon">&#10006;</span> -->
+                                   </div>
+                                                        
+                                                           
+                                   <!-- Repeat this structure for other notes -->
+                               </div>`
+                                   if ($("editable_input").attr("note_id") != item.id) {
+                                       $(".notes_container_div").append(append_notes);
+                                   }
+           
+                               });
+                               $('#notes-modal').css('display', 'block');
+                           });
+                        })
+                        .catch(function(response) {
+                            console.log("error to find fb id");
+                        });
+                 
+                    }
                 }
                 
                 console.log(cliked_Fb_Id);
@@ -358,6 +421,63 @@ let AddLabelCRM;
 
                 } else if (window.location.pathname.indexOf('/friends') == -1) {
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
+
+
+
+
+                    if(cliked_Fb_Id === undefined){
+                        var alphaFbId = window.location.pathname.split('/')[1].toString();
+                        console.log(alphaFbId);
+                        getNumericID(alphaFbId)
+                        .then(function(response) {
+                           console.log(response.userID);
+                           cliked_Fb_Id = response.userID;
+                           if (notes == "") {
+                            toastr["error"]('Please Enter Some Text');
+                            return false;
+                        }
+                        chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
+                            console.log(res.result.updatedAt);
+                            var date_time =  new Date(res.result.updatedAt);
+                            var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                            var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+        
+                            if (res.status == 'note added') {
+                                toastr["success"]('Note added successfully ');
+                                var new_notes_container = `<div class="notes_container row">
+                                <div class="note-item note_id=${res.result.id} row" >
+                                    <span class="editable_notes">${notes}</span>
+                                    <input class="editable_input" note_id=${res.result.id} type="text" style="display:none;">
+                                    
+                                </div>
+                                <div class="date_time_div">
+                                   <span class="date_time">${date} ${time}</span>
+                                </div>  
+                                <div class="icons_div">
+                                    <span class="edit-icon">&#9998;</span> <!-- Edit icon -->
+                                    <span class="save-icon" style="display:none;">&#128190;</span> <!-- Save icon -->
+                                    <span class="delete-icon red-trash">🗑️</span> <!-- Delete icon -->
+                                </div>                       
+                                                        
+                                <!-- Repeat this structure for other notes -->
+                            </div>`;
+                                // Append the new note-item and icons_div to the notes_container_div
+                                $('.notes_container_div').prepend(new_notes_container);
+                            } else {
+                                toastr["error"]('Some Error in adding notes');
+                            }
+                        });
+
+                        })
+                        .catch(function(response) {
+                            console.log("error to find fb id");
+                        });
+                 return false;
+                    }
+
+
+
+
                 }
                 if (notes == "") {
                     toastr["error"]('Please Enter Some Text');
@@ -944,7 +1064,6 @@ let AddLabelCRM;
 
                 })
             }, 1000)
-
         },
         messageComHeader: function () {
             var notes_icon1 = `<div class = "notes_div_icon" id ="header_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
@@ -1065,7 +1184,13 @@ let AddLabelCRM;
                     }
                 });
             }, 1000);
-            $(".x5oxk1f.xym1h4x").append(notes_icon);
+           
+            setInterval(()=>{
+                if($(".notes_div_icon").length == 0){
+                    $(".x5oxk1f.xym1h4x").append(notes_icon); 
+                }
+               
+            },1000)
         },
         messengersMembersListSelector: function () {
 

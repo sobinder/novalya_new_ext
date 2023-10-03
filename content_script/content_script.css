@@ -345,6 +345,7 @@ input.disabled_cls {
   right: 0 !important;	
   margin-left: 12px;	
   height: 28px;	
+  width: 162px;
   /* margin-: 422px; */	
 }	
 i.fa.fa-pencil {	
