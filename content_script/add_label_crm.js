@@ -34,8 +34,8 @@ let AddLabelCRM;
                         </div>
                     </div>`);
             $this.taggeduserapi();
-            $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function() {      
-                $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);      
+            $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function () {
+                $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);
             });
             selector_members_list = $this.messengersMembersListSelector();
             setTimeout(function () {
@@ -181,7 +181,7 @@ let AddLabelCRM;
             });
 
 
-                        //Open notes popup
+            //Open notes popup
             $(document).on('click', '.notes_div_icon', async function (event) {
                 var filteredArray = [];
                 console.log("notes clicked");
@@ -195,14 +195,14 @@ let AddLabelCRM;
                 } else if (window.location.pathname.indexOf('/friends') == -1) {
                     console.log("here");
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
-                    if(cliked_Fb_Id === undefined){
+                    if (cliked_Fb_Id === undefined) {
                         var alphaFbId = window.location.pathname.split('/')[1].toString();
                         console.log(alphaFbId);
                         getNumericID(alphaFbId)
-                        .then(function(response) {
-                           console.log(response.userID);
-                           cliked_Fb_Id = response.userID;
-                           var notes_modal = `<div id="notes-modal" class="modal">
+                            .then(function (response) {
+                                console.log(response.userID);
+                                cliked_Fb_Id = response.userID;
+                                var notes_modal = `<div id="notes-modal" class="modal">
                            <div class="modal-content">
                            <input id="fb_id_for_notes" type="hidden" value="`+ cliked_Fb_Id + `">
                                <span class="close">&times;</span>
@@ -213,20 +213,20 @@ let AddLabelCRM;
                                   
                            </div>
                        </div>`;
-                           $('body').append($(notes_modal));
-           
-                           chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
-                               var all_data_array = res.api_data;
-                               console.log(all_data_array);
-                               filteredArray = all_data_array.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
-                               console.log(filteredArray);
-           
-                               filteredArray.forEach(item => {
-           
-                                   var date_time =  new Date(item.updatedAt);
-                                   var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
-                                   var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-                                   var append_notes = ` <div class="notes_container row">
+                                $('body').append($(notes_modal));
+
+                                chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
+                                    var all_data_array = res.api_data;
+                                    console.log(all_data_array);
+                                    filteredArray = all_data_array.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
+                                    console.log(filteredArray);
+
+                                    filteredArray.forEach(item => {
+
+                                        var date_time = new Date(item.updatedAt);
+                                        var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                                        var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+                                        var append_notes = ` <div class="notes_container row">
                                    <div class="note-item row" note_id = ${item.id}>
                                        <span class="editable_notes">${item.description}</span>
                                        <input class="editable_input" note_id = ${item.id}  type="text" style="display:none;">
@@ -245,21 +245,21 @@ let AddLabelCRM;
                                                            
                                    <!-- Repeat this structure for other notes -->
                                </div>`
-                                   if ($("editable_input").attr("note_id") != item.id) {
-                                       $(".notes_container_div").append(append_notes);
-                                   }
-           
-                               });
-                               $('#notes-modal').css('display', 'block');
-                           });
-                        })
-                        .catch(function(response) {
-                            console.log("error to find fb id");
-                        });
-                 
+                                        if ($("editable_input").attr("note_id") != item.id) {
+                                            $(".notes_container_div").append(append_notes);
+                                        }
+
+                                    });
+                                    $('#notes-modal').css('display', 'block');
+                                });
+                            })
+                            .catch(function (response) {
+                                console.log("error to find fb id");
+                            });
+                        return false;
                     }
                 }
-                
+
                 console.log(cliked_Fb_Id);
 
                 var notes_modal = `<div id="notes-modal" class="modal">
@@ -282,8 +282,8 @@ let AddLabelCRM;
 
                     filteredArray.forEach(item => {
 
-                        var date_time =  new Date(item.updatedAt);
-                        var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                        var date_time = new Date(item.updatedAt);
+                        var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
                         var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
                         var append_notes = ` <div class="notes_container row">
                         <div class="note-item row" note_id = ${item.id}>
@@ -311,9 +311,6 @@ let AddLabelCRM;
                     });
                     $('#notes-modal').css('display', 'block');
                 });
-
-
-
             });
 
             // Edit the notes
@@ -384,12 +381,12 @@ let AddLabelCRM;
 
                         chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
                             var all_data_array = res.api_data;
-                            filteredArray = all_data_array.filter(item =>item.id == note_id);
+                            filteredArray = all_data_array.filter(item => item.id == note_id);
                             console.log(filteredArray[0].updatedAt);
-                            var date_time =  new Date(filteredArray[0].updatedAt);
-                            var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                            var date_time = new Date(filteredArray[0].updatedAt);
+                            var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
                             var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-                            var newdate = $(this).closest('.row').find('.date_time').text(`${date} ${time}` )
+                            var newdate = $(this).closest('.row').find('.date_time').text(`${date} ${time}`)
                             editableNotes.text(editableInput.val());
 
                         });
@@ -425,26 +422,26 @@ let AddLabelCRM;
 
 
 
-                    if(cliked_Fb_Id === undefined){
+                    if (cliked_Fb_Id === undefined) {
                         var alphaFbId = window.location.pathname.split('/')[1].toString();
                         console.log(alphaFbId);
                         getNumericID(alphaFbId)
-                        .then(function(response) {
-                           console.log(response.userID);
-                           cliked_Fb_Id = response.userID;
-                           if (notes == "") {
-                            toastr["error"]('Please Enter Some Text');
-                            return false;
-                        }
-                        chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
-                            console.log(res.result.updatedAt);
-                            var date_time =  new Date(res.result.updatedAt);
-                            var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
-                            var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-        
-                            if (res.status == 'note added') {
-                                toastr["success"]('Note added successfully ');
-                                var new_notes_container = `<div class="notes_container row">
+                            .then(function (response) {
+                                console.log(response.userID);
+                                cliked_Fb_Id = response.userID;
+                                if (notes == "") {
+                                    toastr["error"]('Please Enter Some Text');
+                                    return false;
+                                }
+                                chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
+                                    console.log(res.result.updatedAt);
+                                    var date_time = new Date(res.result.updatedAt);
+                                    var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                                    var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+
+                                    if (res.status == 'note added') {
+                                        toastr["success"]('Note added successfully ');
+                                        var new_notes_container = `<div class="notes_container row">
                                 <div class="note-item note_id=${res.result.id} row" >
                                     <span class="editable_notes">${notes}</span>
                                     <input class="editable_input" note_id=${res.result.id} type="text" style="display:none;">
@@ -461,23 +458,19 @@ let AddLabelCRM;
                                                         
                                 <!-- Repeat this structure for other notes -->
                             </div>`;
-                                // Append the new note-item and icons_div to the notes_container_div
-                                $('.notes_container_div').prepend(new_notes_container);
-                            } else {
-                                toastr["error"]('Some Error in adding notes');
-                            }
-                        });
+                                        // Append the new note-item and icons_div to the notes_container_div
+                                        $('.notes_container_div').prepend(new_notes_container);
+                                    } else {
+                                        toastr["error"]('Some Error in adding notes');
+                                    }
+                                });
 
-                        })
-                        .catch(function(response) {
-                            console.log("error to find fb id");
-                        });
-                 return false;
+                            })
+                            .catch(function (response) {
+                                console.log("error to find fb id");
+                            });
+                        return false;
                     }
-
-
-
-
                 }
                 if (notes == "") {
                     toastr["error"]('Please Enter Some Text');
@@ -485,8 +478,8 @@ let AddLabelCRM;
                 }
                 chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
                     console.log(res.result.updatedAt);
-                    var date_time =  new Date(res.result.updatedAt);
-                    var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                    var date_time = new Date(res.result.updatedAt);
+                    var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
                     var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
 
                     if (res.status == 'note added') {
@@ -703,7 +696,7 @@ let AddLabelCRM;
                 if (listItems.length > 0) {
                     await $this.revertByGroupFilter();
                 }
-            
+
                 const spanElement = `
                     <div id="filter-message">
                         <p>Message</p>
@@ -714,9 +707,9 @@ let AddLabelCRM;
                             <span class="close-by-group">X</span>
                         </div>
                     </div>`;
-            
+
                 const $filterMessage = $('#filter-message');
-                
+
                 if ($filterMessage.length === 0) {
                     // Append the filter message if it doesn't exist
                     $('.custom-filter').parent().append(spanElement);
@@ -726,10 +719,10 @@ let AddLabelCRM;
                     $selectedTag.attr('tag-id', id);
                     $selectedTag.text(name);
                 }
-        
-                const scrollIntervalId = setInterval(()=>{
+
+                const scrollIntervalId = setInterval(() => {
                     const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                    if(rowToScroll){
+                    if (rowToScroll) {
                         $('#overlay').show();
                         const parentContainer = rowToScroll.parentNode.parentNode;
                         const parentContainerClass = parentContainer.classList.value;
@@ -737,10 +730,10 @@ let AddLabelCRM;
                         let cheight = 600;
                         const maxIterations = 10;
                         let currentIteration = 0;
-                        intervalId = setInterval(async() => {
+                        intervalId = setInterval(async () => {
                             $('#overlay').show();
                             currentIteration++;
-                           // console.log(currentIteration);
+                            // console.log(currentIteration);
                             $('.' + parentContainerClass).animate(
                                 { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
                                 1000
@@ -748,18 +741,18 @@ let AddLabelCRM;
                             cheight = cheight + 600;
                             await $this.sortMessengerComMembers(id);
                             if (currentIteration >= maxIterations) {
-                              clearInterval(intervalId);
-                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
-                              setTimeout(()=>{
-                                $('#overlay').hide();
-                              },1000);
+                                clearInterval(intervalId);
+                                $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                                setTimeout(() => {
+                                    $('#overlay').hide();
+                                }, 1000);
                             }
                         }, 2000);
                     }
-                },2000);
+                }, 2000);
                 $this.closefilterAfterSelect();
             });
-            
+
             $(document).on('click', '.close-by-group', function () {
                 $this.revertByGroupFilter();
             });
@@ -770,7 +763,7 @@ let AddLabelCRM;
             var scrollId = setInterval(() => {
                 const targetDiv = document.querySelector('div.sort-by-selected-tag');
                 if (targetDiv) {
-                  
+
                     targetParentDiv = targetDiv.parentNode;
 
                     // Remove the previous scroll event listener if it exists
@@ -787,7 +780,7 @@ let AddLabelCRM;
                             if (selectedTag) {
                                 $this.sortMessengerComMembers(selectedTag);
                             }
-                            if($('.selected-tag').text().trim() == 'Unread'){
+                            if ($('.selected-tag').text().trim() == 'Unread') {
                                 $this.sortMemberUnread();
                             }
                         }
@@ -797,12 +790,12 @@ let AddLabelCRM;
                     // Add the new scroll event listener
                     targetParentDiv.addEventListener('scroll', scrollListener);
                     // Store the new event listener function as the previous one
-                    previousScrollListener = scrollListener;  
+                    previousScrollListener = scrollListener;
                 }
             }, 2000);
 
             // filter for unread
-            $(document).on('click', '#unread',async function () {
+            $(document).on('click', '#unread', async function () {
                 $('#overlay').show();
                 const spanElement = `
                 <div id="filter-message">
@@ -822,10 +815,10 @@ let AddLabelCRM;
                     $selectedTag.text('Unread');
                 }
 
-                const scrollIntervalId = setInterval(()=>{
+                const scrollIntervalId = setInterval(() => {
                     $('#overlay').show();
                     const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                    if(rowToScroll){
+                    if (rowToScroll) {
                         $('#overlay').show();
                         const parentContainer = rowToScroll.parentNode.parentNode;
                         const parentContainerClass = parentContainer.classList.value;
@@ -833,7 +826,7 @@ let AddLabelCRM;
                         let cheight = 600;
                         const maxIterations = 10;
                         let currentIteration = 0;
-                        intervalId = setInterval(async() => {
+                        intervalId = setInterval(async () => {
                             currentIteration++;
                             //console.log(currentIteration);
                             $('.' + parentContainerClass).animate(
@@ -843,21 +836,21 @@ let AddLabelCRM;
                             cheight = cheight + 600;
                             await $this.sortMemberUnread();
                             if (currentIteration >= maxIterations) {
-                              clearInterval(intervalId);
-                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
-                              setTimeout(()=>{
-                                $('#overlay').hide();
-                              },2000);
+                                clearInterval(intervalId);
+                                $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                                setTimeout(() => {
+                                    $('#overlay').hide();
+                                }, 2000);
                             }
                         }, 2000);
-                    }else{
+                    } else {
                         $('#overlay').hide();
                     }
-                },2000);
+                }, 2000);
 
                 $this.closefilterAfterSelect();
             });
-            
+
             //end messenger filter
         },
         sendMessageforSingleUsers: function (fb_user_id) {
@@ -894,7 +887,7 @@ let AddLabelCRM;
                                 let loader = `<div id="overlay" class="overlay">
                                     <div class="loader"></div>
                                 </div>`;
-                
+
                                 if ($('#overlay').length == 0) {
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
                                     $('div[aria-label="Chats"]').prepend(loader);
@@ -1067,7 +1060,7 @@ let AddLabelCRM;
         },
         messageComHeader: function () {
             var notes_icon1 = `<div class = "notes_div_icon" id ="header_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
- 
+
             var notes_icon2 = `<div class = "notes_div_icon" id ="bottom_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
             var clearMessageInt = setInterval(() => {
                 chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
@@ -1118,13 +1111,13 @@ let AddLabelCRM;
                 });
             }, 1000);
             setTimeout(() => {
-                setInterval(()=>{
-                    if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
+                setInterval(() => {
+                    if ($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1) {
                         $(".x6prxxf .xw2csxc").before(notes_icon2);
                     }
-                   
-                },1000)
-             
+
+                }, 1000)
+
             }, 4000);
         },
         currentProfile: function () {
@@ -1182,15 +1175,16 @@ let AddLabelCRM;
                         console.log('userid not found');
                         clearInterval(clearMessageInt);
                     }
+                    setInterval(() => {
+                        if ($(".notes_div_icon").length == 0) {
+                            $(".x5oxk1f.xym1h4x").append(notes_icon);
+                        }
+
+                    }, 1000)
                 });
             }, 1000);
-           
-            setInterval(()=>{
-                if($(".notes_div_icon").length == 0){
-                    $(".x5oxk1f.xym1h4x").append(notes_icon); 
-                }
-               
-            },1000)
+
+
         },
         messengersMembersListSelector: function () {
 
@@ -1254,7 +1248,7 @@ let AddLabelCRM;
                 item.parentNode.classList.add('sort-proceed');
             });
 
-            if(newlistItem.length > 0){
+            if (newlistItem.length > 0) {
                 // $('#overlay').show();
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     const childElement = item.querySelector('[tag-id]');
@@ -1268,7 +1262,7 @@ let AddLabelCRM;
 
                 const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
                 parentContainer.classList.add('sort-filter-class')
-    
+
                 if (parentContainer) {
                     const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
                     const firstChildParent = firstChild.parentNode;
@@ -1296,20 +1290,20 @@ let AddLabelCRM;
         revertByGroupFilter: async function () {
             $('#overlay').show();
             $('#filter-message').remove();
-            
+
             const filteredlists = Array.from(listItems).map(item => item);
             filteredlists.sort((a, b) => {
                 const aValue = a.textContent.trim().toLowerCase();
                 const bValue = b.textContent.trim().toLowerCase();
                 return aValue.localeCompare(bValue);
             });
-        
+
             for (const li of filteredlists) {
                 if (li.parentElement.classList.contains('sort-proceed')) {
                     li.parentElement.remove();
                 }
             }
-        
+
             const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             if (firstChild != null) {
                 const parentContainer = firstChild.parentNode.parentNode;
@@ -1364,7 +1358,7 @@ let AddLabelCRM;
                         }
                     }
                 };
-        
+
                 setInterval(getFirstChildInterval, 2000);
             }
         },
@@ -1378,7 +1372,7 @@ let AddLabelCRM;
                 }
             }
         },
-        sortMemberUnread(){
+        sortMemberUnread() {
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             Array.from(lists).forEach((item) => {
                 if (!item.parentNode.classList.contains('sort-proceed')) {
@@ -1392,18 +1386,18 @@ let AddLabelCRM;
                 item.parentNode.classList.add('sort-proceed');
             });
 
-            if(newlistItem.length > 0){
+            if (newlistItem.length > 0) {
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     let rowElement = item.querySelector('div[role="gridcell"]')
                     const classelement = 'xzsf02u';
                     if (rowElement != null) {
-                        let parentHtmlElement =  rowElement.querySelector('div.html-div');
-                        if(parentHtmlElement != null){
+                        let parentHtmlElement = rowElement.querySelector('div.html-div');
+                        if (parentHtmlElement != null) {
                             childElement = parentHtmlElement.querySelector('.html-span span');
                             if (childElement != null && childElement.classList.contains(classelement)) {
                                 // The class 'xzsf02u' is present in childElement's class list
                                 return childElement;
-                            } 
+                            }
                         }
                     }
                     return false;
