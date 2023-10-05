@@ -345,7 +345,7 @@ input.disabled_cls {
   right: 0 !important;	
   margin-left: 12px;	
   height: 28px;	
-  width: 162px;
+  /* width: 162px; */
   /* margin-: 422px; */	
 }	
 i.fa.fa-pencil {	
@@ -592,7 +592,7 @@ select#mySelect:focus {
 
 .processed-member-to-add .add-button-container {
     position: absolute;
-    right: 0 !important;
+    right: 5px !important;
     border-radius: 6px !important;
     overflow: hidden;
     width: 160px;
@@ -1101,7 +1101,7 @@ button#add-button {
 
 .add-button-container.header_button {
     width: max-content;
-    min-width: 90px;
+    min-width: 75px;
     margin-right: 0;
     border: none;
 }
@@ -1119,6 +1119,17 @@ div#bottom_note_icon {
 
 /* ---------------------- notes css end---------------- */
 
+
+.add-button-container.header_button span.add-icon {
+  width: max-content !important;
+  min-width: 75px;
+  border-radius: 3px;
+}
+div#current_profile_tags span.add-icon {
+  width: max-content  !important;
+  min-width: 75px;
+  border-radius: 3px;
+}
 #toastrIcon{
   width: 20px;
 }

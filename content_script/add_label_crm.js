@@ -1424,7 +1424,7 @@ let AddLabelCRM;
                     const firstChildParent = firstChild.parentNode;
                     let lastInsertedItem = null;
                     filteredItems.forEach((item, index) => {
-                        console.log(item);
+                        console.log(item)
                         if (index === 0) {
                             parentContainer.insertBefore(item, firstChildParent);
                             item.classList.add('sort-complete');
