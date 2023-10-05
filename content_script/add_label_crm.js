@@ -839,7 +839,7 @@ let AddLabelCRM;
                                 $(this).addClass('processed-member-to-add');
                                 let loader = `<div id="overlay" class="overlay">
                                                 <div class="loader">
-                                                    <span>Scroll Contacts</span>
+                                                    <img src="${chrome.runtime.getURL('assets/images/loading-forever.gif')}" alt="Scroll Contacts" width="50" height="50">
                                                 </div>
                                             </div>`;
                 
