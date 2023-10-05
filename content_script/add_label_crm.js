@@ -164,6 +164,12 @@ let AddLabelCRM;
                     };
 
                     chrome.runtime.sendMessage(message, (response) => {
+                        // let selectedTag = $('.selected-tag').attr('tag-id');
+                        // if (selectedTag) {
+                        //     $this.sortMessengerComMembers(selectedTag);
+                        // }
+                        
+                        
                         // var parsedData = JSON.parse(response.data);
                         // var message = parsedData.msg;
                         // toastr["success"]('User Update Succesfully');
@@ -338,7 +344,6 @@ let AddLabelCRM;
                 noteItem.find('.save-icon').show();
             });
 
-
             //It is used to delete the note (deletion)
             $(document).on('click', '.delete-icon', function () {
                 // Find the closest '.notes_container row' and remove it
@@ -354,8 +359,6 @@ let AddLabelCRM;
                 });
 
             });
-
-
 
             // To save the updated data of notes (update)
             $(document).on('click', '.save-icon', function () {
@@ -409,7 +412,6 @@ let AddLabelCRM;
                 $('#notes-modal').css('display', 'none');
                 $(".notes_container").remove();
             });
-
 
             //add notes
             $(document).on('click', '#add-button', function () {
@@ -518,9 +520,6 @@ let AddLabelCRM;
                 $('#notes-textarea').val('');
 
             });
-
-
-
 
             $(document).on('click', '.add-button-container', async function (event) {
                 event.preventDefault();
@@ -701,7 +700,7 @@ let AddLabelCRM;
                 const id = $(this).attr('tag-id');
                 const name = $(this).text().trim();
                 if (listItems.length > 0) {
-                    await $this.revertByGroupFilter();
+                    await $this.revertFilter();
                 }
             
                 const spanElement = `
@@ -761,7 +760,7 @@ let AddLabelCRM;
             });
             
             $(document).on('click', '.close-by-group', function () {
-                $this.revertByGroupFilter();
+                $this.revertFilter();
             });
 
             // Define a variable to store the previous event listener function
@@ -770,15 +769,12 @@ let AddLabelCRM;
             var scrollId = setInterval(() => {
                 const targetDiv = document.querySelector('div.sort-by-selected-tag');
                 if (targetDiv) {
-                  
                     targetParentDiv = targetDiv.parentNode;
-
                     // Remove the previous scroll event listener if it exists
                     if (previousScrollListener) {
                         targetParentDiv.removeEventListener('scroll', previousScrollListener);
                     }
                     clearInterval(scrollId);
-
                     // Define the new scroll event listener function
                     const scrollListener = function (event) {
                         let currentScrollPos = targetParentDiv.scrollTop;
@@ -824,7 +820,6 @@ let AddLabelCRM;
             });
         },
         messengersCom: function () {
-            console.log('messengersCom');
             selector_parent_of_contacts_list = 'div[aria-label="Chat settings"]';
             clearMessageInt = setInterval(function () {
 
@@ -835,21 +830,18 @@ let AddLabelCRM;
                         if ($(selector_search_list).length > 0) {
                             selector_members_list = selector_search_list
                         }
-                        // console.log($(selector_members_list));
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('messenger') > -1) {
-                            //console.log("hello running")
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon" >+</span>';
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
-                            // console.log(selector_members_list);
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
-                                // $('.processed-member-to-add:eq(0)').parent().parent().addClass('main-filter-div');
-
                                 let loader = `<div id="overlay" class="overlay">
-                                    <div class="loader"></div>
-                                </div>`;
+                                                <div class="loader">
+                                                    <span>Scroll Contacts</span>
+                                                </div>
+                                            </div>`;
                 
                                 if ($('#overlay').length == 0) {
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
@@ -871,7 +863,6 @@ let AddLabelCRM;
                                     //console.log('fb id not found');
                                 }
 
-                                // console.log(fb_user);
                                 if (fb_user != '' && fb_user != undefined) {
                                     if ($(this).find('div.add-button-container').length > 0) {
                                         $(this).find('div.add-button-container').remove();
@@ -880,12 +871,9 @@ let AddLabelCRM;
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
-                                //console.log(userTagsArray);
                                 userTagsArray.forEach((item) => {
                                     if (fb_user === item.fb_user_id) {
-
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-
                                         if (filteredTags.length > 0) {
                                             $(this).attr('tag-id', filteredTags[0].id)
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -916,45 +904,33 @@ let AddLabelCRM;
 
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
                                     fb_user = $(this).find('a:eq(0)').attr('href').split('/')[1];
-                                    // console.log(fb_user);
                                     if (fb_user.indexOf('?') > -1) {
                                         fb_user = fb_user.split('?')[0];
                                     }
-                                    // console.log(fb_user);
                                     fb_user = fb_user.replace('/', '');
-                                    // console.log(fb_user);
                                 } else {
                                     //console.log('fb id not found');
                                 }
-                                // console.log('fb_user - ',fb_user);
                                 if (fb_user != '') {
-                                    // console.log(fb_user);
                                     if ($(this).find('div.add-button-container').length > 0) {
                                         $(this).find('div.add-button-container').remove();
-
                                     }
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
 
-                                // console.log(userTagsArray);
                                 userTagsArray.forEach((item) => {
                                     if (fb_user === item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-                                        console.log(filteredTags);
-
                                         if (filteredTags.length > 0) {
-
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                             let add_tag_button = `<div class="add-button-container contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
                                             $(this).append(add_tag_button);
                                         }
-
                                     }
                                 })
                             });
                         }
-                        //clearInterval(clearMessageInt);
                     } else {
                         console.log('userid not found');
                         clearInterval(clearMessageInt);
@@ -1039,8 +1015,6 @@ let AddLabelCRM;
                                 //  console.log('fb id not found');
                             }
 
-                            // console.log(fb_user);
-
                             if (fb_user != '') {
                                 if ($('.x1u998qt').find('div.header_button').length > 0) {
                                     $('.x1u998qt').find('div.header_button').remove();
@@ -1051,7 +1025,6 @@ let AddLabelCRM;
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user === item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean);
-                            // console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                 const addTagButton = `
@@ -1155,8 +1128,6 @@ let AddLabelCRM;
             var selector_clist2 = 'div[aria-label="Chats"][role="grid"] div[role="row"]';
             var selector_clist3 = 'div[aria-label][role="grid"].x78zum5 div[role="row"]';
 
-
-
             if ($(selector_clist1).length > 0) {
                 selector_latest = selector_clist1
             }
@@ -1249,10 +1220,8 @@ let AddLabelCRM;
                 // }, 1000);
             }
         },
-        revertByGroupFilter: async function () {
-            $('#overlay').show();
+        revertFilter: async function () {
             $('#filter-message').remove();
-            
             const filteredlists = Array.from(listItems).map(item => item);
             filteredlists.sort((a, b) => {
                 const aValue = a.textContent.trim().toLowerCase();
@@ -1274,9 +1243,6 @@ let AddLabelCRM;
                     listItems.forEach(item => {
                         parentContainer.insertBefore(item, firstChildParent);
                     });
-                    setTimeout(() => {
-                        $('#overlay').hide();
-                    }, 1000);
                 } else {
                     const parentContainer = document.querySelector('div.sort-filter-class');
                     if (parentContainer) {
@@ -1286,9 +1252,6 @@ let AddLabelCRM;
                             });
                         }
                     }
-                    setTimeout(() => {
-                        $('#overlay').hide();
-                    }, 1000);
                 }
             } else {
                 const getFirstChildInterval = async () => {
@@ -1301,9 +1264,6 @@ let AddLabelCRM;
                             listItems.forEach(item => {
                                 parentContainer.insertBefore(item, firstChildParent);
                             });
-                            setTimeout(() => {
-                                $('#overlay').hide();
-                            }, 1000);
                         } else {
                             const parentContainer = document.querySelector('div.sort-filter-class');
                             if (parentContainer) {
@@ -1313,14 +1273,10 @@ let AddLabelCRM;
                                         parentContainer.prepend(item);
                                     });
                                 }
-                                setTimeout(() => {
-                                    $('#overlay').hide();
-                                }, 1000);
                             }
                         }
                     }
                 };
-        
                 setInterval(getFirstChildInterval, 2000);
             }
         },
@@ -1404,12 +1360,13 @@ let AddLabelCRM;
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     let rowElement = item.querySelector('div[role="gridcell"]')
                     const textelement = 'You:';
+                    const classelement = 'xzsf02u';
                     if (rowElement != null) {
                         let parentHtmlElement =  rowElement.querySelector('div.html-div');
                         if(parentHtmlElement != null){
                             childElement = parentHtmlElement.querySelector('.html-span span');
                            
-                            if (childElement != null &&  !childElement.innerText.includes(textelement)) {
+                            if (childElement != null &&  !childElement.innerText.includes(textelement) && childElement.classList.contains(classelement)) {
                                 return childElement;
                             } 
                         }
@@ -1424,7 +1381,6 @@ let AddLabelCRM;
                     const firstChildParent = firstChild.parentNode;
                     let lastInsertedItem = null;
                     filteredItems.forEach((item, index) => {
-                        console.log(item)
                         if (index === 0) {
                             parentContainer.insertBefore(item, firstChildParent);
                             item.classList.add('sort-complete');
@@ -1490,8 +1446,25 @@ let AddLabelCRM;
               }
             }, 2000);
             $this.closefilterAfterSelect();
+        },
+        scrollAfterUpdateTag(){
+            const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+            if (rowToScroll) {
+                $('#overlay').show();
+                const parentContainer = rowToScroll.parentNode.parentNode;
+                const parentContainerClass = parentContainer.classList.value;
+                $('.' + parentContainerClass).animate(
+                    { scrollTop: $('.' + parentContainerClass).scrollTop() + 1000 },
+                    1000
+                );
+                setTimeout(()=>{
+                    $('#overlay').hide();
+                },1000);
+            }
         }
 
     };
     AddLabelCRM.initilaize();
 })(jQuery);
+
+

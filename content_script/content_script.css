@@ -835,20 +835,30 @@ ul li:hover > ul {
 
 /* Styles for the loader */
 .loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 2s linear infinite;
-  margin-left: 50%;
-  margin-top: 50%;
+  /* border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db; */
+  /* border-radius: 50%; */
+  width: 200px;
+  height: 50px;
+  /* animation: spin 2s linear infinite; */
+  margin-left: 35%;
+  margin-top: 70%;
 }
 
-@keyframes spin {
+.loader span{
+  background-color: white;
+  border-radius: 5px;
+  border:2px solid rgb(70, 130, 180);
+  color: black;
+  padding: 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
+} */
 
 
 
