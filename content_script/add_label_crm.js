@@ -734,7 +734,7 @@ let AddLabelCRM;
                         const parentContainerClass = parentContainer.classList.value;
                         clearInterval(scrollIntervalId);
                         let cheight = 600;
-                        const maxIterations = 10;
+                        const maxIterations = 3;
                         let currentIteration = 0;
                         intervalId = setInterval(async() => {
                             $('#overlay').show();
@@ -1423,7 +1423,7 @@ let AddLabelCRM;
                 const parentContainerClass = parentContainer.classList.value;
                 clearInterval(scrollIntervalId);
                 let cheight = 600;
-                const maxIterations = 10;
+                const maxIterations = 3;
                 let currentIteration = 0;
                 intervalId = setInterval(async () => {
                   currentIteration++;
