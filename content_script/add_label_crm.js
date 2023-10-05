@@ -668,7 +668,7 @@ let AddLabelCRM;
                         ddownhtml += `</ul>
                                                         </li>
                                                         <li class="filter_text"><a id="unread">Unread</a></li>
-                                                        
+                                                        <li class="filter_text"><a id="last_reply">Last Reply</a></li>
                                                     </ul>
                                                 </div>`;
 
@@ -790,6 +790,9 @@ let AddLabelCRM;
                             if($('.selected-tag').text().trim() == 'Unread'){
                                 $this.sortMemberUnread();
                             }
+                            if($('.selected-tag').text().trim() == 'Last Reply'){
+                                $this.sortMemberLastReply();
+                            }
                         }
                         prevScrollPos = currentScrollPos;
                     };
@@ -803,59 +806,12 @@ let AddLabelCRM;
 
             // filter for unread
             $(document).on('click', '#unread',async function () {
-                $('#overlay').show();
-                const spanElement = `
-                <div id="filter-message">
-                    <p>Message</p>
-                    <div>
-                        <span class="close-icon selected-tag">Unread</span>
-                        <span class="close-by-group">X</span>
-                    </div>
-                </div>`;
+                $this.handleFilterClick('Unread', $this.sortMemberUnread);
+            });
 
-                const $filterMessage = $('#filter-message');
-                if ($filterMessage.length === 0) {
-                    $('.custom-filter').parent().append(spanElement);
-                } else {
-                    const $selectedTag = $('.selected-tag');
-                    $selectedTag.removeAttr('tag-id')
-                    $selectedTag.text('Unread');
-                }
 
-                const scrollIntervalId = setInterval(()=>{
-                    $('#overlay').show();
-                    const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                    if(rowToScroll){
-                        $('#overlay').show();
-                        const parentContainer = rowToScroll.parentNode.parentNode;
-                        const parentContainerClass = parentContainer.classList.value;
-                        clearInterval(scrollIntervalId);
-                        let cheight = 600;
-                        const maxIterations = 10;
-                        let currentIteration = 0;
-                        intervalId = setInterval(async() => {
-                            currentIteration++;
-                            //console.log(currentIteration);
-                            $('.' + parentContainerClass).animate(
-                                { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
-                                1000
-                            );
-                            cheight = cheight + 600;
-                            await $this.sortMemberUnread();
-                            if (currentIteration >= maxIterations) {
-                              clearInterval(intervalId);
-                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
-                              setTimeout(()=>{
-                                $('#overlay').hide();
-                              },2000);
-                            }
-                        }, 2000);
-                    }else{
-                        $('#overlay').hide();
-                    }
-                },2000);
-
-                $this.closefilterAfterSelect();
+            $(document).on('click','#last_reply',async function(){
+                $this.handleFilterClick('Last Reply', $this.sortMemberLastReply);
             });
             
             //end messenger filter
@@ -1430,6 +1386,111 @@ let AddLabelCRM;
                 }
             }
         },
+        sortMemberLastReply(){
+            lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
+            Array.from(lists).forEach((item) => {
+                if (!item.parentNode.classList.contains('sort-proceed')) {
+                    listItems.push(item.parentNode);
+                }
+            });
+
+            let newlistItem = [];
+            Array.from(lists).map((item) => {
+                newlistItem.push(item.parentNode);
+                item.parentNode.classList.add('sort-proceed');
+            });
+
+            if(newlistItem.length > 0){
+                const filteredItems = Array.from(newlistItem).filter(item => {
+                    let rowElement = item.querySelector('div[role="gridcell"]')
+                    const textelement = 'You:';
+                    if (rowElement != null) {
+                        let parentHtmlElement =  rowElement.querySelector('div.html-div');
+                        if(parentHtmlElement != null){
+                            childElement = parentHtmlElement.querySelector('.html-span span');
+                           
+                            if (childElement != null &&  !childElement.innerText.includes(textelement)) {
+                                return childElement;
+                            } 
+                        }
+                    }
+                    return false;
+                });
+                const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
+                parentContainer.classList.add('sort-filter-class')
+
+                if (parentContainer) {
+                    const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
+                    const firstChildParent = firstChild.parentNode;
+                    let lastInsertedItem = null;
+                    filteredItems.forEach((item, index) => {
+                        console.log(item);
+                        if (index === 0) {
+                            parentContainer.insertBefore(item, firstChildParent);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        } else {
+                            parentContainer.insertBefore(item, lastInsertedItem.nextSibling);
+                            item.classList.add('sort-complete');
+                            lastInsertedItem = item; // Update the last inserted item
+                        }
+                    });
+                }
+            }
+        },
+        handleFilterClick(tagText, sortFunction) {
+            $('#overlay').show();
+            const spanElement = `
+              <div id="filter-message">
+                <p>Message</p>
+                <div>
+                  <span class="close-icon selected-tag">${tagText}</span>
+                  <span class="close-by-group">X</span>
+                </div>
+              </div>`;
+          
+            const $filterMessage = $('#filter-message');
+            if ($filterMessage.length === 0) {
+              $('.custom-filter').parent().append(spanElement);
+            } else {
+              const $selectedTag = $('.selected-tag');
+              $selectedTag.removeAttr('tag-id');
+              $selectedTag.text(tagText);
+            }
+          
+            const scrollIntervalId = setInterval(() => {
+              $('#overlay').show();
+              const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+              if (rowToScroll) {
+                $('#overlay').show();
+                const parentContainer = rowToScroll.parentNode.parentNode;
+                const parentContainerClass = parentContainer.classList.value;
+                clearInterval(scrollIntervalId);
+                let cheight = 600;
+                const maxIterations = 10;
+                let currentIteration = 0;
+                intervalId = setInterval(async () => {
+                  currentIteration++;
+                  $('.' + parentContainerClass).animate(
+                    { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
+                    1000
+                  );
+                  cheight = cheight + 600;
+                  await sortFunction();
+                  if (currentIteration >= maxIterations) {
+                    clearInterval(intervalId);
+                    $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                    setTimeout(() => {
+                      $('#overlay').hide();
+                    }, 2000);
+                  }
+                }, 2000);
+              } else {
+                $('#overlay').hide();
+              }
+            }, 2000);
+            $this.closefilterAfterSelect();
+        }
 
     };
     AddLabelCRM.initilaize();

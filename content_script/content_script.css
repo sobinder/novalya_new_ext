@@ -944,7 +944,7 @@ button.dropbtn.custom-drop svg {
     width: 20px;
 }
 
-a#sort-by-group,a#unread {
+a#sort-by-group,a#unread,a#last_reply {
     color: #646464;
 }
 
