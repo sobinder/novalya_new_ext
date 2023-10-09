@@ -1011,6 +1011,7 @@ span.close-icon.selected-tag {
 .modal-content {
   background-color: #fff;
   margin: 15% auto;
+  margin-top: 103px !important;
   padding: 20px;
   border: 1px solid #888;
   width: 580px;
@@ -1105,7 +1106,8 @@ button#add-button {
     order: 4;
     display: flex;
     align-items: center;
-    margin-left: 8px;
+    /* margin-left: 8px; */
+    margin-right: auto;
     height: 30px;
 }
 

@@ -207,11 +207,11 @@ let AddLabelCRM;
 
             //Open notes popup
             $(document).on('click', '.notes_div_icon', async function (event) {
-                var filteredArray = [];
-                console.log("notes clicked");
                 event.preventDefault();
                 event.stopPropagation();
-
+                var filteredArray = [];
+                console.log("notes clicked");
+                
                 var pathname = window.location.href.toString();
                 var cliked_Fb_Id = '';
                 if (pathname.indexOf('profile.php') > -1) {
@@ -1053,9 +1053,19 @@ let AddLabelCRM;
                             } else {
                                 $(".x1u998qt a").append(add_label_button);
                             }
-                            if ($(".x1u998qt a .post").length === 0) {
-                                $(".x1u998qt a").append(notes_icon1);
+
+                           
+
+                            if(window.location.href.indexOf('facebook.com/messages/t/') > 0){
+                                if($(".x1u998qt .post").length === 0){
+                                    $(".x1u998qt a").parent().append(notes_icon1);
+                                }
+                            }else{
+                                if ($(".x1u998qt a .post").length === 0) {
+                                    $(".x1u998qt a").append(notes_icon1);
+                                }
                             }
+                            
                         }, 2000);
                     }
                     else {
@@ -1067,7 +1077,7 @@ let AddLabelCRM;
             setTimeout(() => {
                 setInterval(()=>{
                     if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
-                        $(".x6prxxf .xw2csxc").before(notes_icon2);
+                        $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
                     }
                    
                 },1000)
