@@ -464,6 +464,7 @@ let AddLabelCRM;
                 //console.log(fb_user_id);
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
+                       // console.log(response);
                         var tag_data_individual = JSON.parse(response);
 
                         //var tag_data_individual = response;
@@ -485,7 +486,8 @@ let AddLabelCRM;
                                 clearInterval(checkMultiple);
                                 $('.multi-label-checkbox').each(function () {
                                     var checkboxValue = $(this).parents('li').attr('tag-id'); // Get the value of the checkbox
-
+                                    // console.log(arrayOfIds);
+                                    // console.log(checkboxValue);
                                     // Check if the checkbox value exists in the valuesArray
                                     if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
                                         $(this).prop('checked', true); // Check the checkbox
@@ -495,6 +497,8 @@ let AddLabelCRM;
                         }, 1000);
                     }
                     $('#mySelect option').each(function () {
+                        // console.log('primary ',primary);
+                        // console.log($(this).val());
                         if (primary && $(this).val() == primary) {
                             $(this).attr('selected', 'selected');
                         }
@@ -505,17 +509,17 @@ let AddLabelCRM;
                 });
 
                 var options = `
-                <div class="row novalya-row modal-heading">
-                    <div class="label-name">` + fbName + `</div>
-                    <div class="close-model">X</div>
-                </div>
-                <div class = "primary_dropdown">
-                <label for="mySelect">Select Primary:</label>                 
-                <select id="mySelect"> ${options2}</select>
-                </div>
-                <div class="row novalya-row"> 
-                    <div class="labels-list-container">
-                        <ul class="model-labels-list novalya-scroll">`;
+                    <div class="row novalya-row modal-heading">
+                        <div class="label-name">` + fbName + `</div>
+                        <div class="close-model">X</div>
+                    </div>
+                    <div class = "primary_dropdown">
+                    <label for="mySelect">Select Primary:</label>                 
+                    <select id="mySelect"> ${options2}</select>
+                    </div>
+                    <div class="row novalya-row"> 
+                        <div class="labels-list-container">
+                            <ul class="model-labels-list novalya-scroll">`;
 
                 for (i = 0; i < tags_fetch_data.length; i++) {
                     var style = '';
