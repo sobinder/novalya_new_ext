@@ -58,6 +58,7 @@
             "resources": [
                 "assets/image/filter.png",
                 "assets/images/post.png",
+                "assets/images/message.png",
                 "assets/images/loading-forever.gif"
             ],
             "matches": [

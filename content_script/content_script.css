@@ -1145,3 +1145,7 @@ div#current_profile_tags span.add-icon {
 #toastrIcon{
   width: 20px;
 }
+
+.notes_div_icon{
+  z-index: 999999;
+}

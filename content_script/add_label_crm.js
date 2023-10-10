@@ -205,139 +205,32 @@ let AddLabelCRM;
 
             });
 
+            $(document).on('click','.message_div_icon', async function(){
+                alert('here');
+                event.preventDefault();
+                event.stopPropagation();
+                let templateArray = [];
+                templateArray = ["hi","hello","Good Morning","Namaste"];
+               
+                let tagId = '';
+            })
+
             //Open notes popup
             $(document).on('click', '.notes_div_icon', async function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                var filteredArray = [];
                 console.log("notes clicked");
-                
-                var pathname = window.location.href.toString();
-                var cliked_Fb_Id = '';
-                if (pathname.indexOf('profile.php') > -1) {
-                    cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
-                } else if (window.location.pathname.indexOf('/friends') == -1) {
-                    console.log("here");
-                    cliked_Fb_Id = window.location.pathname.split('/')[2];
-                    if(cliked_Fb_Id === undefined){
-                        var alphaFbId = window.location.pathname.split('/')[1].toString();
-                        console.log(alphaFbId);
-                        getNumericID(alphaFbId)
-                        .then(function(response) {
-                           console.log(response.userID);
-                           cliked_Fb_Id = response.userID;
-                           var notes_modal = `<div id="notes-modal" class="modal">
-                           <div class="modal-content">
-                           <input id="fb_id_for_notes" type="hidden" value="`+ cliked_Fb_Id + `">
-                               <span class="close">&times;</span>
-                               <h1 style="margin-bottom: 15px">Notes</h1>
-                               <textarea id="notes-textarea" placeholder="Enter your notes here..."></textarea>
-                               <button id="add-button">+ Add</button>
-                            <div class="notes_container_div">
-                                  
-                           </div>
-                       </div>`;
-                           $('body').append($(notes_modal));
-           
-                           chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
-                               var all_data_array = res.api_data;
-                               console.log(all_data_array);
-                               filteredArray = all_data_array.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
-                               console.log(filteredArray);
-           
-                               filteredArray.forEach(item => {
-           
-                                   var date_time =  new Date(item.updatedAt);
-                                   var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
-                                   var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-                                   var append_notes = ` <div class="notes_container row">
-                                   <div class="note-item row" note_id = ${item.id}>
-                                       <span class="editable_notes">${item.description}</span>
-                                       <input class="editable_input" note_id = ${item.id}  type="text" style="display:none;">
-                                       
-                                   </div>
-                                   <div class="date_time_div">
-                                   <span class="date_time">${date} ${time}</span>
-                                   </div>  
-                                   <div class="icons_div">
-                                       <span class="edit-icon">&#9998;</span> <!-- Edit icon -->
-                                       <span class="save-icon" style="display:none;">&#128190;</span> <!-- Save icon -->
-                                       <span class="delete-icon">🗑️</span> <!-- Delete icon -->
-                                       <!--  <span class="delete-icon">&#10006;</span> -->
-                                   </div>
-                                                        
-                                                           
-                                   <!-- Repeat this structure for other notes -->
-                               </div>`
-                                   if ($("editable_input").attr("note_id") != item.id) {
-                                       $(".notes_container_div").append(append_notes);
-                                   }
-           
-                               });
-                               $('#notes-modal').css('display', 'block');
-                           });
-                        })
-                        .catch(function(response) {
-                            console.log("error to find fb id");
-                        });
-                 
-                    }
-                }
-                
-                console.log(cliked_Fb_Id);
-
-                var notes_modal = `<div id="notes-modal" class="modal">
-                <div class="modal-content">
-                <input id="fb_id_for_notes" type="hidden" value="`+ cliked_Fb_Id + `">
-                    <span class="close">&times;</span>
-                    <h1 style="margin-bottom: 15px">Notes</h1>
-                    <textarea id="notes-textarea" placeholder="Enter your notes here..."></textarea>
-                    <button id="add-button">+ Add</button>
-                 <div class="notes_container_div">
-                       
-                </div>
-            </div>`;
-                $('body').append($(notes_modal));
-
-                chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
-                    var all_data_array = res.api_data;
-                    filteredArray = all_data_array.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
-                    console.log(filteredArray);
-
-                    filteredArray.forEach(item => {
-
-                        var date_time =  new Date(item.updatedAt);
-                        var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
-                        var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-                        var append_notes = ` <div class="notes_container row">
-                        <div class="note-item row" note_id = ${item.id}>
-                            <span class="editable_notes">${item.description}</span>
-                            <input class="editable_input" note_id = ${item.id}  type="text" style="display:none;">
-                            
-                        </div>
-                        <div class="date_time_div">
-                        <span class="date_time">${date} ${time}</span>
-                        </div>  
-                        <div class="icons_div">
-                            <span class="edit-icon">&#9998;</span> <!-- Edit icon -->
-                            <span class="save-icon" style="display:none;">&#128190;</span> <!-- Save icon -->
-                            <span class="delete-icon">🗑️</span> <!-- Delete icon -->
-                            <!--  <span class="delete-icon">&#10006;</span> -->
-                        </div>
-                                             
-                                                
-                        <!-- Repeat this structure for other notes -->
-                    </div>`
-                        if ($("editable_input").attr("note_id") != item.id) {
-                            $(".notes_container_div").append(append_notes);
-                        }
-
-                    });
+                try {
+                    const cliked_Fb_Id = await $this.getClikedFbId();
+                    const notesModal = $this.createNotesModal(cliked_Fb_Id);
+                    $('body').append($(notesModal));
+                    const res = await $this.getNotesData(cliked_Fb_Id);
+                    const filteredArray = res.api_data.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
+                    $this.updateNotesContainer(filteredArray);
                     $('#notes-modal').css('display', 'block');
-                });
-
-
-
+                } catch (error) {
+                    console.error(error);
+                }
             });
 
             // Edit the notes
@@ -440,9 +333,11 @@ let AddLabelCRM;
                     cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
 
                 } else if (window.location.pathname.indexOf('/friends') == -1) {
-                    cliked_Fb_Id = window.location.pathname.split('/')[2];
-
-
+                    if (window.location.pathname.indexOf('/t/') > 0) {
+                        cliked_Fb_Id = window.location.pathname.split('/t/')[1];
+                    } else {
+                        cliked_Fb_Id = window.location.pathname.split('/')[2];
+                    }
 
 
                     if(cliked_Fb_Id === undefined){
@@ -879,8 +774,9 @@ let AddLabelCRM;
                                     $(this).append(add_label_button);
                                 }
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user === item.fb_user_id) {
-                                        const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                    if (fb_user == item.fb_user_id) {
+                                        const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
+                                        console.log(filteredTags);
                                         if (filteredTags.length > 0) {
                                             console.log('in')
                                             $(this).attr('tag-id', filteredTags[0].id)
@@ -931,8 +827,9 @@ let AddLabelCRM;
                                 }
 
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user === item.fb_user_id) {
-                                        const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
+                                    if (fb_user == item.fb_user_id) {
+                                        const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
+                                        console.log(filteredTags);
                                         if (filteredTags.length > 0) { 
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                             let add_tag_button = `<div class="add-button-container contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
@@ -955,14 +852,14 @@ let AddLabelCRM;
                     var user_id = res16.user_id;
                     if (user_id != 0 && user_id != "") {
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('facebook') > -1) {
-                            // console.log("hello running")
+                             console.log("hello running")
                             processing = true;
                             var add_label_button = '<div class="add-button-container"><span class="add-icon">+</span>';
 
                             
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
-                            $(selector_members_list).each(function (index) {
+                            $(selector_members_list).each(async function (index) {
                                 $(this).addClass('processed-member-to-add');
                                 if ($('#overlay').length == 0) {
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
@@ -978,9 +875,10 @@ let AddLabelCRM;
                                     }
                                     fb_user = fb_user.replace('/', '');
                                 } else {
-                                    //console.log('fb id not found');
+                                    console.log('fb id not found');
                                 }
-
+                                
+                                
                                 // console.log(fb_user);
                                 if (fb_user != '') {
                                     if ($(this).find('div.add-button-container').length > 0) {
@@ -991,9 +889,9 @@ let AddLabelCRM;
                                 }
 
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user === item.fb_user_id) {
-                                        const filteredTags = item.tags.filter(tag => tag.id === item.primary_tag);
-                                        //  console.log(filteredTags);
+                                    if (fb_user == item.fb_user_id) {
+                                        const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
+                                         
 
                                         if (filteredTags.length > 0) {
                                             $(this).attr('tag-id', filteredTags[0].id);
@@ -1019,18 +917,22 @@ let AddLabelCRM;
             var notes_icon1 = `<div class = "notes_div_icon" id ="header_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
  
             var notes_icon2 = `<div class = "notes_div_icon" id ="bottom_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
+
+            var message_icon = `<div class = "message_div_icon" id ="bottom_message_icon"><img src="${chrome.runtime.getURL('assets/images/message.png')}" class="post" title="Message" height="25"></div>`;
+            
             var clearMessageInt = setInterval(() => {
-                chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
+                chrome.runtime.sendMessage({ action: "reloadExtensionId" },  (res16) => {
                     var user_id = res16.user_id;
                     if (user_id != 0 && user_id != "") {
                         var add_label_button = '<div class="add-button-container header_button"><span class="add-icon">+</span>';
-                        setTimeout(() => {
+                        setTimeout(async() => {
                             var fb_user = '';
                             currentWindowUrl = window.location.origin;
                             if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
                                 fb_user = $(".x1u998qt").find('a').attr('href').split('/')[3];
-                            } else {
-                                //  console.log('fb id not found');
+                            } 
+                            if(fb_user == undefined){
+                                fb_user = await $this.getClikedFbId();
                             }
 
                             if (fb_user != '') {
@@ -1039,22 +941,21 @@ let AddLabelCRM;
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
                             }
-
+                          
                             let filteredTags = userTagsArray
-                                .filter(item => fb_user === item.fb_user_id)
-                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean);
+                                .filter(item => fb_user == item.fb_user_id)
+                                .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
+                                
                             if (filteredTags.length > 0) {
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                 const addTagButton = `
                                                 <div id="msg-header" class="add-button-container header_button" style="${style}">
-                                                    <span class="add-icon" style="${style}">${filteredTags[0].name}</span>
+                                                    <span class="add-icon" tag-id="${filteredTags[0].id}" style="${style}">${filteredTags[0].name}</span>
                                                 </div>`;
                                 $(".x1u998qt a").append(addTagButton);
                             } else {
                                 $(".x1u998qt a").append(add_label_button);
                             }
-
-                           
 
                             if(window.location.href.indexOf('facebook.com/messages/t/') > 0){
                                 if($(".x1u998qt .post").length === 0){
@@ -1078,8 +979,8 @@ let AddLabelCRM;
                 setInterval(()=>{
                     if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
                         $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
+                        // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
                     }
-                   
                 },1000)
              
             }, 4000);
@@ -1093,7 +994,7 @@ let AddLabelCRM;
                     var user_id = res16.user_id;
                     if (user_id != 0 && user_id != "") {
                         var add_label_button = '<div class="add-button-container" id = "current_profile_tags"><span class="add-icon">+</span>';
-                        setTimeout(() => {
+                        setTimeout(async () => {
                             var fb_user = '';
                             currentWindowUrl = window.location.search;
                             if (currentWindowUrl !== "") {
@@ -1101,9 +1002,9 @@ let AddLabelCRM;
                                 fb_user = match ? match[1] : null;
                             } else {
                                 var currentWindowUrl2 = window.location.pathname;
-                                //fb_user = currentWindowUrl2.replace(/^\/|\/$/g, '');
-                                fb_user = currentWindowUrl2.replace('/t/', '');
+                                fb_user = await $this.getClikedFbId();
                             }
+                            
                             if (fb_user != '' && fb_user != null) {
                                 fb_user = fb_user.replace(/\//g, '');
                             }
@@ -1116,9 +1017,8 @@ let AddLabelCRM;
                                 $(".x9a2f9n").attr('fb_user_id', fb_user);
                             }
                             let filteredTags = userTagsArray
-                                .filter(item => fb_user === item.fb_user_id)
-                                .map(item => item.tags.find(tag => tag.id === item.primary_tag)).filter(Boolean);
-                            // console.log(filteredTags);
+                                .filter(item => fb_user == item.fb_user_id)
+                                .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
                             if (filteredTags.length > 0) {
                                 $(this).attr('tag-id', filteredTags[0].id);
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -1193,6 +1093,7 @@ let AddLabelCRM;
                 }
             });
         },
+        // Menu filters functions
         sortMessengerComMembers: function (selectedTag) {
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
 
@@ -1473,6 +1374,76 @@ let AddLabelCRM;
               }
             }, 2000);
             $this.closefilterAfterSelect();
+        },
+
+        // Notes functions
+        async getClikedFbId() {
+            const pathname = window.location.href.toString();
+            let cliked_Fb_Id = '';
+        
+            if (pathname.indexOf('profile.php') > -1) {
+                cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
+            } else if (window.location.pathname.indexOf('/friends') === -1) {
+                if (window.location.pathname.indexOf('/t/') > 0) {
+                    cliked_Fb_Id = window.location.pathname.split('/t/')[1];
+                } else {
+                    cliked_Fb_Id = window.location.pathname.split('/')[2];
+                }
+        
+                if (cliked_Fb_Id === undefined) {
+                    const alphaFbId = window.location.pathname.split('/')[1].toString();
+                    const response = await getNumericID(alphaFbId);
+                    cliked_Fb_Id = response.userID;
+                }
+            }
+            return cliked_Fb_Id;
+        },
+        createNotesModal(cliked_Fb_Id) {
+            return `
+                <div id="notes-modal" class="modal">
+                    <div class="modal-content">
+                        <input id="fb_id_for_notes" type="hidden" value="${cliked_Fb_Id}">
+                        <span class="close">&times;</span>
+                        <h1 style="margin-bottom: 15px">Notes</h1>
+                        <textarea id="notes-textarea" placeholder="Enter your notes here..."></textarea>
+                        <button id="add-button">+ Add</button>
+                        <div class="notes_container_div"></div>
+                    </div>
+                </div>`;
+        },
+        async getNotesData(cliked_Fb_Id) {
+            const res = await chrome.runtime.sendMessage({ action: "get_all_notes" });
+            console.log(res);
+            return res;
+        },
+        updateNotesContainer(filteredArray) {
+            const notesContainerDiv = $(".notes_container_div");
+            notesContainerDiv.html('');
+        
+            filteredArray.forEach(item => {
+                const date_time = new Date(item.updatedAt);
+                const date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()}`;
+                const time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+                const append_notes = `
+                    <div class="notes_container row">
+                        <div class="note-item row" note_id="${item.id}">
+                            <span class="editable_notes">${item.description}</span>
+                            <input class="editable_input" note_id="${item.id}" type="text" style="display:none;">
+                        </div>
+                        <div class="date_time_div">
+                            <span class="date_time">${date} ${time}</span>
+                        </div>
+                        <div class="icons_div">
+                            <span class="edit-icon">&#9998;</span>
+                            <span class="save-icon" style="display:none;">&#128190;</span>
+                            <span class="delete-icon">🗑️</span>
+                        </div>
+                    </div>`;
+        
+                if ($(".editable_input").attr("note_id") !== item.id) {
+                    notesContainerDiv.append(append_notes);
+                }
+            });
         }
 
     };
