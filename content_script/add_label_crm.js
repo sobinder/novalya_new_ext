@@ -461,10 +461,12 @@ let AddLabelCRM;
                         }
                     }
                 }
-                //console.log(fb_user_id);
+                if(fb_user_id == undefined){
+                    fb_user_id =  await $this.getClikedFbId();
+                }
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
-                       // console.log(response);
+                        console.log(response);
                         var tag_data_individual = JSON.parse(response);
 
                         //var tag_data_individual = response;
