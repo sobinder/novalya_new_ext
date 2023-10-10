@@ -1146,6 +1146,7 @@ div#current_profile_tags span.add-icon {
   width: 20px;
 }
 
-.notes_div_icon{
+.notes_div_icon,#msg-header{
   z-index: 999999;
+  cursor: pointer;
 }

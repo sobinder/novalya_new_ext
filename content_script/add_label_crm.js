@@ -440,21 +440,8 @@ let AddLabelCRM;
                 var fbName = '';
                 var profilePic = '';
                 var fb_user_id = '';
-                fbName = $(this).parent().parent().find('img').attr('alt');
-                if (fbName === "" || fbName == undefined) {
-                    if ($('div[role="main"]').find('a').first().attr('aria-label') === "Link to open profile cover photo") {
-                        fbName = $('div[role="main"] span.x1xmvt09.x1lliihq.x1s928wv h1').text();
-                    } else {
-                        fbName = $(this).closest('div[aria-label="Chat settings"]').find('h2').find('span:last').text();
-                        if (fbName == undefined || fbName == '') {
-                            fbName = $(this).closest('div[aria-label="chat settings"]').find('h2').find('span:last').text();
-                        }
-                        if (fbName == '') {
-                            fbName = $(this).parent().find('h1').find('span:last').text();
-                        }
-                    }
-                }
-
+                fbName = await $this.findName.call(this);
+                console.log(fbName);
                 profilePic = $(this).parent().parent().find('img').attr('src');
                 if (profilePic === "" || profilePic == undefined) {
                     profilePic = '';
@@ -471,7 +458,6 @@ let AddLabelCRM;
                         } else {
                             var currentWindowUrl2 = window.location.pathname;
                             fb_user_id = currentWindowUrl2.replace(/^\/|\/$/g, '');
-
                         }
                     }
                 }
@@ -776,9 +762,9 @@ let AddLabelCRM;
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
-                                        console.log(filteredTags);
+                                        //console.log(filteredTags);
                                         if (filteredTags.length > 0) {
-                                            console.log('in')
+                                            //console.log('in')
                                             $(this).attr('tag-id', filteredTags[0].id)
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
 
@@ -801,7 +787,7 @@ let AddLabelCRM;
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
 
                             $(selector_parent_of_contacts_list).each(function (index) {
-                                console.log("hello running facebook")
+                                //console.log("hello running facebook")
 
                                
 
@@ -829,7 +815,7 @@ let AddLabelCRM;
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
-                                        console.log(filteredTags);
+                                        //console.log(filteredTags);
                                         if (filteredTags.length > 0) { 
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                             let add_tag_button = `<div class="add-button-container contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
@@ -946,22 +932,34 @@ let AddLabelCRM;
                                 .filter(item => fb_user == item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
                                 
-                            if (filteredTags.length > 0) {
-                                const style = `background-color: ${filteredTags[0].custom_color} !important;`;
-                                const addTagButton = `
-                                                <div id="msg-header" class="add-button-container header_button" style="${style}">
-                                                    <span class="add-icon" tag-id="${filteredTags[0].id}" style="${style}">${filteredTags[0].name}</span>
-                                                </div>`;
-                                $(".x1u998qt a").append(addTagButton);
-                            } else {
-                                $(".x1u998qt a").append(add_label_button);
-                            }
+                            
 
                             if(window.location.href.indexOf('facebook.com/messages/t/') > 0){
+                                if (filteredTags.length > 0) {
+                                    const style = `background-color: ${filteredTags[0].custom_color} !important;`;
+                                    const addTagButton = `
+                                                    <div id="msg-header" class="add-button-container header_button" style="${style}">
+                                                        <span class="add-icon" tag-id="${filteredTags[0].id}" style="${style}">${filteredTags[0].name}</span>
+                                                    </div>`;
+                                    $(".x1u998qt a").parent().append(addTagButton);
+                                } else {
+                                    $(".x1u998qt a").parent().append(add_label_button);
+                                }
+                                
                                 if($(".x1u998qt .post").length === 0){
                                     $(".x1u998qt a").parent().append(notes_icon1);
                                 }
                             }else{
+                                if (filteredTags.length > 0) {
+                                    const style = `background-color: ${filteredTags[0].custom_color} !important;`;
+                                    const addTagButton = `
+                                                    <div id="msg-header" class="add-button-container header_button" style="${style}">
+                                                        <span class="add-icon" tag-id="${filteredTags[0].id}" style="${style}">${filteredTags[0].name}</span>
+                                                    </div>`;
+                                    $(".x1u998qt a").append(addTagButton);
+                                } else {
+                                    $(".x1u998qt a").append(add_label_button);
+                                }
                                 if ($(".x1u998qt a .post").length === 0) {
                                     $(".x1u998qt a").append(notes_icon1);
                                 }
@@ -1444,6 +1442,57 @@ let AddLabelCRM;
                     notesContainerDiv.append(append_notes);
                 }
             });
+        },
+
+        //find fb name from different dom
+        findName() {
+            let fbName = $this.findNameFromImageAlt.call(this);
+        
+            if (fbName === "" || fbName === undefined) {
+                fbName = $this.findNameFromProfileCover();
+                console.log(fbName);
+            }
+        
+            if (fbName === "" || fbName === undefined) {
+                fbName = $this.findNameFromChatSettings.call(this);
+                console.log(fbName);
+            }
+        
+            if (fbName === '' || fbName === undefined) {
+                fbName = $this.findNameFromParent.call(this);
+                console.log(fbName);
+            }
+            if (fbName === '' || fbName === undefined) {
+                fbName = $this.findNameFromHeading.call(this);
+                console.log(fbName);
+            }
+
+        
+            return fbName;
+        },
+        findNameFromHeading(){
+            fbName = $(this).parent().find('h1 span:last').text();
+            return fbName;
+        },
+        findNameFromParent() {
+            let fbName = $(this).parent().find('a h1 span:last').text();
+            
+            if (fbName === '') {
+                fbName = $(this).parent().find('a h2 span:last').text();
+            }
+            
+            return fbName;
+        },
+        findNameFromChatSettings() {
+            return $(this).closest('div[aria-label="Chat settings"]').find('h2 span:last').text();
+        },
+        findNameFromProfileCover() {
+            return $('div[role="main"]').find('a').first().attr('aria-label') === "Link to open profile cover photo"
+                ? $('div[role="main"] span.x1xmvt09.x1lliihq.x1s928wv h1').text()
+                : '';
+        },
+        findNameFromImageAlt() {
+            return $(this).parent().parent().find('img').attr('alt');
         }
 
     };
