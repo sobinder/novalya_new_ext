@@ -440,6 +440,7 @@ let AddLabelCRM;
                 var profilePic = '';
                 var fb_user_id = '';
                 fbName = await $this.findName.call(this);
+                console.log(fbName);
                 profilePic = $(this).parent().parent().find('img').attr('src');
                 if (profilePic === "" || profilePic == undefined) {
                     profilePic = '';
@@ -1030,8 +1031,10 @@ let AddLabelCRM;
                                 }
 
                             } else {
-                                $(".x5oxk1f.xym1h4x").append(add_label_button);
-                                // $(".x9a2f9n").append(add_label_button);
+                                if ($("#current_profile_tags").length === 0) {
+                                    $(".x5oxk1f.xym1h4x").append(add_label_button);
+                                    // $(".x9a2f9n").append(add_label_button);
+                                }
                             }
                         }, 2000);
                     } else {
@@ -1462,7 +1465,11 @@ let AddLabelCRM;
             return fbName;
         },
         findNameFromHeading(){
-            fbName = $(this).parent().find('h1 span:last').text();
+            fbName = $(this).parent().find('h1 span:last').text().trim();
+            if(fbName === 'Verified account'){
+                fbName = $(this).parent().find('h1 span:eq(-3)').text().trim();
+                fbName = fbName.split('Verified')[0];
+            }
             return fbName;
         },
         findNameFromParent() {
@@ -1473,6 +1480,7 @@ let AddLabelCRM;
             if (fbName === '') {
                 fbName = $(this).parent().find('span h1').text();
             }
+            console.log(fbName);
             return fbName;
         },
         findNameFromChatSettings() {

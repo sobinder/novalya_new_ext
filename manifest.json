@@ -43,7 +43,8 @@
                 "content_script/send_message_members.js",
                 "content_script/add_new_friend.js",
                 "content_script/add_label_crm.js",
-                "content_script/custom_toastr.js"
+                "content_script/custom_toastr.js",
+                "content_script/unfollow_friends.js"
             ],
             "css": [                
                 "content_script/toastr.min.css",

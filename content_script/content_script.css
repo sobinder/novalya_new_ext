@@ -1150,3 +1150,15 @@ div#current_profile_tags span.add-icon {
   z-index: 999999;
   cursor: pointer;
 }
+
+/* Unfollow module css  */
+#data-unfollow {
+  margin-left: 15px;
+  padding: 5px 19px;
+  color: white;
+  background: #0866ff;
+  border: none;
+  border-radius: 5px;
+  font: 500 14px;
+  cursor: pointer;
+}
