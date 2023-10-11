@@ -544,7 +544,7 @@ let AddLabelCRM;
             //Messenger filter function 
             if (window.location.href.indexOf('messenger.com') > -1 || window.location.href.indexOf('facebook.com/messages/') > -1) {
                 var appendSortBtn = setInterval(() => {
-                    const h1Element = $('h1');
+                    const h1Element = $('h1:containsI("chats")');
                     if (h1Element.length > 0 && tags_fetch_data.length > 0) {
                         clearInterval(appendSortBtn);
                         let url = chrome.runtime.getURL("assets/image/filter.png");
