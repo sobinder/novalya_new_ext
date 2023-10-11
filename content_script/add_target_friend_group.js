@@ -233,7 +233,7 @@ let group_url_value = window.location.href ;
                 }
 
                 countryList = true;
-                if (countryvalue != "") {
+                if (countryvalue != "" && countryvalue != null) {
                   countryvalue2 = countryvalue.split(",");
                   if (countryvalue2.length > 0) {
                     if (typeof response.data.body != "undefined") {
