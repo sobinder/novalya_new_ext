@@ -440,7 +440,6 @@ let AddLabelCRM;
                 var profilePic = '';
                 var fb_user_id = '';
                 fbName = await $this.findName.call(this);
-                console.log(fbName);
                 profilePic = $(this).parent().parent().find('img').attr('src');
                 if (profilePic === "" || profilePic == undefined) {
                     profilePic = '';
