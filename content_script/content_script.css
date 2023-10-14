@@ -1162,3 +1162,21 @@ div#current_profile_tags span.add-icon {
   font: 500 14px;
   cursor: pointer;
 }
+div[data-visualcompletion="ignore"] {
+  position: relative;
+}
+.add-button-container.contact-pop-up-chat-window {
+    transform: unset;
+    right: unset !important;
+    left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 12px) !important;
+    background: #fff !important;
+    padding: 3px 0 5px;
+    transform: translateY(-30px) !important;
+}
+#add-icon.add-button-container.contact-pop-up-chat-window {
+  width: calc(100% - 12px) !important;
+}

@@ -775,23 +775,13 @@ let AddLabelCRM;
                                 })
                             });
                         }
-                        if (window.location.origin.indexOf('facebook') > -1) {
-
-                            // var spanTagCurrentProfile = '<div class="validlogin current-user-profile-parent tags-container chatsilo-tags-container"><span class="bg-muted current-user-profile chatsilo-selected-tag">+</span>';
-                            // spanTagCurrentProfile += '</div>';
-                            //$('#fbTimelineHeadline ul[data-referrer="timeline_light_nav_top"] li:last').append(spanTagCurrentProfile);
-
+                        if (window.location.origin.indexOf('facebook') > -1) {  
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container contact-pop-up-chat-window"><span class="add-icon">+</span>';
-
+                            //$(this).parents(".x164qtfw").prepend(add_label_button);
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
-
-                            $(selector_parent_of_contacts_list).each(function (index) {
-                                //console.log("hello running facebook")
-
-                               
-
-                                $(this).addClass('cts-message-thread-id-1');
+                            $(selector_parent_of_contacts_list).parents(".x164qtfw>div").each(function (index) {
+                                $(this).parents(".x164qtfw").addClass('cts-message-thread-id-1');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
 
@@ -826,7 +816,7 @@ let AddLabelCRM;
                             });
                         }
                     } else {
-                        console.log('userid not found');
+                        //console.log('userid not found');
                         clearInterval(clearMessageInt);
                     }
                 });

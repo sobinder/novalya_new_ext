@@ -654,6 +654,12 @@ $(document).ready(function () {
         });
     });
 
+
+    // SELECTED ONLY ONE CHECKBOX FROM MULTIPLE
+     $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function() {      
+        $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);      
+    });
+
     $(document).on("click", "#submit-campaign", function () {        
         $("#submit-campaign").prop("disabled", true);
         $("#submit-campaign").addClass("disabled_cls");        
