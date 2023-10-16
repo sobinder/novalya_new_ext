@@ -828,7 +828,7 @@ let AddLabelCRM;
                     var user_id = res16.user_id;
                     if (user_id != 0 && user_id != "") {
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('facebook') > -1) {
-                             console.log("hello running")
+                            //  console.log("hello running")
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon">+</span>';
 
@@ -851,7 +851,7 @@ let AddLabelCRM;
                                     }
                                     fb_user = fb_user.replace('/', '');
                                 } else {
-                                    console.log('fb id not found');
+                                    // console.log('fb id not found');
                                 }
                                 
                                 

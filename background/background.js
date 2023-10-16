@@ -847,6 +847,54 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             });
             return true;
     }
+    if(message.action == "checkProspectUser"){
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer "+token);
+        var raw = JSON.stringify({
+          "fb_user_id": message.memberid,
+          "user_id": user_id
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("https://novalyabackend.novalya.com/prospect/setting/api/check", requestOptions)
+          .then(response => response.json())
+          .then(result => { console.log(result); sendResponse({result: result})})
+          .catch(error => console.log('error', error));
+        return true;
+
+    }
+    if(message.action === "createProspectUser"){
+        console.log(" create message recieved");
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer "+token);
+        var raw = JSON.stringify({
+          "fb_user_id": message.memberid,
+          "user_id": user_id
+        });
+
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: raw,
+          redirect: 'follow'
+        };
+
+        fetch("https://novalyabackend.novalya.com/prospect/setting/api/create", requestOptions)
+          .then(response => response.json())
+          .then(result => { console.log(result); sendResponse({result: result})})
+          .catch(error => console.log('error', error));
+        return true;
+    }
 
 });
 var currentDate = getCurrentDate();

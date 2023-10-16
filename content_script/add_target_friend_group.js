@@ -20,57 +20,57 @@ let AddTargetFriendNV;
     },
     onInitMethods: function () {
       var button = $('<button>', {
-  id: 'add-group-btn',
-  text: ' + Add this group to Novalya'
-});
+        id: 'add-group-btn',
+        text: ' + Add this group to Novalya'
+      });
 
-var button2 = $('<button>', {
-  id: 'add-group-btn2',
-  text: ' + Add this group to Novalya'
-});
-setInterval(()=>{
-let group_url_value = window.location.href ;
-  if (
-    group_url_value.indexOf("/groups/") > -1 &&
-    group_url_value.indexOf("/members") != -1
-  ) {
-    
-      
-      // $('.x1yztbdb span:first').append(button);
-      $('.x1yztbdb span:contains("Members with things in common"):first').append(button2);
-      
-  };
+      var button2 = $('<button>', {
+        id: 'add-group-btn2',
+        text: ' + Add this group to Novalya'
+      });
+      setInterval(() => {
+        let group_url_value = window.location.href;
+        if (
+          group_url_value.indexOf("/groups/") > -1 &&
+          group_url_value.indexOf("/members") != -1
+        ) {
 
-  if (
-    group_url_value.indexOf("/groups/") > -1 &&
-    group_url_value.indexOf("/members") != -1
-  ) {
-      
-       $('.x78zum5 .xdt5ytf .x1iyjqo2 .x1sy10c2 .x1yztbdb span:first').append(button);
-     
-      
-  };
-},[1000])
+
+          // $('.x1yztbdb span:first').append(button);
+          $('.x1yztbdb span:contains("Members with things in common"):first').append(button2);
+
+        };
+
+        if (
+          group_url_value.indexOf("/groups/") > -1 &&
+          group_url_value.indexOf("/members") != -1
+        ) {
+
+          $('.x78zum5 .xdt5ytf .x1iyjqo2 .x1sy10c2 .x1yztbdb span:first').append(button);
+
+
+        };
+      }, [1000])
     },
 
     startAddingFriend: function (settings, extTabId) {
       // $this.addProgressModel(extTabId);
-     
+
       processing_status = "running";
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
 
       const intervalValue = settings[0].interval;
-    if (intervalValue == "30-60") {
-          randomDelay = Math.floor(Math.random() * 31) * 1000 + 30000; ;
+      if (intervalValue == "30-60") {
+        randomDelay = Math.floor(Math.random() * 31) * 1000 + 30000;;
       } else if (intervalValue == "1-3") {
-          randomDelay = Math.floor(Math.random() * 121) * 1000 + 60000;;
+        randomDelay = Math.floor(Math.random() * 121) * 1000 + 60000;;
       } else if (intervalValue == "3-5") {
-          randomDelay = Math.floor(Math.random() * 121) * 1000 + 180000;;
+        randomDelay = Math.floor(Math.random() * 121) * 1000 + 180000;;
       } else if (intervalValue == "5-10") {
-          randomDelay = Math.floor(Math.random() * 301) * 1000 + 300000;;
+        randomDelay = Math.floor(Math.random() * 301) * 1000 + 300000;;
       } else {
-          randomDelay = 60000;
+        randomDelay = 60000;
       }
 
       console.log(randomDelay);
@@ -91,14 +91,15 @@ let group_url_value = window.location.href ;
       const gender = settings[0].gender;
       const countryvalue = settings[0].country;
       groupId = settings[0].message;
+      const prospect = "Yes";
       $(".total1").text(limit_req);
       search_index_value = settings[0].search_index;
       console.log('search_index_value', search_index_value);
       if (search_index_value != 0 && search_index_value != "") {
-         console.log('enable search index');
-         setTimeout(() => {
+        console.log('enable search index');
+        setTimeout(() => {
           $this.setIndexingOnMembersRequest(search_index_value);
-         }, 5000);
+        }, 5000);
       }
 
       setTimeout(() => {
@@ -111,7 +112,7 @@ let group_url_value = window.location.href ;
           totalGroupMembers,
           gender,
           messageArray,
-          search_index_value
+          prospect
         );
       }, 8000);
     },
@@ -123,27 +124,30 @@ let group_url_value = window.location.href ;
       countryvalue,
       totalGroupMembers,
       gender,
-      messageArray
+      messageArray,
+      prospect
     ) {
+
+      selector_for_validclass2 =
+        'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
       /****************FIND AND ADDING FRINED***************************/
       if (stoprequest == false) {
         loop2 = loop1;
         $("#loop1").text(loop2 + 1);
-       
+
         selector_for_validclass =
           'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed):eq(0)';
         //console.log('Length of main selector', $(selector_for_validclass).length);
         if ($(selector_for_validclass).length > 0 && loop1 < limit_req) {
-       
-          var incrementedLoop = loop2 + 1;
-          if(loop2 + 1 == limit_req){
 
+          var incrementedLoop = loop2 + 1;
+          if (loop2 + 1 == limit_req) {
             $("#toastrMessage").text("Limit Exceeded Process Completed");
           }
           btnText = $(selector_for_validclass).find(
             'div[aria-label="Add Friend"]:containsI("Add Friend")'
           );
-          
+
           if (btnText.length == 0) {
             btnText = $(selector_for_validclass).find(
               'div[aria-label="Add friend"]:containsI("Add Friend")'
@@ -152,260 +156,303 @@ let group_url_value = window.location.href ;
 
           //console.log('btnText.length', btnText.length);
 
-          if (btnText.length == 1) {
-            $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
-            var incrementedLoop = loop2 + 1;
-          
+          let groupHref2 = $(selector_for_validclass2)
+            .find('a[href*="/groups/"]')
+            .attr("href");
+          let memberurl2 = groupHref2.split("user/");
+          let memberid2 = memberurl2[1].replace("/", "");
+          let member_name2 = $(selector_for_validclass2)
+            .find('a[href*="/groups/"]')
+            .text()
+            .toLowerCase();
 
-            // positive keywords
-            validKeyword = true;
-            if (keywordTypeValue != "") {
-              var description = ""
+          console.log(memberid2);
 
-              var arrayKeyword = keywordTypeValue;
-
-              if (description != "") {
-                matched = arrayKeyword.filter(
-                  (item) => description.indexOf(item) > -1
-                );
-                if (matched.length == 0) {
-                  validKeyword = false;
-                }
-              } else {
-                validKeyword = true;
-              }
-            }
-
-            // negtive keyword
-            invalidKeyword = false;
-            if (negative_keyword != "") {
-              var description = "";
-
-              var arraynegative_keyword = negative_keyword;
-
-              if (description != "") {
-                matched = arraynegative_keyword.filter(
-                  (item) => description.indexOf(item) > -1
-                );
-                if (matched.length == 0) {
-                  invalidKeyword = false;
-                } else {
-                  invalidKeyword = true;
-                }
-              } else {
-                invalidKeyword = false;
-              }
-            }
-
-            selector_for_validclass2 =
-              'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
-
-            //console.log('selector class 2 length', $(selector_for_validclass2).length);
-            let groupHref2 = $(selector_for_validclass2)
-              .find('a[href*="/groups/"]')
-              .attr("href");
-            let memberurl2 = groupHref2.split("user/");
-            let memberid2 = memberurl2[1].replace("/", "");
-            let member_name2 = $(selector_for_validclass2)
-              .find('a[href*="/groups/"]')
-              .text()
-              .toLowerCase();
-
-            chrome.runtime.sendMessage(
-              {
-                action: "getGenderCountry",
-                profile_id: memberid2,
-                gender: gender,
-                name: member_name2,
-              },
-              (response) => {
-                if (
-                  response.gender != "both" &&
-                  typeof response.data.body != "undefined"
-                ) {
-                  validGender = false;
-                  console.log(response);
-                  if (response.data.body.gender.toLowerCase() == gender) {
-                    validGender = true;
-                  }
-                } else {
-                  validGender = true;
-                }
-
-                countryList = true;
-                if (countryvalue != "" && countryvalue != null) {
-                  countryvalue2 = countryvalue.split(",");
-                  if (countryvalue2.length > 0) {
-                    if (typeof response.data.body != "undefined") {
-                      matched = countryvalue2.filter(
-                        (item) => item == response.data.body.countryName
+          if (prospect == "Yes") {
+            chrome.runtime.sendMessage({
+              action: "checkProspectUser",
+              memberid: memberid2,
+            }, (res) => {
+              console.log(res.result);
+              if (res.result.message == "no record found") {
+                console.log("here");
+                if (btnText.length == 1) {
+                  $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
+                  var incrementedLoop = loop2 + 1;
+  
+  
+                  // positive keywords
+                  validKeyword = true;
+                  if (keywordTypeValue != "") {
+                    var description = ""
+  
+                    var arrayKeyword = keywordTypeValue;
+  
+                    if (description != "") {
+                      matched = arrayKeyword.filter(
+                        (item) => description.indexOf(item) > -1
                       );
                       if (matched.length == 0) {
-                        countryList = true;
+                        validKeyword = false;
                       }
                     } else {
-                      countryList = true;
+                      validKeyword = true;
                     }
                   }
-                }
-
-                // SEARCH INDEX VALUE
-                //validIndex = true;
-                currentIndex = $(selector_for_validclass2).attr("scl-index");
-
-                //cint = Number(currentIndex);
-                var cint =
-                  typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
-                if (cint < search_index_value) {
-                  validIndex = false;
-                } else {
-                  validIndex = true;
-                }
-                if (
-                  validKeyword &&
-                  !invalidKeyword &&
-                  countryList &&
-                  validGender &&
-                  validIndex
-                ) {
-                  showCustomToastr('info', 'Sending Friend Request', randomDelay , true );
-                  $(selector_for_validclass).addClass("add-done-border");
-                  $(selector_for_validclass).addClass("loading_w_scl");
-                  $(selector_for_validclass).attr("member_id", memberid2);
-
-                  let groupHref = $(selector_for_validclass2)
+  
+                  // negtive keyword
+                  invalidKeyword = false;
+                  if (negative_keyword != "") {
+                    var description = "";
+  
+                    var arraynegative_keyword = negative_keyword;
+  
+                    if (description != "") {
+                      matched = arraynegative_keyword.filter(
+                        (item) => description.indexOf(item) > -1
+                      );
+                      if (matched.length == 0) {
+                        invalidKeyword = false;
+                      } else {
+                        invalidKeyword = true;
+                      }
+                    } else {
+                      invalidKeyword = false;
+                    }
+                  }
+  
+                  selector_for_validclass2 =
+                    'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
+  
+                  //console.log('selector class 2 length', $(selector_for_validclass2).length);
+                  let groupHref2 = $(selector_for_validclass2)
                     .find('a[href*="/groups/"]')
                     .attr("href");
-                  let member_name = $(selector_for_validclass2)
+                  let memberurl2 = groupHref2.split("user/");
+                  let memberid2 = memberurl2[1].replace("/", "");
+                  let member_name2 = $(selector_for_validclass2)
                     .find('a[href*="/groups/"]')
-                    .text();
-                  let memberurl = groupHref.split("user/");
-                  //let memberid = memberurl[1].replace('/', '');
-                  var memberid = $(selector_for_validclass2).attr("member_id");
-
-                  let member_names = member_name.split(" ");
-                  $(selector_for_validclass).addClass("sca-member-proccessed");
-                  var segementMessage = [];
-                  segementMessagetextArray = messageArray;
-                  console.log(segementMessagetextArray);
-                  segementMessagetextArray.forEach(function (item, i) {
-                    segementMessage_json = segementMessagetextArray[i];
-                    segementMessage_varient_json = segementMessage_json.varient;
-                    segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
-                    var randomIndex2 = Math.floor(
-                      Math.random() * segementMessage_varient_array.length
-                    );
-                    segementMessage.push(segementMessage_varient_array[randomIndex2]);
-                    
-                  });
-                  //2, 11, 333
-                  segementMessage = segementMessage.join('');
-                  console.log(segementMessage);
-                  setTimeout(() => {
-                    //console.log(segementMessage);
-                    showCustomToastr('success', 'Friend Request Sent', 5000 , false );
-                    btnText.click(); 
-                    showCustomToastr('success', 'Message Sending Start', 10000 , true );                   
-                    setTimeout(() => {
-                      // --------------------------------------
-                      $this.closeWarningPopup();                      
-                      setTimeout(() => {
-                        if (!warningStatus) {
-                          segementMessage = segementMessage.replaceAll(
-                            "[first name]",
-                            member_names[0]
-                          );
-                          segementMessage = segementMessage.replaceAll(
-                            "[last name]",
-                            member_names[1]
-                          );
-                         
-                          chrome.runtime.sendMessage(
-                            {
-                              action: "sendMessageToMember",
-                              memberid: memberid,
-                              groupid: groupId,
-                              textMsg: segementMessage,
-                            },
-                            (response) => {
-                              $(".loading_w_scl").addClass("working-scl");
-                              setTimeout(() => {
-                                $(".working-scl").removeClass("loading_w_scl");
-                              }, 500);
-
-                              if(loop2 + 1 == limit_req){
-                                $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
-                              }
-                              setTimeout(() => {
-                                showCustomToastr('success', 'Message Sent Successfully', 5000, false );
-                              }, 2000);
-                            
-                              loop1++;
-                              $this.checkValidUsers(
-                                randomDelay,
-                                limit_req,
-                                keywordTypeValue,
-                                negative_keyword,
-                                countryvalue,
-                                totalGroupMembers,
-                                gender,
-                                messageArray,
-                                search_index_value
-                              );
-                            }
-                          );
-                        } else {
-                          showCustomToastr('error', 'Message Sending Failled', 3000 , false );
-                          console.log("reached iin else condition");
-                          loop1++;
-                          // $(selector_for_validclass).addClass(
-                          //   "sca-member-proccessed"
-                          // );
-                          // if ($(selector_for_validclass)[0] != undefined) {
-                          //   window.scrollTo(
-                          //     0,
-                          //     window.pageYOffset +
-                          //       $(
-                          //         selector_for_validclass
-                          //       )[0].getBoundingClientRect().top -
-                          //       350
-                          //   );
-                          // }
-                          $(".loading_w_scl").addClass("failed-scl");
-                          setTimeout(() => {
-                            $(".failed-scl").removeClass("loading_w_scl");
-                          }, 500);
-                          setTimeout(() => {
-                            $this.checkValidUsers(
-                              randomDelay,
-                              limit_req,
-                              keywordTypeValue,
-                              negative_keyword,
-                              countryvalue,
-                              totalGroupMembers,
-                              gender,
-                              messageArray,
-                              search_index_value
-                            );
-                          }, 4000);
-                          warningStatus = false;
+                    .text()
+                    .toLowerCase();
+  
+                  chrome.runtime.sendMessage(
+                    {
+                      action: "getGenderCountry",
+                      profile_id: memberid2,
+                      gender: gender,
+                      name: member_name2,
+                    },
+                    (response) => {
+                      if (
+                        response.gender != "both" &&
+                        typeof response.data.body != "undefined"
+                      ) {
+                        validGender = false;
+                        console.log(response);
+                        if (response.data.body.gender.toLowerCase() == gender) {
+                          validGender = true;
                         }
-                      }, 5000);
-
-                      //   -----------------------------------
-                    }, 3000);
-                  }, randomDelay);
+                      } else {
+                        validGender = true;
+                      }
+  
+                      countryList = true;
+                      if (countryvalue != "") {
+                        countryvalue2 = countryvalue.split(",");
+                        if (countryvalue2.length > 0) {
+                          if (typeof response.data.body != "undefined") {
+                            matched = countryvalue2.filter(
+                              (item) => item == response.data.body.countryName
+                            );
+                            if (matched.length == 0) {
+                              countryList = true;
+                            }
+                          } else {
+                            countryList = true;
+                          }
+                        }
+                      }
+  
+                      // SEARCH INDEX VALUE
+                      //validIndex = true;
+                      currentIndex = $(selector_for_validclass2).attr("scl-index");
+  
+                      //cint = Number(currentIndex);
+                      var cint =
+                        typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
+                      if (cint < search_index_value) {
+                        validIndex = false;
+                      } else {
+                        validIndex = true;
+                      }
+                      if (
+                        validKeyword &&
+                        !invalidKeyword &&
+                        countryList &&
+                        validGender &&
+                        validIndex
+                      ) {
+                        showCustomToastr('info', 'Sending Friend Request', randomDelay, true);
+                        $(selector_for_validclass).addClass("add-done-border");
+                        $(selector_for_validclass).addClass("loading_w_scl");
+                        $(selector_for_validclass).attr("member_id", memberid2);
+  
+                        let groupHref = $(selector_for_validclass2)
+                          .find('a[href*="/groups/"]')
+                          .attr("href");
+                        let member_name = $(selector_for_validclass2)
+                          .find('a[href*="/groups/"]')
+                          .text();
+                        let memberurl = groupHref.split("user/");
+                        //let memberid = memberurl[1].replace('/', '');
+                        var memberid = $(selector_for_validclass2).attr("member_id");
+  
+                        let member_names = member_name.split(" ");
+                        $(selector_for_validclass).addClass("sca-member-proccessed");
+                        var segementMessage = [];
+                        segementMessagetextArray = messageArray;
+                        console.log(segementMessagetextArray);
+                        segementMessagetextArray.forEach(function (item, i) {
+                          segementMessage_json = segementMessagetextArray[i];
+                          segementMessage_varient_json = segementMessage_json.varient;
+                          segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
+                          var randomIndex2 = Math.floor(
+                            Math.random() * segementMessage_varient_array.length
+                          );
+                          segementMessage.push(segementMessage_varient_array[randomIndex2]);
+  
+                        });
+                        //2, 11, 333
+                        segementMessage = segementMessage.join('');
+                        console.log(segementMessage);
+                        setTimeout(() => {
+                          //console.log(segementMessage);
+                          showCustomToastr('success', 'Friend Request Sent', 5000, false);
+                          btnText.click();
+                          showCustomToastr('success', 'Message Sending Start', 10000, true);
+                          setTimeout(() => {
+                            // --------------------------------------
+                            $this.closeWarningPopup();
+                            setTimeout(() => {
+                              if (!warningStatus) {
+                                segementMessage = segementMessage.replaceAll(
+                                  "[first name]",
+                                  member_names[0]
+                                );
+                                segementMessage = segementMessage.replaceAll(
+                                  "[last name]",
+                                  member_names[1]
+                                );
+  
+                                chrome.runtime.sendMessage(
+                                  {
+                                    action: "sendMessageToMember",
+                                    memberid: memberid,
+                                    groupid: groupId,
+                                    textMsg: segementMessage,
+                                  },
+                                  (response) => {
+                                    $(".loading_w_scl").addClass("working-scl");
+                                    setTimeout(() => {
+                                      $(".working-scl").removeClass("loading_w_scl");
+                                    }, 500);
+  
+                                    if (loop2 + 1 == limit_req) {
+                                      $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                                    }
+                                    setTimeout(() => {
+                                      showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                    }, 2000);
+                                    chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                                      console.log(res);
+                                    });
+                                    loop1++;
+                                    $this.checkValidUsers(
+                                      randomDelay,
+                                      limit_req,
+                                      keywordTypeValue,
+                                      negative_keyword,
+                                      countryvalue,
+                                      totalGroupMembers,
+                                      gender,
+                                      messageArray,
+                                      prospect
+                                    );
+                                  }
+                                );
+                              } else {
+                                showCustomToastr('error', 'Message Sending Failled', 3000, false);
+                                console.log("reached iin else condition");
+                                loop1++;
+                                $(".loading_w_scl").addClass("failed-scl");
+                                setTimeout(() => {
+                                  $(".failed-scl").removeClass("loading_w_scl");
+                                }, 500);
+                                chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                                  console.log(res);
+                                });
+  
+  
+                                setTimeout(() => {
+                                  $this.checkValidUsers(
+                                    randomDelay,
+                                    limit_req,
+                                    keywordTypeValue,
+                                    negative_keyword,
+                                    countryvalue,
+                                    totalGroupMembers,
+                                    gender,
+                                    messageArray,
+                                    prospect
+                                  );
+                                }, 4000);
+                                warningStatus = false;
+                              }
+                            }, 5000);
+  
+                            //   -----------------------------------
+                          }, 3000);
+                        }, randomDelay);
+                      } else {
+                        console.log("reached here");
+                        // IF KEYWORD NOT MATCHED LIKE PATNA NOT MACTHED
+                        $(selector_for_validclass).addClass("sca-member-proccessed");
+                        if ($(selector_for_validclass)[0] != undefined) {
+                          window.scrollTo(
+                            0,
+                            window.pageYOffset +
+                            $(selector_for_validclass)[0].getBoundingClientRect()
+                              .top -
+                            350
+                          );
+                        }
+  
+  
+  
+                        setTimeout(() => {
+                          $this.checkValidUsers(
+                            randomDelay,
+                            limit_req,
+                            keywordTypeValue,
+                            negative_keyword,
+                            countryvalue,
+                            totalGroupMembers,
+                            gender,
+                            messageArray,
+                            prospect
+                          );
+                        }, 4000);
+                      }
+                    }
+                  );
                 } else {
-                  console.log("reached here");
-                  // IF KEYWORD NOT MATCHED LIKE PATNA NOT MACTHED
                   $(selector_for_validclass).addClass("sca-member-proccessed");
                   if ($(selector_for_validclass)[0] != undefined) {
                     window.scrollTo(
                       0,
                       window.pageYOffset +
-                        $(selector_for_validclass)[0].getBoundingClientRect()
-                          .top -
-                        350
+                      $(selector_for_validclass)[0].getBoundingClientRect().top -
+                      350
                     );
                   }
                   setTimeout(() => {
@@ -418,36 +465,332 @@ let group_url_value = window.location.href ;
                       totalGroupMembers,
                       gender,
                       messageArray,
-                      search_index_value
+                      prospect
                     );
                   }, 4000);
                 }
+              } else {
+                $(selector_for_validclass).addClass("sca-member-proccessed");
+                if ($(selector_for_validclass)[0] != undefined) {
+                  window.scrollTo(
+                    0,
+                    window.pageYOffset +
+                    $(selector_for_validclass)[0].getBoundingClientRect().top -
+                    350
+                  );
+                }
+                setTimeout(() => {
+                  $this.checkValidUsers(
+                    randomDelay,
+                    limit_req,
+                    keywordTypeValue,
+                    negative_keyword,
+                    countryvalue,
+                    totalGroupMembers,
+                    gender,
+                    messageArray,
+                    prospect
+                  );
+                }, 4000);
               }
-            );
-          } else {
-            $(selector_for_validclass).addClass("sca-member-proccessed");
-            if ($(selector_for_validclass)[0] != undefined) {
-              window.scrollTo(
-                0,
-                window.pageYOffset +
+            });
+          }else{
+            if (btnText.length == 1) {
+              $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
+              var incrementedLoop = loop2 + 1;
+
+
+              // positive keywords
+              validKeyword = true;
+              if (keywordTypeValue != "") {
+                var description = ""
+
+                var arrayKeyword = keywordTypeValue;
+
+                if (description != "") {
+                  matched = arrayKeyword.filter(
+                    (item) => description.indexOf(item) > -1
+                  );
+                  if (matched.length == 0) {
+                    validKeyword = false;
+                  }
+                } else {
+                  validKeyword = true;
+                }
+              }
+
+              // negtive keyword
+              invalidKeyword = false;
+              if (negative_keyword != "") {
+                var description = "";
+
+                var arraynegative_keyword = negative_keyword;
+
+                if (description != "") {
+                  matched = arraynegative_keyword.filter(
+                    (item) => description.indexOf(item) > -1
+                  );
+                  if (matched.length == 0) {
+                    invalidKeyword = false;
+                  } else {
+                    invalidKeyword = true;
+                  }
+                } else {
+                  invalidKeyword = false;
+                }
+              }
+
+              selector_for_validclass2 =
+                'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
+
+              //console.log('selector class 2 length', $(selector_for_validclass2).length);
+              let groupHref2 = $(selector_for_validclass2)
+                .find('a[href*="/groups/"]')
+                .attr("href");
+              let memberurl2 = groupHref2.split("user/");
+              let memberid2 = memberurl2[1].replace("/", "");
+              let member_name2 = $(selector_for_validclass2)
+                .find('a[href*="/groups/"]')
+                .text()
+                .toLowerCase();
+
+              chrome.runtime.sendMessage(
+                {
+                  action: "getGenderCountry",
+                  profile_id: memberid2,
+                  gender: gender,
+                  name: member_name2,
+                },
+                (response) => {
+                  if (
+                    response.gender != "both" &&
+                    typeof response.data.body != "undefined"
+                  ) {
+                    validGender = false;
+                    console.log(response);
+                    if (response.data.body.gender.toLowerCase() == gender) {
+                      validGender = true;
+                    }
+                  } else {
+                    validGender = true;
+                  }
+
+                  countryList = true;
+                  if (countryvalue != "") {
+                    countryvalue2 = countryvalue.split(",");
+                    if (countryvalue2.length > 0) {
+                      if (typeof response.data.body != "undefined") {
+                        matched = countryvalue2.filter(
+                          (item) => item == response.data.body.countryName
+                        );
+                        if (matched.length == 0) {
+                          countryList = true;
+                        }
+                      } else {
+                        countryList = true;
+                      }
+                    }
+                  }
+
+                  // SEARCH INDEX VALUE
+                  //validIndex = true;
+                  currentIndex = $(selector_for_validclass2).attr("scl-index");
+
+                  //cint = Number(currentIndex);
+                  var cint =
+                    typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
+                  if (cint < search_index_value) {
+                    validIndex = false;
+                  } else {
+                    validIndex = true;
+                  }
+                  if (
+                    validKeyword &&
+                    !invalidKeyword &&
+                    countryList &&
+                    validGender &&
+                    validIndex
+                  ) {
+                    showCustomToastr('info', 'Sending Friend Request', randomDelay, true);
+                    $(selector_for_validclass).addClass("add-done-border");
+                    $(selector_for_validclass).addClass("loading_w_scl");
+                    $(selector_for_validclass).attr("member_id", memberid2);
+
+                    let groupHref = $(selector_for_validclass2)
+                      .find('a[href*="/groups/"]')
+                      .attr("href");
+                    let member_name = $(selector_for_validclass2)
+                      .find('a[href*="/groups/"]')
+                      .text();
+                    let memberurl = groupHref.split("user/");
+                    //let memberid = memberurl[1].replace('/', '');
+                    var memberid = $(selector_for_validclass2).attr("member_id");
+
+                    let member_names = member_name.split(" ");
+                    $(selector_for_validclass).addClass("sca-member-proccessed");
+                    var segementMessage = [];
+                    segementMessagetextArray = messageArray;
+                    console.log(segementMessagetextArray);
+                    segementMessagetextArray.forEach(function (item, i) {
+                      segementMessage_json = segementMessagetextArray[i];
+                      segementMessage_varient_json = segementMessage_json.varient;
+                      segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
+                      var randomIndex2 = Math.floor(
+                        Math.random() * segementMessage_varient_array.length
+                      );
+                      segementMessage.push(segementMessage_varient_array[randomIndex2]);
+
+                    });
+                    //2, 11, 333
+                    segementMessage = segementMessage.join('');
+                    console.log(segementMessage);
+                    setTimeout(() => {
+                      //console.log(segementMessage);
+                      showCustomToastr('success', 'Friend Request Sent', 5000, false);
+                      btnText.click();
+                      showCustomToastr('success', 'Message Sending Start', 10000, true);
+                      setTimeout(() => {
+                        // --------------------------------------
+                        $this.closeWarningPopup();
+                        setTimeout(() => {
+                          if (!warningStatus) {
+                            segementMessage = segementMessage.replaceAll(
+                              "[first name]",
+                              member_names[0]
+                            );
+                            segementMessage = segementMessage.replaceAll(
+                              "[last name]",
+                              member_names[1]
+                            );
+
+                            chrome.runtime.sendMessage(
+                              {
+                                action: "sendMessageToMember",
+                                memberid: memberid,
+                                groupid: groupId,
+                                textMsg: segementMessage,
+                              },
+                              (response) => {
+                                $(".loading_w_scl").addClass("working-scl");
+                                setTimeout(() => {
+                                  $(".working-scl").removeClass("loading_w_scl");
+                                }, 500);
+
+                                if (loop2 + 1 == limit_req) {
+                                  $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                                }
+                                setTimeout(() => {
+                                  showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                }, 2000);
+                                // chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                                //   console.log(res);
+                                // });
+                                loop1++;
+                                $this.checkValidUsers(
+                                  randomDelay,
+                                  limit_req,
+                                  keywordTypeValue,
+                                  negative_keyword,
+                                  countryvalue,
+                                  totalGroupMembers,
+                                  gender,
+                                  messageArray,
+                                  prospect
+                                );
+                              }
+                            );
+                          } else {
+                            showCustomToastr('error', 'Message Sending Failled', 3000, false);
+                            console.log("reached iin else condition");
+                            loop1++;
+                            $(".loading_w_scl").addClass("failed-scl");
+                            setTimeout(() => {
+                              $(".failed-scl").removeClass("loading_w_scl");
+                            }, 500);
+                            // chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                            //   console.log(res);
+                            // });
+
+
+                            setTimeout(() => {
+                              $this.checkValidUsers(
+                                randomDelay,
+                                limit_req,
+                                keywordTypeValue,
+                                negative_keyword,
+                                countryvalue,
+                                totalGroupMembers,
+                                gender,
+                                messageArray,
+                                prospect
+                              );
+                            }, 4000);
+                            warningStatus = false;
+                          }
+                        }, 5000);
+
+                        //   -----------------------------------
+                      }, 3000);
+                    }, randomDelay);
+                  } else {
+                    console.log("reached here");
+                    // IF KEYWORD NOT MATCHED LIKE PATNA NOT MACTHED
+                    $(selector_for_validclass).addClass("sca-member-proccessed");
+                    if ($(selector_for_validclass)[0] != undefined) {
+                      window.scrollTo(
+                        0,
+                        window.pageYOffset +
+                        $(selector_for_validclass)[0].getBoundingClientRect()
+                          .top -
+                        350
+                      );
+                    }
+
+
+
+                    setTimeout(() => {
+                      $this.checkValidUsers(
+                        randomDelay,
+                        limit_req,
+                        keywordTypeValue,
+                        negative_keyword,
+                        countryvalue,
+                        totalGroupMembers,
+                        gender,
+                        messageArray,
+                        prospect
+                      );
+                    }, 4000);
+                  }
+                }
+              );
+            } else {
+              $(selector_for_validclass).addClass("sca-member-proccessed");
+              if ($(selector_for_validclass)[0] != undefined) {
+                window.scrollTo(
+                  0,
+                  window.pageYOffset +
                   $(selector_for_validclass)[0].getBoundingClientRect().top -
                   350
-              );
+                );
+              }
+              setTimeout(() => {
+                $this.checkValidUsers(
+                  randomDelay,
+                  limit_req,
+                  keywordTypeValue,
+                  negative_keyword,
+                  countryvalue,
+                  totalGroupMembers,
+                  gender,
+                  messageArray,
+                  prospect
+                );
+              }, 4000);
             }
-            setTimeout(() => {
-              $this.checkValidUsers(
-                randomDelay,
-                limit_req,
-                keywordTypeValue,
-                negative_keyword,
-                countryvalue,
-                totalGroupMembers,
-                gender,
-                messageArray,
-                search_index_value
-              );
-            }, 4000);
           }
+         
+
         } else {
           if (loop1 < limit_req) {
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
@@ -500,7 +843,7 @@ let group_url_value = window.location.href ;
                   .prev()
                   .find("span.xk50ysn.xzsf02u .scl-label")
                   .text();
-                 // console.log('lastcount', lastcount);
+                // console.log('lastcount', lastcount);
                 if (lastcount != "") {
                   //currentIndex = j + index ;
                   var count = parseInt(lastcount) + 1;
@@ -520,10 +863,10 @@ let group_url_value = window.location.href ;
                     .find('span.xk50ysn.xzsf02u:not(".scl-label-processed")')
                     .append(
                       '<span class="scl-label" index-scl="' +
-                        count +
-                        '">' +
-                        count +
-                        "</span>"
+                      count +
+                      '">' +
+                      count +
+                      "</span>"
                     );
                   //console.log('DOM not found');
                 }

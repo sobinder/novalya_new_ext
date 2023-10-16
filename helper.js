@@ -58,7 +58,6 @@ function reloadAllGroupTabs() {
 
 // HELPER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
 async function getNumericID(facebook_id) {
-    console.log("getNumericID called");
     return new Promise(function (resolve, reject) {
       fetch("https://www.facebook.com/" + facebook_id)
         .then((response) => response.text())
