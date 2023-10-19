@@ -509,7 +509,7 @@ let AddTargetFriendNV;
                   console.log(currentDate, dateInMilliseconds);
                 }
                 console.log(selectedInterval , "this is select interval");
-                if(selectedInterval !== "" && selectedInterval !== undefined){
+                if(selectedInterval !== "alltime"){
                   console.log("in the selectedInterval not empty");
                   if (currentDate >= dateInMilliseconds) {
                     console.log("in the sending condition");
