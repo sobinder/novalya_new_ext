@@ -1180,3 +1180,7 @@ div[data-visualcompletion="ignore"] {
 #add-icon.add-button-container.contact-pop-up-chat-window {
   width: calc(100% - 12px) !important;
 }
+
+div#current_profile_tags {
+  width: auto;
+}

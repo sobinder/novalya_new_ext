@@ -965,6 +965,7 @@ let AddLabelCRM;
             }, 1000);
             setTimeout(() => {
                 setInterval(()=>{
+                    
                     if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
                         $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
                         // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
@@ -1400,7 +1401,7 @@ let AddLabelCRM;
                         <div class="notes_container_div"></div>
                     </div>
                 </div>`;
-        },
+        },          
         async getNotesData(cliked_Fb_Id) {
             const res = await chrome.runtime.sendMessage({ action: "get_all_notes" });
             console.log(res);
