@@ -3,7 +3,8 @@ importScripts(
     "bg_send_message.js",
     "bg_friend_requests.js",
     "send_without_popup.js",
-    "birthday.js"
+    "birthday.js",
+    "unfollow_friends.js"
 );
 
 //****************************** DEFINE VARIABLES *****************************************//
