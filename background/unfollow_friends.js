@@ -27,6 +27,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             let fbTabId = tabs.tabs[0].id;
             chrome.tabs.onUpdated.addListener(function facebookTabListener(tabId, changeInfo, tab) {
                 if (tabId === fbTabId && changeInfo.status === "complete") {
+                    console.log(tabId);
+                    console.log(fbTabId);
+                    console.log(changeInfo.status);
+                    console.log('send message');
                     chrome.tabs.sendMessage(fbTabId, {
                         action: "getGenderAndPlace",
                         from: "background",
@@ -43,42 +47,57 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         friendListArray.push(friendDetails);
         console.log(friendListArray);
 
-        chrome.tabs.sendMessage(friendListTabId, {
-            action: 'nextFetchFriend',
-            from: 'background'
-        });
-
-        // if(token != undefined && token != ''){
-        //     var myHeaders = new Headers();
-        //     myHeaders.append("Authorization", "Bearer "+token);
-        //     myHeaders.append("Content-Type", "application/json");
+        // chrome.tabs.sendMessage(friendListTabId, {
+        //     action: 'nextFetchFriend',
+        //     from: 'background'
+        // });
+        console.log(authToken);
+        let token = authToken;
+        if(token != undefined && token != ''){
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
+            let status = 0;
+            if(friendDetails.status === 'activate'){
+                status = 1;
+            }
             
-        //     var raw = JSON.stringify({
-        //       "fbId": friendDetails.fbId,
-        //       "name": friendDetails.name,
-        //       "gender": friendDetails.gender,
-        //       "profile": friendDetails.profile,
-        //       "image": friendDetails.image,
-        //       "lived": friendDetails.lived,
-        //     });
+            var raw = JSON.stringify({
+                "type":'',
+                "fbId":friendDetails.fbId,
+                "user_name": friendDetails.name,
+                "gender":friendDetails.gender,
+                "profile":friendDetails.profile,
+                "status":status,
+                "image":friendDetails.image,
+                "lived":friendDetails.lived
+            });
 
-        //     var requestOptions = {
-        //       method: 'POST',
-        //       headers: myHeaders,
-        //       body: raw,
-        //       redirect: 'follow'
-        //     };
-        //     fetch("https://novalyabackend.novalya.com/api/ext/addFriendList", requestOptions)
-        //     .then((response) => response.json())
-        //     .then((result) => { 
-        //         chrome.tabs.sendMessage(friendListTabId, {
-        //             action: 'nextFetchFriend',
-        //             from: 'background'
-        //         }); 
+            console.log(raw);
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+            fetch("https://novalyabackend.novalya.com/novadata/api/user-add", requestOptions)
+            .then((response) => response.json())
+            .then((result) => { 
+                console.log(result);
+                chrome.tabs.sendMessage(friendListTabId, {
+                    action: 'nextFetchFriend',
+                    from: 'background'
+                });
                
-        //     })
-        //     .catch(error => console.log('error', error));               
-        // } 
-        
+            })
+            .catch((error) => {
+                console.error('error', error); 
+                chrome.tabs.sendMessage(friendListTabId, {
+                    action: 'closeFriendPopup',
+                    from: 'background'
+                })
+            });               
+        } 
     }
 });

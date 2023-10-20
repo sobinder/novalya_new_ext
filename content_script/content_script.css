@@ -1154,13 +1154,14 @@ div#current_profile_tags span.add-icon {
 /* Unfollow module css  */
 #data-unfollow {
   margin-left: 15px;
-  padding: 5px 19px;
   color: white;
-  background: #0866ff;
   border: none;
   border-radius: 5px;
-  font: 500 14px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  background: steelblue;
+  padding: 6px 20px;
 }
 div[data-visualcompletion="ignore"] {
   position: relative;
