@@ -964,12 +964,20 @@ let AddLabelCRM;
                 });
             }, 1000);
             setTimeout(() => {
+                console.log($(".notes_div_icon").length);
                 setInterval(()=>{
-                    
-                    if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
-                        $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
-                        // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
+                    if(window.location.href.indexOf('messenger') > -1){
+                        if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
+                            $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
+                            // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
+                        }
+                    }else if(window.location.href.indexOf('facebook') > -1){
+                        if($(".notes_div_icon").length <= 2){
+                            $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
+                            // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
+                        }
                     }
+                  
                 },1000)
              
             }, 4000);
