@@ -14,39 +14,6 @@ let totalFriends = 4;
             $(document).ready(function () {
                 $this.onInitMethods();
             });
-
-            // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-            //     console.log('message - ',message);
-            //     if (message.action === 'getGenderAndPlace') {
-            //         let friendDetails = message.friend;
-            //         (async () => {
-            //             const gender = await $this.extractGender();
-            //             const lived = await $this.extractLived();
-            //             const status = await $this.extractStatus();
-            //             if (friendDetails) {
-            //                 friendDetails.gender = gender;
-            //                 friendDetails.lived = lived;
-            //                 friendDetails.status= status;
-            //                 chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
-
-
-            //             } else {
-            //                 console.error("Invalid friendDetails object.");
-            //                 chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
-            //             }
-            //         })();
-            //     }
-            //     if(message.action === 'nextFetchFriend'){
-            //         setTimeout(()=>{
-            //             $this.getFriendList();
-            //         },45000);
-            //     } 
-            //     if(message.action === 'closeFriendPopup'){
-            //         $("#stop_crm").text("Close popup");
-            //         $(".loading").remove();
-            //         $("h2.title_lg").text("There is an error.").css('color','red');
-            //     }
-            // });   
         },
         onInitMethods: function () {
             // Run & check appebd btn every 2 seconds

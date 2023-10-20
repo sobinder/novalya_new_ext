@@ -51,7 +51,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         //     action: 'nextFetchFriend',
         //     from: 'background'
         // });
-        console.log(authToken);
         let token = authToken;
         if(token != undefined && token != ''){
             var myHeaders = new Headers();
@@ -72,8 +71,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 "image":friendDetails.image,
                 "lived":friendDetails.lived
             });
-
-            console.log(raw);
 
             var requestOptions = {
               method: 'POST',
