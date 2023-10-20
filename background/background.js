@@ -3,13 +3,13 @@ importScripts(
     "bg_send_message.js",
     "bg_friend_requests.js",
     "send_without_popup.js",
-    "birthday.js"
+    "birthday.js",
+    "unfollow_friends.js"
 );
 
 //****************************** DEFINE VARIABLES *****************************************//
 // GET HEIGHT WIDTH OF CHROME WINDOWS
 var user_id;   
-
 var window_height = 0;
 var window_width = 0;
 chrome.windows.getAll({ populate: true }, function(list) {
@@ -28,7 +28,6 @@ chrome.runtime.onInstalled.addListener(function() {
     reloadMessengersTabs();
     clearAlarm("requestIsReceived");
 });
-
 
 chrome.management.onEnabled.addListener(function(extensionInfo) {
     checkMessengerMobileView();
@@ -954,7 +953,6 @@ function getCookies(domain, name, callback) {
     });
 }
 
-
 function groupPageTabListener(tabId, changeInfo, tab) {
     if (changeInfo.status === "complete" && tabId === groupPageTabId) {
         extTabId = extension_page_tabid;
@@ -1028,7 +1026,6 @@ function CS_isValidJSONString(str) {
     }
     return true;
 }
-
 
 function sendMessageFromCRMOnebyOne(window_data, thread_id) {
     chrome.storage.local.get(["messengerMobViewStatus"], function(result) {

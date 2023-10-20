@@ -585,6 +585,36 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         var currentLocationUrl = window.location.origin;
         chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
     }
+        //unfollow module
+    if (message.action === 'getGenderAndPlace') {
+        let friendDetails = message.friend;
+        (async () => {
+            const gender = await Unfollow.extractGender();
+            const lived = await Unfollow.extractLived();
+            const status = await Unfollow.extractStatus();
+            if (friendDetails) {
+                friendDetails.gender = gender;
+                friendDetails.lived = lived;
+                friendDetails.status= status;
+                chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
+
+
+            } else {
+                console.error("Invalid friendDetails object.");
+                chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
+            }
+        })();
+    }
+    if(message.action === 'nextFetchFriend'){
+        setTimeout(()=>{
+            Unfollow.getFriendList();
+        },45000);
+    } 
+    if(message.action === 'closeFriendPopup'){
+        $("#stop_crm").text("Close popup");
+        $(".loading").remove();
+        $("h2.title_lg").text("There is an error.").css('color','red');
+    }
 });
 
 if (window.location.href.indexOf(my_domain) > -1) {
