@@ -1379,18 +1379,19 @@ let AddLabelCRM;
         async getClikedFbId() {
             const pathname = window.location.href.toString();
             let cliked_Fb_Id = '';
-        
+            
             if (pathname.indexOf('profile.php') > -1) {
                 cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
-            } else if (window.location.pathname.indexOf('/friends') === -1) {
+            } else if (window.location.pathname.indexOf('/friends') > -1) {
                 if (window.location.pathname.indexOf('/t/') > 0) {
                     cliked_Fb_Id = window.location.pathname.split('/t/')[1];
                 } else {
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
                 }
-        
+                console.log(cliked_Fb_Id);
                 if (cliked_Fb_Id === undefined) {
                     const alphaFbId = window.location.pathname.split('/')[1].toString();
+                    console.log(alphaFbId);
                     const response = await getNumericID(alphaFbId);
                     cliked_Fb_Id = response.userID;
                 }
