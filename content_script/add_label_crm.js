@@ -964,23 +964,43 @@ let AddLabelCRM;
                 });
             }, 1000);
             setTimeout(() => {
-                console.log($(".notes_div_icon").length);
-                setInterval(()=>{
-                    if(window.location.href.indexOf('messenger') > -1){
-                        if($(".notes_div_icon").length == 0 || $(".notes_div_icon").length == 1){
-                            $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
-                            // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
-                        }
-                    }else if(window.location.href.indexOf('facebook') > -1){
-                        if($(".notes_div_icon").length <= 2){
-                            $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
-                            // $(".x6prxxf .xw2csxc:eq(0)").before(message_icon);
-                        }
+                console.log(window.location.href);
+                setInterval(() => {
+                    if (window.location.href.includes('messenger')) {
+                        console.log("in this");
+                        const xw2csxcElements = $(".x1uvtmcs"); // Select all elements with class .xw2csxc
+                        xw2csxcElements.each(function() {
+                          const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
+                          const notesDivIconLength = notesDivIcons.length;
+                          console.log(notesDivIconLength);
+                          // Check the length of .notes_div_icon elements within this .xw2csxc
+                          
+                            if (notesDivIconLength === 0 ) {
+                                // Insert notes_icon2 before this .xw2csxc element
+                                $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
+                              }
+                        });
+                    }else if(window.location.href.includes('facebook')){
+                        console.log("in this");
+                        const xw2csxcElements = $('.x164qtfw'); // Select all elements with class .xw2csxc
+                        console.log(xw2csxcElements);
+                        xw2csxcElements.each(function() {
+                          const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
+                          const notesDivIconLength = notesDivIcons.length;
+                          console.log(notesDivIconLength);
+                          // Check the length of .notes_div_icon elements within this .xw2csxc
+                          
+                            if (notesDivIconLength === 0 ) {
+                                // Insert notes_icon2 before this .xw2csxc element
+                                $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
+                              }
+                        });
                     }
+                    
+                }, 1000);
                   
-                },1000)
-             
-            }, 4000);
+                
+              }, 4000);
         },
         currentProfile: function () {
             console.log("current  profile is called");
