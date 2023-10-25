@@ -1136,13 +1136,13 @@ function getGroupUser(message){
     .then(response => response.json())
     .then((data) => {
         let taggedusers = data.taggedUsers;
-        getTaggedUserName(taggedusers);
+        getTaggedUserName(taggedusers,groupId);
     })
     .catch(error => console.log('error', error));
     return true;
 }
 
-async function getTaggedUserName(taggedusers){
+async function getTaggedUserName(taggedusers,groupId){
     try {
         const fetchPromises = taggedusers.map(async (item) => {
             console.log(item);
@@ -1157,12 +1157,30 @@ async function getTaggedUserName(taggedusers){
 
         const results = await Promise.all(fetchPromises);
         const filteredResults = results.filter(result => result !== null);
-        filteredResults.forEach(async function (item, i) {
-            console.log(item);
+        for (const [i, item] of filteredResults.entries()) {
             await syncGroupTaggedUserInDB(item);
+            if (i === filteredResults.length - 1) {
+                console.log('get api');
+                const url = `https://novalyabackend.novalya.com/user/api/group/${groupId}`;
+                const myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer " + authToken);
 
+                const requestOptions = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    redirect: 'follow'
+                };
 
-        })
+                try {
+                    const response = await fetch(url, requestOptions);
+                    const data = await response.json();
+                    console.log(data);
+                    return true;
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
         console.log(filteredResults);
     } catch (error) {
         console.error(error);
@@ -1211,7 +1229,7 @@ async function syncGroupTaggedUserInDB(item){
         method: 'PATCH',
         headers: myHeaders,
         body: raw
-      };
+    };
 
     fetch(url, requestOptions)
     .then(response => response.json())

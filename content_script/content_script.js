@@ -656,7 +656,9 @@ $(document).ready(function () {
 
     $(document).on("click", "#sync_fbname", function(){
         let groupId = $(this).val();
-        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId});
+        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId},function(response){
+            console.log(response);
+        });
     })
 
     $(document).on("click", "#stop_run", function () {
