@@ -1185,3 +1185,6 @@ div[data-visualcompletion="ignore"] {
 div#current_profile_tags {
   width: auto;
 }
+#count-show{
+  display: none;
+}

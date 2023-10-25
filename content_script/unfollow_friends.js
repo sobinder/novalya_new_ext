@@ -1,6 +1,7 @@
 let Unfollow;
-let totalFriends = 4;
+let totalFriends = 0;
 (function ($) {
+    console.log('here');
     let $this;
     let btn = `<button id="data-unfollow">Nova Data</button>`;
     let friendsList = [];
@@ -17,32 +18,25 @@ let totalFriends = 4;
         },
         onInitMethods: function () {
             // Run & check appebd btn every 2 seconds
-            const getFriendId = setInterval($this.appendNovaDataButton, 200);
 
-            $(document).on('click','#data-unfollow',async function(){
-                $('div[role="tablist"] a:contains("All friends")').click();
-                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-              
-                totalFriends = await $this.extractTotalFriends();
-                console.log(totalFriends, 'totalFriends here')
-                if(totalFriends  > 0){
-                    $this.novaDataProgressModel()
-                }
-                console.log("Total Friends:", totalFriends);
-                $this.getFriendList();
+            $(document).on('click','#async_novadata',async function(){
+                chrome.runtime.sendMessage({'action':'openUserProfile','from':'unfollow'})
             });
+            $(document).on('click','#stop_unfollow',async function(){
+                chrome.runtime.sendMessage({'action':'closeUnfollow','from':'unfollow'})
+            });
+            
+
         },
-        // Append Nova Data  button
-        appendNovaDataButton: function() {
-            if(window.location.href.indexOf('/friends') > 0 || window.location.href.indexOf('/friends_all') > 0 ){
-                const friendsLink = $('h2 span a:contains("Friends")').addClass('nova-data');
-                //console.log( $('.nova-data'));
-                if (friendsLink.length > 0) {
-                    if ($('#data-unfollow').length === 0) {
-                        $('.nova-data').parent().parent().parent().parent().parent().append(btn);
-                    }
-                }
-            }
+
+        async groupListIntial(message){
+            $this.novaDataProgressModel(message.extTabId);
+            $("html, body").animate({ scrollTop: $(document).height() }, 1000); 
+            totalFriends = await $this.extractTotalFriends();
+            console.log("Total Friends:", totalFriends);
+            $('.total_members').text(totalFriends);
+            $('#count-show').show();
+            $this.getFriendList();
         },
         // Get Friend List
         getFriendList: async function () {
@@ -158,44 +152,51 @@ let totalFriends = 4;
         extractTotalFriends: async function() {
             return new Promise((resolve) => {
               var totalFriendsElement = $('h1:eq(2)').parent().parent().parent().parent().next().find('span a').text();
-              
-              var totalFriends = totalFriendsElement.match(/\d+/); // Extract numeric digits
-          
-              if (totalFriends) {
-                if (totalFriendsElement.indexOf('k') > 0) {
-                  // If 'k' is found in the text, convert to thousands
-                  $this.convertIntoThousand(totalFriends[0]).then((convertedValue) => {
-                    resolve(convertedValue);
-                  }).catch((error) => {
-                    console.error(error);
-                    resolve(0); // Handle the error, resolve with 0
-                  });
-                } else {
-                  resolve(parseInt(totalFriends[0], 10)); // Parse the numeric value
+             let getCountInterval = setInterval(()=>{
+                if($('h1:eq(2)').length > 0){
+                    clearInterval(getCountInterval);
+                    totalFriendsElement = $('h1:eq(2)').parent().parent().parent().parent().next().find('span a').text();
+                    var totalFriends = totalFriendsElement.match(/\d+/); // Extract numeric digits
+                    console.log(totalFriends);
+                    if (totalFriends) {
+                        if (totalFriendsElement.indexOf('k') > 0) {
+                            // If 'k' is found in the text, convert to thousands
+                            $this.convertIntoThousand(totalFriends[0]).then((convertedValue) => {
+                                resolve(convertedValue);
+                                $('.total_members').text(convertedValue);
+                                $('#count-show').show();
+                            }).catch((error) => {
+                                console.error(error);
+                                resolve(0); // Handle the error, resolve with 0
+                            });
+                        } else {
+                            resolve(parseInt(totalFriends[0], 10)); // Parse the numeric value
+                        }
+                    } else {
+                        resolve(0); // If no numeric value is found, resolve with 0
+                    }
                 }
-              } else {
-                resolve(0); // If no numeric value is found, resolve with 0
-              }
+              },2000);
             });
-          },
+        },
           
         convertIntoThousand:function(value) {
             var numericValue = parseFloat(value);
             var result = numericValue * 1000;
             return result;
         },
-        novaDataProgressModel: function () {
+        novaDataProgressModel: function (extTabId) {
             let html_processing_model = `<section class="main-app">
                                 <div class="overlay-ld">
                                     <div class="container-ld">
-                                        <h3 class="title_lg">CAMPAIGN IS PROCESSING</h3>
+                                        <h3 class="title_lg">NOVA DATA IS PROCESSING</h3>
                                         <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
-                                        <h2 class="title_lg">NEXT REQUEST IS SENDING...</h2>
+                                        <h2 class="title_lg">NEXT FRIEND IS SEARCHING...</h2>
                                         <div class="loading">
                                             <span class="fill"></span>
                                         </div>
-                                        <p class="simple-txt"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${totalFriends}</span></p>
-                                        <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_crm">stop sending</button>
+                                        <p class="simple-txt" id="count-show"><span id="processed_member">0</span> REQUESTS IS ON <span class="total_members"> ${totalFriends}</span></p>
+                                        <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_unfollow" data-tabid="${extTabId}">stop sending</button>
                                     </div>
                                 </div>
                             </section>`;

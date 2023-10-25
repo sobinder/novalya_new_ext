@@ -2,7 +2,7 @@ let friendDetails;
 let friendListTabId;
 let friendListArray = [];
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.action === 'fetchedFriendData') {
         friendListTabId = sender.tab.id;
         let friendDetails = message.data;
@@ -97,4 +97,63 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             });               
         } 
     }
+    if(message.action === 'openUserProfile' && message.from === 'unfollow'){
+        let id = await getCurrentUserFbId(); // Get user's Fb id
+        if(id){
+            const url = `https://www.facebook.com/${id}/friends_all`;
+            chrome.tabs.create({ url: url, active: true },
+                function(tabs) {
+                    friendTabId = tabs.id;
+                    extension_page_tabid = sender.tab.id;
+                    chrome.storage.local.set({ friendUnfollowProcess: "process" },
+                        function() {
+                            chrome.tabs.onUpdated.addListener(friendListPageTabListener);
+                            //sendResponse({ data: res1 });
+                        }
+                    );
+                }
+            );
+        }
+    }
+    if(message.action === 'closeUnfollow' && message.from === 'unfollow'){
+        chrome.tabs.remove(sender.tab.id);
+    }
+    
+
 });
+
+
+async function getCurrentUserFbId() {
+    return new Promise(function (resolve, reject) {
+      fetch('https://www.facebook.com/me', { method: 'GET' }).then(function (
+        response
+      ) {
+        if (response.status == 200) {
+          let fbID = new URL(response.url).searchParams.get('id');
+          if (fbID == null) {
+            url = new URL(response.url);
+            fbID = url.pathname;
+            fbID = fbID.replace('/', '');
+            fbID = fbID.replace('/', '');
+          }
+          resolve(fbID);
+        } else {
+          reject(false);
+        }
+      });
+    });
+}
+
+function friendListPageTabListener(tabId, changeInfo, tab) {
+    console.log('extension_page_tabid - ',extension_page_tabid);
+    console.log('friendTabId - ',friendTabId);
+    if (changeInfo.status === "complete" && tabId === friendTabId) {
+        extTabId = extension_page_tabid;
+        chrome.tabs.sendMessage(friendTabId, {
+            action: "friendUnfollowProcess",
+            from: "background",
+            extTabId: extTabId,
+        });
+        chrome.tabs.onUpdated.removeListener(friendListPageTabListener);
+    }
+}  

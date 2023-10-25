@@ -16,6 +16,7 @@ chrome.windows.getAll({ populate: true }, function(list) {
     window_height = list[0].height;
     window_width = list[0].width;
 });
+let taggedusers = [];
 
 // Oninstall though window.open can be blocked by popup blockers
 chrome.runtime.onInstalled.addListener(function() {
@@ -162,7 +163,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .catch(error => console.log('error', error));
         return true;
     }
-//sendResponse({ data: result, status: "ok" })
+    //sendResponse({ data: result, status: "ok" })
     if (message.action === "tagsAssiging") {
         const fbUserId = message.fb_user_id;
         getBothAlphaAndNumericId(fbUserId)
@@ -894,6 +895,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           .catch(error => console.log('error', error));
         return true;
     }
+    if(message.action === "getUserName"){
+        let usersId = message.ids;
+        findUserName(usersId);
+    }
+    if(message.action === "syncFbname"){
+        let groupId = message.groupId;
+        getGroupUser(message); 
+    }
 
 });
 var currentDate = getCurrentDate();
@@ -968,10 +977,10 @@ function groupPageTabListener(tabId, changeInfo, tab) {
 function getGroupName(sendResponse, grouppage_url) {
     //console.log(grouppage_url);
     fetch(grouppage_url, { method: "GET" })
-        .then((response) => response.text())
-        .then((textResponse) => {
-            sendResponse({ groupPageDOM: textResponse });
-        });
+    .then((response) => response.text())
+    .then((textResponse) => {
+        sendResponse({ groupPageDOM: textResponse });
+    });
 }
 
 FriendRequestsNVClass.getRequestSettings();
@@ -993,28 +1002,28 @@ function GetFacebookLoginId() {
 async function getNumericID(facebook_id) {
     return new Promise(function(resolve, reject) {
         fetch("https://www.facebook.com/" + facebook_id)
-            .then((response) => response.text())
-            .then((str) => {
-                var mySubString = str.substring(
-                    str.lastIndexOf('"props":') + 8,
-                    str.lastIndexOf(',"entryPoint"') + 0
-                );
-                //console.log(mySubString);
-                if (CS_isValidJSONString(mySubString)) {
-                    decoded_data = JSON.parse(mySubString);
-                    viewerID = decoded_data.viewerID;
-                    userVanity = decoded_data.userVanity;
-                    userID = decoded_data.userID;
-                    userInfo = {
-                        viewerID: decoded_data.viewerID,
-                        userVanity: decoded_data.userVanity,
-                        userID: decoded_data.userID,
-                    };
-                    resolve(userInfo);
-                } else {
-                    reject(false);
-                }
-            });
+        .then((response) => response.text())
+        .then((str) => {
+            var mySubString = str.substring(
+                str.lastIndexOf('"props":') + 8,
+                str.lastIndexOf(',"entryPoint"') + 0
+            );
+            //console.log(mySubString);
+            if (CS_isValidJSONString(mySubString)) {
+                decoded_data = JSON.parse(mySubString);
+                viewerID = decoded_data.viewerID;
+                userVanity = decoded_data.userVanity;
+                userID = decoded_data.userID;
+                userInfo = {
+                    viewerID: decoded_data.viewerID,
+                    userVanity: decoded_data.userVanity,
+                    userID: decoded_data.userID,
+                };
+                resolve(userInfo);
+            } else {
+                reject(false);
+            }
+        });
     });
 }
 
@@ -1060,4 +1069,155 @@ function sendMessageFromCRMOnebyOne(window_data, thread_id) {
                 checkMessengerMobileView();
             }
         });
+}
+
+async function findUserName(usersId){
+    try {
+        const fetchPromises = usersId.map(async (item) => {
+            const response = await getFacebookNameByFbID(item);
+            if (response.id != null && response.name != null) {
+                const userInfo = { "fb_user_id": response.id, "name": response.name };
+                return userInfo;
+            }
+            return null; 
+        });
+
+        const results = await Promise.all(fetchPromises);
+        const filteredResults = results.filter(result => result !== null);
+        if(filteredResults.length > 0){
+            //call api for update data into db
+        }
+        console.log(filteredResults);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getFacebookNameByFbID(id) {
+    try {
+        const response = await fetch(`https://www.facebook.com/${id}/about`);
+        const domStr = await response.text();
+        const subString = domStr.substring(
+            domStr.lastIndexOf('"tracePolicy":') + 0,
+            domStr.lastIndexOf(',"prefetchable"') + 0
+        );
+        const metaString = subString.substring(
+            subString.lastIndexOf('"meta":') + 7
+        );
+        if (CS_isValidJSONString(metaString)) {
+            const decoded_data = JSON.parse(metaString);
+            const name = decoded_data.title;
+            const temp = {id, name};
+            return temp;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+// get taggedUser name for syncing
+function getGroupUser(message){
+    let groupId = message.groupId;
+    let url = `https://novalyabackend.novalya.com/user/api/group/${groupId}`;
+    
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer "+authToken);
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    fetch(url, requestOptions)
+    .then(response => response.json())
+    .then((data) => {
+        let taggedusers = data.taggedUsers;
+        getTaggedUserName(taggedusers);
+    })
+    .catch(error => console.log('error', error));
+    return true;
+}
+
+async function getTaggedUserName(taggedusers){
+    try {
+        const fetchPromises = taggedusers.map(async (item) => {
+            console.log(item);
+            console.log(item.fb_user_id);
+            const response = await getFacebookNameByFbID(item.fb_user_id);
+            if (response.id != null && response.name != null) {
+                const userInfo = {"id":item.id, "fb_user_id": response.id, "name": response.name };
+                return userInfo;
+            }
+            return null; 
+        });
+
+        const results = await Promise.all(fetchPromises);
+        const filteredResults = results.filter(result => result !== null);
+        filteredResults.forEach(async function (item, i) {
+            console.log(item);
+            await syncGroupTaggedUserInDB(item);
+
+
+        })
+        console.log(filteredResults);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getFacebookNameByFbID(id) {
+    try {
+        const response = await fetch(`https://www.facebook.com/${id}/about`);
+        const domStr = await response.text();
+        const subString = domStr.substring(
+            domStr.lastIndexOf('"tracePolicy":') + 0,
+            domStr.lastIndexOf(',"prefetchable"') + 0
+        );
+        const metaString = subString.substring(
+            subString.lastIndexOf('"meta":') + 7
+        );
+        if (CS_isValidJSONString(metaString)) {
+            const decoded_data = JSON.parse(metaString);
+            const name = decoded_data.title;
+            const temp = {id, name};
+            return temp;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+async function syncGroupTaggedUserInDB(item){
+    let id = item.id;
+    let name = item.name;
+    let url = `https://novalyabackend.novalya.com/user/api/taggeduser/${id}`;
+    let raw = JSON.stringify({
+        "Fb_name":name
+    });
+      console.log(raw);
+      console.log(authToken);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer "+authToken);
+
+    var requestOptions = {
+        method: 'PATCH',
+        headers: myHeaders,
+        body: raw
+      };
+
+    fetch(url, requestOptions)
+    .then(response => response.json())
+    .then((data) => {
+        console.log(data);
+    })
+    .catch(error => console.log('error', error));
+    return true;
 }

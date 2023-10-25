@@ -596,9 +596,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 friendDetails.gender = gender;
                 friendDetails.lived = lived;
                 friendDetails.status= status;
+                console.log(friendDetails);
                 chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
-
-
             } else {
                 console.error("Invalid friendDetails object.");
                 chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
@@ -614,6 +613,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         $("#stop_crm").text("Close popup");
         $(".loading").remove();
         $("h2.title_lg").text("There is an error.").css('color','red');
+    }
+    if(message.action === 'friendUnfollowProcess' &&  message.from === "background"){
+        console.log(message);
+        setTimeout(()=>{
+            Unfollow.groupListIntial(message);
+        },1000);
     }
 });
 
@@ -648,6 +653,11 @@ $(document).ready(function () {
     //         }
     //     );
     // }, 2000);
+
+    $(document).on("click", "#sync_fbname", function(){
+        let groupId = $(this).val();
+        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId});
+    })
 
     $(document).on("click", "#stop_run", function () {
         //$('#stop_run').remove();
