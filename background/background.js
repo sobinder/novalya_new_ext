@@ -901,7 +901,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     if(message.action === "syncFbname"){
         let groupId = message.groupId;
-        getGroupUser(message); 
+        getGroupUser(message, sender, sendResponse); 
     }
 
 });
@@ -1119,7 +1119,7 @@ async function getFacebookNameByFbID(id) {
 }
 
 // get taggedUser name for syncing
-function getGroupUser(message){
+function getGroupUser(message, sender, sendResponse){
     let groupId = message.groupId;
     let url = `https://novalyabackend.novalya.com/user/api/group/${groupId}`;
     
@@ -1136,17 +1136,15 @@ function getGroupUser(message){
     .then(response => response.json())
     .then((data) => {
         let taggedusers = data.taggedUsers;
-        getTaggedUserName(taggedusers,groupId);
+        getTaggedUserName(taggedusers,groupId,sender, sendResponse);
     })
     .catch(error => console.log('error', error));
     return true;
 }
 
-async function getTaggedUserName(taggedusers,groupId){
+async function getTaggedUserName(taggedusers,groupId,sender, sendResponse){
     try {
         const fetchPromises = taggedusers.map(async (item) => {
-            console.log(item);
-            console.log(item.fb_user_id);
             const response = await getFacebookNameByFbID(item.fb_user_id);
             if (response.id != null && response.name != null) {
                 const userInfo = {"id":item.id, "fb_user_id": response.id, "name": response.name };
@@ -1160,28 +1158,9 @@ async function getTaggedUserName(taggedusers,groupId){
         for (const [i, item] of filteredResults.entries()) {
             await syncGroupTaggedUserInDB(item);
             if (i === filteredResults.length - 1) {
-                console.log('get api');
-                const url = `https://novalyabackend.novalya.com/user/api/group/${groupId}`;
-                const myHeaders = new Headers();
-                myHeaders.append("Authorization", "Bearer " + authToken);
-
-                const requestOptions = {
-                    method: 'GET',
-                    headers: myHeaders,
-                    redirect: 'follow'
-                };
-
-                try {
-                    const response = await fetch(url, requestOptions);
-                    const data = await response.json();
-                    console.log(data);
-                    return true;
-                } catch (error) {
-                    console.error('Error:', error);
-                }
+                chrome.tabs.sendMessage(sender.tab.id,{'action':'syncingComplete'})
             }
         }
-        console.log(filteredResults);
     } catch (error) {
         console.error(error);
     }
@@ -1219,8 +1198,6 @@ async function syncGroupTaggedUserInDB(item){
     let raw = JSON.stringify({
         "Fb_name":name
     });
-      console.log(raw);
-      console.log(authToken);
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer "+authToken);

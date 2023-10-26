@@ -620,6 +620,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             Unfollow.groupListIntial(message);
         },1000);
     }
+    if(message.action === 'syncingComplete'){
+        toastr["success"]('Sync complete');
+        setTimeout(()=>{
+            location.reload();
+        },1000);
+        
+    }
 });
 
 if (window.location.href.indexOf(my_domain) > -1) {
@@ -656,9 +663,7 @@ $(document).ready(function () {
 
     $(document).on("click", "#sync_fbname", function(){
         let groupId = $(this).val();
-        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId},function(response){
-            console.log(response);
-        });
+        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId});
     })
 
     $(document).on("click", "#stop_run", function () {
