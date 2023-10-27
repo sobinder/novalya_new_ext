@@ -4,6 +4,8 @@ var loopValue = 0;
 var segementMessage = "";
 let timeOutIdsArray = [];
 let clearMessageInt = [];
+let usersubscriptionDate = "24-10-2023";
+let messageLimit = 5;
 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
@@ -711,18 +713,21 @@ $(document).ready(function () {
         $("#submit-campaign").prop("disabled", true);
         $("#submit-campaign").addClass("disabled_cls");        
         let data = JSON.parse($(this).attr('attr-data'));
-        console.log(data);
+ 
+       
+
         setTimeout(() => {
             chrome.runtime.sendMessage({ action: "getCRMSettings", settins:data }, (res7) => {                
                 console.log(res7);
+                //return false;
                 let status_api = res7.setting.status;
                 if(status_api == "success") {
                     toastr["success"]('setting saved successfully! fetching members');
-                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings"}, (res17) => {                
-                        console.log(res17);
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings"}, async(res17) => {                
+                       console.log(res17);
                         let reponse17 = res17.api_data.data;
                         let crm_settings = reponse17[0];
-                        console.log(reponse17[0]);
+                        //console.log(reponse17[0]);
 
                         let total_memberss = crm_settings.taggedUsers.length;
                         let html_processing_model = `<section class="main-app">
@@ -746,8 +751,8 @@ $(document).ready(function () {
                             $("#submit-campaign").prop("disabled", false);
                             $("#submit-campaign").removeClass("disabled_cls");
                         }, 5000);
-
                         var selected_group_members = crm_settings.taggedUsers;
+
                         const intervalValue = crm_settings.time_interval;
                         console.log(intervalValue); 
                         if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
@@ -1075,7 +1080,7 @@ $(document).ready(function () {
                 (res8) => {
                     console.log(res8);
                     let response = res8.groupPageDOM;
-                    console.log(response);
+                    //console.log(response);
                     let title = $(response).filter("title").text();
                     console.log(title);
                     $("#group_name").text("Group Name:- " + title + "( VERIFIED )");
@@ -1201,3 +1206,4 @@ function appendHTMLOnBirthday(extTabIdOnBirthday) {
     $("body:not('.process-model-added')").prepend(html_processing_model);
     $("body").addClass("process-model-added");
 }
+

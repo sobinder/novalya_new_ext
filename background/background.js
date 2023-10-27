@@ -106,7 +106,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let window_data = {
             text_message: message.textMsg,
         };
-
         chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
             if (
                 typeof result.messengerMobViewStatus != "undefined" &&
@@ -171,7 +170,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             const numericUserFbId = fbIDsObject.numeric_fb_id;
             const alphanumericUserFbId = fbIDsObject.fb_user_id;
             
-
             let token = authToken;
             if(token != undefined && token != ''){
                 console.log(message);
@@ -267,7 +265,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             fetch("https://novalyabackend.novalya.com/extension/api/taggeduser-api", requestOptions)
                .then(response => response.json())
-               .then(result => { sendResponse(result) })
+               .then(result => { console.log(result); sendResponse(result) })
                .catch(error => console.log('error', error));               
         }
         return true;
@@ -714,7 +712,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
           .then(response => response.json())
-          .then(result => { console.log(result); sendResponse({ setting: result}) })
+          .then(async (result) => { 
+            console.log(result); 
+            // let limit = await getUserLimit();
+            // sendResponse({ setting: result,limit:limit}) 
+            sendResponse({ setting: result}) 
+        })
           .catch(error => console.log('error', error));
         return true;
     }
@@ -1196,7 +1199,7 @@ async function syncGroupTaggedUserInDB(item){
     let name = item.name;
     let url = `https://novalyabackend.novalya.com/user/api/taggeduser/${id}`;
     let raw = JSON.stringify({
-        "Fb_name":name
+        "fb_name":name
     });
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -1216,3 +1219,29 @@ async function syncGroupTaggedUserInDB(item){
     .catch(error => console.log('error', error));
     return true;
 }
+// setTimeout(()=>{
+//     getUserLimit();
+// },3000);
+
+// async function getUserLimit(){
+//     let url = "https://novalyabackend.novalya.com/userlimit/api/check";
+//     var myHeaders = new Headers();
+//     myHeaders.append("Content-Type", "application/json");
+//     myHeaders.append("Authorization", "Bearer "+authToken);
+
+//     var requestOptions = {
+//         method: 'POST',
+//         headers: myHeaders,
+//     };
+
+//     fetch(url, requestOptions)
+//     .then(response => response.json())
+//     .then((data) => {
+//         console.log(data);
+//         if(data.status == 'success'){
+//             return data.data.no_of_send_message;
+//         }
+//     })
+//     .catch(error => console.log('error', error));
+//     return true;
+// }

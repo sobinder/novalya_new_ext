@@ -338,7 +338,6 @@ let AddLabelCRM;
                         cliked_Fb_Id = window.location.pathname.split('/')[2];
                     }
 
-
                     if(cliked_Fb_Id === undefined){
                         var alphaFbId = window.location.pathname.split('/')[1].toString();
                         console.log(alphaFbId);
@@ -386,11 +385,8 @@ let AddLabelCRM;
                         .catch(function(response) {
                             console.log("error to find fb id");
                         });
-                 return false;
+                        return false;
                     }
-
-
-
 
                 }
                 if (notes == "") {
@@ -1092,7 +1088,9 @@ let AddLabelCRM;
         },
         taggeduserapi: function () {
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
+                console.log(response);
                 let all_users_tag_get = response.data;
+                console.log(all_users_tag_get)
                 userTagsArray = [];
                 if (all_users_tag_get.length > 0) {
                     for (let i = 0; i < all_users_tag_get.length; i++) {
