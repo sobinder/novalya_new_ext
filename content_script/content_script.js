@@ -713,9 +713,8 @@ $(document).ready(function () {
         $("#submit-campaign").prop("disabled", true);
         $("#submit-campaign").addClass("disabled_cls");        
         let data = JSON.parse($(this).attr('attr-data'));
- 
-       
-
+        let userIds = data.userIds;
+        console.log(userIds);
         setTimeout(() => {
             chrome.runtime.sendMessage({ action: "getCRMSettings", settins:data }, (res7) => {                
                 console.log(res7);
@@ -730,6 +729,9 @@ $(document).ready(function () {
                         //console.log(reponse17[0]);
 
                         let total_memberss = crm_settings.taggedUsers.length;
+                        if(userIds.length > 0){
+                            total_memberss = userIds.length;
+                        }
                         let html_processing_model = `<section class="main-app">
                                 <div class="overlay-ld">
                                     <div class="container-ld">
@@ -752,6 +754,12 @@ $(document).ready(function () {
                             $("#submit-campaign").removeClass("disabled_cls");
                         }, 5000);
                         var selected_group_members = crm_settings.taggedUsers;
+                        console.log('selected_group_members - ',selected_group_members);
+                        if(userIds.length > 0){
+                            selected_group_members =  selected_group_members.filter(item => userIds.includes(item.id));
+                        }
+
+                        console.log('selected_group_members - ',selected_group_members);
 
                         const intervalValue = crm_settings.time_interval;
                         console.log(intervalValue); 
@@ -1082,7 +1090,7 @@ $(document).ready(function () {
                     let response = res8.groupPageDOM;
                     //console.log(response);
                     let title = $(response).filter("title").text();
-                    console.log(title);
+                    // console.log(title);
                     $("#group_name").text("Group Name:- " + title + "( VERIFIED )");
                     $("#verfiyurlfbgroup").text("Saving..");
                     chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title,token:token },
