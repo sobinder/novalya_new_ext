@@ -44,7 +44,8 @@
                 "content_script/add_new_friend.js",
                 "content_script/add_label_crm.js",
                 "content_script/custom_toastr.js",
-                "content_script/unfollow_friends.js"
+                "content_script/unfollow_friends.js",
+                "content_script/facebook_cs.js"
             ],
             "css": [                
                 "content_script/toastr.min.css",
@@ -60,7 +61,11 @@
                 "assets/image/filter.png",
                 "assets/images/post.png",
                 "assets/images/message.png",
-                "assets/images/loading-forever.gif"
+                "assets/images/loading-forever.gif",
+                "assets/images/like.png",
+                "assets/images/play_submit.png",
+                "assets/images/dislike.png",
+                "assets/images/reload.png"
             ],
             "matches": [
                 "<all_urls>"

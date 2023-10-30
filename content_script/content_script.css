@@ -1188,3 +1188,227 @@ div#current_profile_tags {
 #count-show{
   display: none;
 }
+
+
+
+
+/* ------------------------commentAIcSS------------------------- */
+
+div#quentintou button {
+  border: 1px solid #269be8;
+  border-radius: 25px;
+  padding: 4px 10px;
+  margin: 0 4px 10px 0;
+  color: #269be8;
+  font-weight: 700;
+}
+div#quentintou {
+  margin: 5px 0px;
+  height:auto;
+  width: 100%;
+}
+div#quentintou .agree_div {
+    margin-bottom: 8px;
+}
+.que-footer {
+  color: #269be8;
+  font-size: 12px;
+}
+.loader {
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  margin: 0 auto;
+  border-width: 2px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+.que-red-border {
+  border: 1px solid red !important;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.like_option
+{
+width: 150px;
+  margin: 0px;
+  padding: 0px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+div#quentintou .like_option
+{
+width: auto;
+}
+.like_option  {
+    justify-content: start;
+    margin-left: 8px;  
+    gap: 8px; 
+}
+.like_option img {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+.shorter
+{
+display: flex;
+}
+.remove_close
+{
+    margin-left: 10px;
+  font-weight: 700;
+}
+
+.ai2-message-page div#quentintou {
+  margin-left: 35px;
+}
+button.que-expression-btn.ExpBtn {
+  cursor: pointer !important;
+}
+
+.ai2-link-message-page div#quentintou {
+    margin-left: 35px;
+}
+
+.agree_div, .opinion_option, .writing_option, .size_option, .response, .tone_option{
+    display: flex;
+    justify-content: space-between;
+}
+.agree_div, .opinion_option, .writing_option, .size_option, .tone_option{
+    margin-bottom: 12px;
+}
+.opinion_option, .writing_option, .size_option, .tone_option {
+    display:none;
+}
+.agree_div{
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.agree_div ul, .opinion_option ul, .writing_option ul,.tone_option ul, .size_option ul{
+    display: inline-flex;
+    justify-content: start;
+    text-decoration: none;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+.agree_div ul li, .opinion_option ul li, .tone_option ul li, .writing_option ul li, .size_option ul li
+{
+    border: 2px solid #0075b2;
+    border-radius: 20px;
+    padding: 6px;
+    margin: 10px;
+    width: auto;
+    text-align: center;
+    font-size: 12px;
+    line-height: 12px;
+    color:#4f92bc;
+    font-weight:600;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+.response_opinion, .response_writing, .response_tone, .response_size {
+    display: flex;
+    justify-content: space-evenly;
+    line-height: 1px;
+    background: #1950b5;
+    padding: 0px 25px;
+    border-radius: 25px;
+}
+.response_opinion span, .response_writing span, .response_tone span, .response_size span  {
+    text-align: center;
+    color: #ffffff;
+    padding:8px;
+}
+.response_opinion p, .response_writing p, .response_tone p, .response_size p {
+    margin-left: 11px;
+    font-size: 24px;
+    color: #ffffff;
+    line-height: 30px;
+}
+.agree_div ul{
+
+    flex-wrap: nowrap;
+}
+
+.option_active {
+    background: #0075b2;
+    color: #ffffff !important;
+}
+.response {
+    justify-content: start;
+    flex-wrap: wrap;
+    gap: 0; 
+}
+.response div {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#quentintou ul li {
+    display: block;
+    height: auto !important;
+}
+#quentintou ul {
+    gap: 8px;
+}
+#quentintou ul li {
+    margin: 0;
+    padding: 6px 18px;
+}
+
+.play img {
+    width: 18px;
+    height: 18px;
+}
+
+.play {
+    border: 2px solid #0075b2;
+    border-radius: 20px;
+    padding: 3px 20px;
+    display: flex;
+    align-items: center;
+    background: #0075b2;
+    justify-content: center;
+    cursor: pointer;
+}
+.response_opinion ,.response_tone ,.response_writing ,.response_size {
+    cursor: pointer;
+}
+.response p {
+    font-size: 12px;
+    line-height: 1;
+    margin: 0 0 0 10px;
+    cursor: pointer;
+}
+.feed-shared-update-v2__comments-container.flex-column .comments-comment-box:not(.comments-comment-item__comment-box){
+    flex-wrap: wrap;
+}
+.response>div {
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+.ai2-feed-page {
+    flex-wrap: wrap !important;
+}

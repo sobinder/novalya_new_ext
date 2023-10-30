@@ -906,6 +906,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let groupId = message.groupId;
         getGroupUser(message, sender, sendResponse); 
     }
+// --------------------------------COMMENT AI--------------------------------
+    if (message.action == "getResponseFromChatGPT" && message.from == "content") {
+console.log("GPT messag recieved");
+      
+            
+                var authtoken = authToken;
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                        myHeaders.append("Authorization", "Bearer " + authtoken);
+                var requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: message.request,
+                  redirect: 'follow'
+                };
+                  var apiBaseUrl = 'https://novalyabackend.novalya.com/commentai/api/commentgenerate';
+                fetch(apiBaseUrl, requestOptions)
+                  .then(response => response.text())
+                  .then(result => {
+                    console.log(result)
+                    console.log('message.formfield', message.formfield);
+                    chrome.tabs.sendMessage(sender.tab.id, { from: 'background', subject: 'responseBG', result: result}, function() {
+                        // bbody console.log();
+                    });            
+                })
+                .catch(error => console.log('error', error));
+            
+        
+        return true;
+
+    }    
 
 });
 var currentDate = getCurrentDate();
@@ -989,7 +1020,7 @@ function getGroupName(sendResponse, grouppage_url) {
 FriendRequestsNVClass.getRequestSettings();
 // FriendCRMClass.getCRMStatus();
 
-// GET FACEBOOK LOGGED-IN USER ID FROM APIS AND SET CUSTOMER ID
+// GET FACEBOOK LOGGED-IN USER 1ID FROM APIS AND SET CUSTOMER ID
 function GetFacebookLoginId() {
     return fetch("https://www.facebook.com/help")
         .then(function(response) {
@@ -1001,7 +1032,7 @@ function GetFacebookLoginId() {
         });
 }
 
-// HEPER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
+// HEPgfcvbcER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
 async function getNumericID(facebook_id) {
     return new Promise(function(resolve, reject) {
         fetch("https://www.facebook.com/" + facebook_id)
