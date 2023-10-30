@@ -714,9 +714,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           .then(response => response.json())
           .then(async (result) => { 
             console.log(result); 
-            // let limit = await getUserLimit();
-            // sendResponse({ setting: result,limit:limit}) 
-            sendResponse({ setting: result}) 
+            let no_of_send_message = await getUserLimit();
+            console.log(no_of_send_message);
+            sendResponse({ setting: result,no_of_send_message:no_of_send_message}) 
         })
           .catch(error => console.log('error', error));
         return true;
@@ -1219,29 +1219,32 @@ async function syncGroupTaggedUserInDB(item){
     .catch(error => console.log('error', error));
     return true;
 }
-// setTimeout(()=>{
-//     getUserLimit();
-// },3000);
 
-// async function getUserLimit(){
-//     let url = "https://novalyabackend.novalya.com/userlimit/api/check";
-//     var myHeaders = new Headers();
-//     myHeaders.append("Content-Type", "application/json");
-//     myHeaders.append("Authorization", "Bearer "+authToken);
 
-//     var requestOptions = {
-//         method: 'POST',
-//         headers: myHeaders,
-//     };
+async function getUserLimit() {
+    try {
+        const url = "https://novalyabackend.novalya.com/userlimit/api/check";
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authToken);
 
-//     fetch(url, requestOptions)
-//     .then(response => response.json())
-//     .then((data) => {
-//         console.log(data);
-//         if(data.status == 'success'){
-//             return data.data.no_of_send_message;
-//         }
-//     })
-//     .catch(error => console.log('error', error));
-//     return true;
-// }
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+        };
+
+        const response = await fetch(url, requestOptions);
+        if (response.ok) {
+            const result = await response.json();
+            return result.data.no_of_send_message;
+        } else {
+            // Handle the error here if needed
+            console.log('Error:', response.status, response.statusText);
+            return null; // Or you can throw an error
+        }
+    } catch (error) {
+        // Handle any other errors that may occur during the request
+        console.error('Error:', error);
+        return null; // Or you can throw an error
+    }
+}

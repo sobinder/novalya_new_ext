@@ -979,17 +979,17 @@ let AddLabelCRM;
                     }else if(window.location.href.includes('facebook')){
                         console.log("in this");
                         const xw2csxcElements = $('.x164qtfw'); // Select all elements with class .xw2csxc
-                        console.log(xw2csxcElements);
+                        //console.log(xw2csxcElements);
                         xw2csxcElements.each(function() {
                           const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
                           const notesDivIconLength = notesDivIcons.length;
-                          console.log(notesDivIconLength);
+                          //console.log(notesDivIconLength);
                           // Check the length of .notes_div_icon elements within this .xw2csxc
                           
                             if (notesDivIconLength === 0 ) {
                                 // Insert notes_icon2 before this .xw2csxc element
                                 $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
-                              }
+                            }
                         });
                     }
                     
