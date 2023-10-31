@@ -9,17 +9,17 @@ importScripts(
 
 //****************************** DEFINE VARIABLES *****************************************//
 // GET HEIGHT WIDTH OF CHROME WINDOWS
-var user_id;   
+var user_id;
 var window_height = 0;
 var window_width = 0;
-chrome.windows.getAll({ populate: true }, function(list) {
+chrome.windows.getAll({ populate: true }, function (list) {
     window_height = list[0].height;
     window_width = list[0].width;
 });
 let taggedusers = [];
 
 // Oninstall though window.open can be blocked by popup blockers
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(function () {
     chrome.alarms.create("wakeup_bg", { periodInMinutes: 1 / 60 });
     // chrome.alarms.create('requestIsReceived', { periodInMinutes: 9 });
     checkMessengerMobileView();
@@ -30,7 +30,7 @@ chrome.runtime.onInstalled.addListener(function() {
     clearAlarm("requestIsReceived");
 });
 
-chrome.management.onEnabled.addListener(function(extensionInfo) {
+chrome.management.onEnabled.addListener(function (extensionInfo) {
     checkMessengerMobileView();
     reloadAllNovalyaTabs();
     reloadAllGroupTabs();
@@ -39,7 +39,7 @@ chrome.management.onEnabled.addListener(function(extensionInfo) {
 
 });
 
-chrome.management.onDisabled.addListener(function(extensionInfo) {
+chrome.management.onDisabled.addListener(function (extensionInfo) {
     //console.log(extensionInfo.name + " disabled");
     checkMessengerMobileView();
     reloadAllNovalyaTabs();
@@ -49,17 +49,17 @@ chrome.management.onDisabled.addListener(function(extensionInfo) {
 
 });
 
-getCookies(site_url, "user_id", function(id) {
+getCookies(site_url, "user_id", function (id) {
     user_id = id;
-    console.log(user_id , "this is the user id");
+    console.log(user_id, "this is the user id");
 });
 
-getCookies(site_url, "authToken", function(token) {
+getCookies(site_url, "authToken", function (token) {
     authToken = token;
     console.log(authToken, "this is the auth token");
 });
 
-chrome.runtime.onStartup.addListener(function() {
+chrome.runtime.onStartup.addListener(function () {
     checkMessengerMobileView();
     reloadAllNovalyaTabs();
     reloadAllGroupTabs();
@@ -67,9 +67,9 @@ chrome.runtime.onStartup.addListener(function() {
     reloadMessengersTabs();
 });
 
-chrome.alarms.onAlarm.addListener(function(alarm) {
+chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name == "wakeup_bg") {
-        getCookies(site_url, "authToken", function(id) {
+        getCookies(site_url, "authToken", function (id) {
             authToken = id;
             console.log("wake up service worker", userId);
         });
@@ -78,7 +78,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 
 // Clear a specific alarm by name
 function clearAlarm(alarmName) {
-    chrome.alarms.clear(alarmName, function(cleared) {
+    chrome.alarms.clear(alarmName, function (cleared) {
         if (cleared) {
             console.log("Alarm cleared successfully!");
         } else {
@@ -88,7 +88,7 @@ function clearAlarm(alarmName) {
 }
 
 // RUN CODE WHEN RELODE NOVALYA.COM
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (
         typeof changeInfo.status != "undefined" &&
         changeInfo.status == "complete"
@@ -106,7 +106,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let window_data = {
             text_message: message.textMsg,
         };
-        chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
+        chrome.storage.local.get(["messengerMobViewStatus"], function (result) {
             if (
                 typeof result.messengerMobViewStatus != "undefined" &&
                 result.messengerMobViewStatus != ""
@@ -140,15 +140,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         //checkMessage(message.memberid,message.textMsg)
     }
-    if(message.action === "Reload_all_novalya_tabs"){
+    if (message.action === "Reload_all_novalya_tabs") {
         if (message.currentLocationUrl.indexOf('messenger') > -1) {
             reloadAllNovalyaTabs();
         }
-       
-     }
+
+    }
     if (message.action === "tagsApiCall") {
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+authToken);
+        myHeaders.append("Authorization", "Bearer " + authToken);
 
         var requestOptions = {
             method: 'GET',
@@ -156,117 +156,117 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             redirect: 'follow'
         };
 
-        fetch(new_base_url+"/user/api/group", requestOptions)
-        .then(response => response.json())
-        .then(result => sendResponse({ data: result, status: "ok" }))
-        .catch(error => console.log('error', error));
+        fetch(new_base_url + "/user/api/group", requestOptions)
+            .then(response => response.json())
+            .then(result => sendResponse({ data: result, status: "ok" }))
+            .catch(error => console.log('error', error));
         return true;
     }
     //sendResponse({ data: result, status: "ok" })
     if (message.action === "tagsAssiging") {
         const fbUserId = message.fb_user_id;
         getBothAlphaAndNumericId(fbUserId)
-        .then(function (fbIDsObject) {
-            const numericUserFbId = fbIDsObject.numeric_fb_id;
-            const alphanumericUserFbId = fbIDsObject.fb_user_id;
-            
-            let token = authToken;
-            if(token != undefined && token != ''){
-                console.log(message);
-                var myHeaders = new Headers();
-                myHeaders.append("Authorization", "Bearer "+token);
-                myHeaders.append("Content-Type", "application/json");
-                var raw = JSON.stringify({
-                  "type": "add",
-                  "fb_user_id": numericUserFbId,
-                  "fb_user_alphanumeric_id": alphanumericUserFbId,
-                  "fb_image_id": 'null',
-                  "fb_name": message.fbName,
-                  "profile_pic": message.profilePic,
-                  "is_primary": message.is_primary,
-                  "tag_id": message.selected_tags_ids
-                });
-                var requestOptions = {
-                  method: 'POST',
-                  headers: myHeaders,
-                  body: raw,
-                  redirect: 'follow'
-                };
-                fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
-                .then((response) => response.json())
-                .then((result) => { 
-                    chrome.tabs.sendMessage(sender.tab.id, {
-                        type: 'tag_update_done',
-                        from: 'background',
-                        result:result,
-                    }); 
-                    sendResponse({ data: result.msg, status: "ok" });
-                })
-                .catch(error => console.log('error', error));               
-            } 
-        })
-        .catch(error => {
-            console.error('Error getting FB IDs:', error);
-            sendResponse({ data: "An error occurred", status: "error" });
-        });
+            .then(function (fbIDsObject) {
+                const numericUserFbId = fbIDsObject.numeric_fb_id;
+                const alphanumericUserFbId = fbIDsObject.fb_user_id;
+
+                let token = authToken;
+                if (token != undefined && token != '') {
+                    console.log(message);
+                    var myHeaders = new Headers();
+                    myHeaders.append("Authorization", "Bearer " + token);
+                    myHeaders.append("Content-Type", "application/json");
+                    var raw = JSON.stringify({
+                        "type": "add",
+                        "fb_user_id": numericUserFbId,
+                        "fb_user_alphanumeric_id": alphanumericUserFbId,
+                        "fb_image_id": 'null',
+                        "fb_name": message.fbName,
+                        "profile_pic": message.profilePic,
+                        "is_primary": message.is_primary,
+                        "tag_id": message.selected_tags_ids
+                    });
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                    };
+                    fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                        .then((response) => response.json())
+                        .then((result) => {
+                            chrome.tabs.sendMessage(sender.tab.id, {
+                                type: 'tag_update_done',
+                                from: 'background',
+                                result: result,
+                            });
+                            sendResponse({ data: result.msg, status: "ok" });
+                        })
+                        .catch(error => console.log('error', error));
+                }
+            })
+            .catch(error => {
+                console.error('Error getting FB IDs:', error);
+                sendResponse({ data: "An error occurred", status: "error" });
+            });
         return true;
     }
 
-    if(message.action === "single_users_tag_get"){
+    if (message.action === "single_users_tag_get") {
         console.log(authToken);
         let token = authToken;
-        if(token != undefined && token != ''){
+        if (token != undefined && token != '') {
             console.log(message);
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Authorization", "Bearer " + token);
             myHeaders.append("Content-Type", "application/json");
-            
+
             var raw = JSON.stringify({
                 "type": "single_get",
-            //   "type": "get",
-              "fb_user_id": message.fb_user_id
+                //   "type": "get",
+                "fb_user_id": message.fb_user_id
             });
 
             var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
             };
 
-            fetch(new_base_api_url+"tag/get-tagged-user", requestOptions)
+            fetch(new_base_api_url + "tag/get-tagged-user", requestOptions)
                 .then(response => response.text())
                 .then(result => sendResponse(result))
-                .catch(error => console.log('error', error));              
+                .catch(error => console.log('error', error));
         }
         return true;
     }
 
 
-    if(message.action === "all_users_tag_get"){
+    if (message.action === "all_users_tag_get") {
         console.log(user_id);
         let token = authToken;
-        if(token != undefined && token != ''){
+        if (token != undefined && token != '') {
             console.log(message);
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Authorization", "Bearer " + token);
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
-              "type": "get"
+                "type": "get"
             });
 
             var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
             };
 
             fetch("https://novalyabackend.novalya.com/extension/api/taggeduser-api", requestOptions)
-               .then(response => response.json())
-               .then(result => { console.log(result); sendResponse(result) })
-               .catch(error => console.log('error', error));               
+                .then(response => response.json())
+                .then(result => { console.log(result); sendResponse(result) })
+                .catch(error => console.log('error', error));
         }
         return true;
     }
@@ -284,50 +284,50 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action === "addgroupapi") {
         let token = authToken;
-            console.log(message);
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer "+token);
-            myHeaders.append("Content-Type", "application/json");
+        console.log(message);
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + token);
+        myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({
-              "name": message.name,
-              "url": message.url
-            });
-            var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
-            };
-            fetch(new_base_api_url+"group/create-group", requestOptions)
-                .then((response) => response.json())
-                .then((result) => sendResponse({ data: result, status: "ok" }))
-                .catch((error) => sendResponse({ data: error, status: "error" }));               
+        var raw = JSON.stringify({
+            "name": message.name,
+            "url": message.url
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch(new_base_api_url + "group/create-group", requestOptions)
+            .then((response) => response.json())
+            .then((result) => sendResponse({ data: result, status: "ok" }))
+            .catch((error) => sendResponse({ data: error, status: "error" }));
         return true;
     }
 
 
-    if (message.action === "addgroupapinew") {  
+    if (message.action === "addgroupapinew") {
         let token = authToken;
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer "+token);
-            myHeaders.append("Content-Type", "application/json");
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + token);
+        myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({
-              "name": message.name,
-              "url": message.url,
-              "group_type":message.group_type
-            });
-            var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: raw,
-              redirect: 'follow'
-            };
-            fetch(new_base_api_url+"group/create-group", requestOptions)
-                .then((response) => response.json())
-                .then((result) => sendResponse({ data: result, status: "ok" }))
-                .catch((error) => sendResponse({ data: error, status: "error" }));               
+        var raw = JSON.stringify({
+            "name": message.name,
+            "url": message.url,
+            "group_type": message.group_type
+        });
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch(new_base_api_url + "group/create-group", requestOptions)
+            .then((response) => response.json())
+            .then((result) => sendResponse({ data: result, status: "ok" }))
+            .catch((error) => sendResponse({ data: error, status: "error" }));
         return true;
     }
 
@@ -336,27 +336,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "getMessageSections") {
         console.log(authToken);
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+authToken);
+        myHeaders.append("Authorization", "Bearer " + authToken);
         var requestOptions = {
-          method: 'GET',
-          headers: myHeaders,
-          redirect: 'follow'
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/target/setting/api/all", requestOptions)
-          .then(response => response.json())
-          .then(res1 => {
-            console.log(res1);
-            if(res1.status == "error") {
-                console.log(res1.message);
-            } else {
-                chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function() {
+            .then(response => response.json())
+            .then(res1 => {
+                console.log(res1);
+                if (res1.status == "error") {
+                    console.log(res1.message);
+                } else {
+                    chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function () {
                         chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
-                            function(tabs) {
+                            function (tabs) {
                                 groupPageTabId = tabs.id;
                                 extension_page_tabid = sender.tab.id;
                                 chrome.storage.local.set({ nvAddFriendProcess: "process" },
-                                    function() {
+                                    function () {
                                         chrome.tabs.onUpdated.addListener(groupPageTabListener);
                                         sendResponse({ data: res1 });
                                     }
@@ -364,9 +364,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                             }
                         );
                     });
-            }
-          })
-          .catch(error => console.log('error', error));
+                }
+            })
+            .catch(error => console.log('error', error));
     }
 
     if (message.action == "fetchMessageFromGroupSegement") {
@@ -395,7 +395,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }, 7000);
         sendResponse({ status: true });
         return true;
-    } 
+    }
 
     if (message.action == "closeTabs2") {
         setTimeout(() => {
@@ -420,9 +420,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         };
 
         fetch(
-                "https://z7c5j0fjy8.execute-api.us-east-2.amazonaws.com/dev/tiersai",
-                requestOptions
-            )
+            "https://z7c5j0fjy8.execute-api.us-east-2.amazonaws.com/dev/tiersai",
+            requestOptions
+        )
             .then((response) => response.json())
             .then((result) => sendResponse({ gender: message.gender, data: result }))
             .catch((error) => console.log("error", error));
@@ -434,7 +434,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action == "deleteRequest") {
         FriendRequestsNVClass.getRequestSettings();
         setTimeout(() => {
-            chrome.storage.local.get(["requestSettings"], function(result) {
+            chrome.storage.local.get(["requestSettings"], function (result) {
                 console.log(result);
                 if (
                     typeof result.requestSettings != "undefined" &&
@@ -442,12 +442,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 ) {
 
                     requestSettings1 = result.requestSettings;
-                   //  messageArray = requestSettings1.reject_message;
-                   //  var randomIndex = Math.floor(Math.random() * messageArray.length);
+                    //  messageArray = requestSettings1.reject_message;
+                    //  var randomIndex = Math.floor(Math.random() * messageArray.length);
 
-                   //  // Disable for API
-                   // // var messageText = messageArray[randomIndex];
-                   //  var messageText = "Hello mr. [first name] [last name]";
+                    //  // Disable for API
+                    // // var messageText = messageArray[randomIndex];
+                    //  var messageText = "Hello mr. [first name] [last name]";
 
                     var reqeuestMessage = [];
                     var reqeuestMessagetextArray = requestSettings1.reject_message.Sections;
@@ -455,7 +455,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         reqeuestMessage_json = reqeuestMessagetextArray[i];
                         reqeuestMessage_varient_json = reqeuestMessage_json.varient;
                         reqeuestMessage_varient_array = JSON.parse(reqeuestMessage_varient_json);
-                            var randomIndex2 = Math.floor(
+                        var randomIndex2 = Math.floor(
                             Math.random() * reqeuestMessage_varient_array.length
                         );
                         reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
@@ -485,9 +485,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }, 6000)
     }
 
-    if(message.action == "openBirthdayEventNew"){
+    if (message.action == "openBirthdayEventNew") {
         console.log('openBirthdayEventNew');
-        BirthdayNovaClass.getBirthdaySettingsNew(message, sendResponse, sender);        
+        BirthdayNovaClass.getBirthdaySettingsNew(message, sendResponse, sender);
         return true;
     }
 
@@ -497,7 +497,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action == "confirmRequest") {
         FriendRequestsNVClass.getRequestSettings();
         setTimeout(() => {
-            chrome.storage.local.get(["requestSettings"], function(result) {
+            chrome.storage.local.get(["requestSettings"], function (result) {
                 console.log(result);
                 if (
                     typeof result.requestSettings != "undefined" &&
@@ -510,7 +510,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         reqeuestMessage_json = reqeuestMessagetextArray[i];
                         reqeuestMessage_varient_json = reqeuestMessage_json.varient;
                         reqeuestMessage_varient_array = JSON.parse(reqeuestMessage_varient_json);
-                            var randomIndex2 = Math.floor(
+                        var randomIndex2 = Math.floor(
                             Math.random() * reqeuestMessage_varient_array.length
                         );
                         reqeuestMessage.push(reqeuestMessage_varient_array[randomIndex2]);
@@ -543,7 +543,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         var outgoing_requests_url =
             "https://m.facebook.com/friends/center/requests/outgoing";
         chrome.tabs.create({ url: outgoing_requests_url, active: true },
-            function(tabs) {
+            function (tabs) {
                 outgoing_page_tabId = tabs.id;
                 chrome.tabs.onUpdated.addListener(function outgoingRequestsTabListener(
                     tabId,
@@ -569,29 +569,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         var outgoing_requests_url =
             "chrome://extensions/?id=iemhbpcnoehagepnbflncegkcgpphmpc";
         chrome.tabs.create({ url: outgoing_requests_url, active: true },
-            function(tabs) {
+            function (tabs) {
                 sendResponse({ status: "start" });
             }
         );
         return true;
     }
 
-    if (message.action == "openBirthdayEvent") {   
-        BirthdayNovaClass.getBirthdaySettings(message, sendResponse, sender);        
+    if (message.action == "openBirthdayEvent") {
+        BirthdayNovaClass.getBirthdaySettings(message, sendResponse, sender);
         return true;
     }
 
     if (message.action == "sendMessageBirthday") {
         const window_data = { text_message: message.messagtext };
         getNumericID(message.member_fb_id)
-            .then(function(resopnse) {
-                chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
+            .then(function (resopnse) {
+                chrome.storage.local.get(["messengerMobViewStatus"], function (result) {
                     if (
                         typeof result.messengerMobViewStatus != "undefined" &&
                         result.messengerMobViewStatus != ""
                     ) {
                         let mobileViewEnable = result.messengerMobViewStatus.enable;
-                        if (mobileViewEnable) {                            
+                        if (mobileViewEnable) {
                             var mfacebook_thread_url = "https://mbasic.facebook.com/messages/compose/?ids=" + resopnse.userID;
                             SendMessageMembersNVClass.openSmallWindow(
                                 mfacebook_thread_url,
@@ -614,7 +614,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 });
                 sendResponse({ status: "start" });
             })
-            .catch(function(response) {
+            .catch(function (response) {
                 console.log("error to find fb id");
                 sendResponse({ status: "error" });
             });
@@ -634,36 +634,36 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action === "addgroupapi") {
         let token = authToken;
-        if(token != undefined && token != ''){
-                console.log(message);
-                var myHeaders = new Headers();
-                myHeaders.append("Authorization", "Bearer "+token);
-                myHeaders.append("Content-Type", "application/json");
+        if (token != undefined && token != '') {
+            console.log(message);
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer " + token);
+            myHeaders.append("Content-Type", "application/json");
 
-                var raw = JSON.stringify({
-                    "name": message.name,
-                    "group_type": "member",
-                    "url": message.url,
-                });
-        
-                var requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                    redirect: "follow",
-                };
-        
-                fetch(new_base_api_url + "group/create-group", requestOptions)
-                    .then((response) => response.json())
-                    .then((result) => sendResponse({ data: result, status: "ok" }))
-                    .catch((error) => sendResponse({ data: error, status: "error" }));
-            }
+            var raw = JSON.stringify({
+                "name": message.name,
+                "group_type": "member",
+                "url": message.url,
+            });
+
+            var requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow",
+            };
+
+            fetch(new_base_api_url + "group/create-group", requestOptions)
+                .then((response) => response.json())
+                .then((result) => sendResponse({ data: result, status: "ok" }))
+                .catch((error) => sendResponse({ data: error, status: "error" }));
+        }
         return true;
     }
 
     if (message.action == "reloadExtensionId") {
         //usage:
-        getCookies(site_url, "authToken", function(id) {
+        getCookies(site_url, "authToken", function (id) {
             authToken = id;
             sendResponse({ authToken: authToken });
         });
@@ -673,21 +673,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action == "userCRMPermission") {
         console.log(authToken);
         let token = authToken;
-        if(token != undefined && token != ''){
+        if (token != undefined && token != '') {
             console.log(message);
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Authorization", "Bearer " + token);
             myHeaders.append("Content-Type", "application/json");
 
             var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              redirect: 'follow'
+                method: 'POST',
+                headers: myHeaders,
+                redirect: 'follow'
             };
-            fetch(new_base_api_url+"crm/get-crm-status", requestOptions)
-              .then(response => response.json())
-              .then(result =>sendResponse({ data: result.data, status: "ok" }))
-              .catch(error => sendResponse({ data: error, status: "error" }));                
+            fetch(new_base_api_url + "crm/get-crm-status", requestOptions)
+                .then(response => response.json())
+                .then(result => sendResponse({ data: result.data, status: "ok" }))
+                .catch(error => sendResponse({ data: error, status: "error" }));
         }
         return true;
     }
@@ -696,247 +696,245 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
-          "group_id": message.settins.group_id,
-          "message_id": message.settins.message_id,
-          "time_interval": message.settins.time_interval
+            "group_id": message.settins.group_id,
+            "message_id": message.settins.message_id,
+            "time_interval": message.settins.time_interval
         });
 
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/user/api/compaigns", requestOptions)
-          .then(response => response.json())
-          .then(async (result) => { 
-            console.log(result); 
-            let no_of_send_message = await getUserLimit();
-            console.log(no_of_send_message);
-            sendResponse({ setting: result,no_of_send_message:no_of_send_message}) 
-        })
-          .catch(error => console.log('error', error));
+            .then(response => response.json())
+            .then(async (result) => {
+                console.log(result);
+                let no_of_send_message = await getUserLimit();
+                console.log(no_of_send_message);
+                sendResponse({ setting: result, no_of_send_message: no_of_send_message })
+            })
+            .catch(error => console.log('error', error));
         return true;
     }
 
-    if(message.action == "sendMessageFromCRMOnebyOne") {
+    if (message.action == "sendMessageFromCRMOnebyOne") {
         let window_data = {
             text_message: message.textMsg,
         };
         sendMessageFromCRMOnebyOne(window_data, message.thread_id);
-        setTimeout( () => {
-            sendResponse({ 'status': 'ok'});
+        setTimeout(() => {
+            sendResponse({ 'status': 'ok' });
         }, 5000)
         return true;
     }
 
-    if(message.action == "getMessagesANDSettings") {
+    if (message.action == "getMessagesANDSettings") {
         let token = authToken;
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
         var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
         };
 
-        fetch(new_base_url+"/user/api/compaigns", requestOptions)
-        .then(response => response.json())
-        .then((result) => {
-            console.log(result)
-            sendResponse({ api_data: result});
-        })
-        .catch(error => console.log('error', error));
+        fetch(new_base_url + "/user/api/compaigns", requestOptions)
+            .then(response => response.json())
+            .then((result) => {
+                console.log(result)
+                sendResponse({ api_data: result });
+            })
+            .catch(error => console.log('error', error));
         return true;
     }
 
-    if(message.action == "get_all_notes"){
+    if (message.action == "get_all_notes") {
         let token = authToken;
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
 
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
             redirect: 'follow'
-            };
-    
-            fetch("https://novalyabackend.novalya.com/user/api/note", requestOptions)
-            .then(response => response.json())
-            .then((result) => {
-                console.log(result)
-                sendResponse({ api_data: result , user_id: user_id});
-            })
-            .catch(error => console.log('error', error));
-            return true;
-    }
-
-    if(message.action =="add_Notes"){
-        let token = authToken;
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer "+token);
-        var raw = JSON.stringify({
-          "description": message.description,
-          "fb_user_id": message.fb_user_id,
-          "user_id": user_id
-        });
-
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/user/api/note", requestOptions)
-          .then(response => response.json())
-          .then(result => { console.log(result); sendResponse({status : "note added" , result: result})})
-          .catch(error => console.log('error', error));
+            .then(response => response.json())
+            .then((result) => {
+                console.log(result)
+                sendResponse({ api_data: result, user_id: user_id });
+            })
+            .catch(error => console.log('error', error));
         return true;
     }
 
-    if(message.action == "edit_notes"){
+    if (message.action == "add_Notes") {
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
-          "description": message.description,
-          "fb_user_id": message.fb_user_id,
-          "user_id": user_id
+            "description": message.description,
+            "fb_user_id": message.fb_user_id,
+            "user_id": user_id
         });
 
         var requestOptions = {
-          method: 'PATCH',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
-        fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
-          .then(response => response.json())
-          .then(result => { console.log(result); sendResponse({status : "note updated"})})
-          .catch(error => {
-            console.log('error', error);
-            sendResponse({status : "Error"})
-        });
+        fetch("https://novalyabackend.novalya.com/user/api/note", requestOptions)
+            .then(response => response.json())
+            .then(result => { console.log(result); sendResponse({ status: "note added", result: result }) })
+            .catch(error => console.log('error', error));
         return true;
     }
 
-    if(message.action == "delete_note"){
+    if (message.action == "edit_notes") {
         let token = authToken;
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + token);
+        var raw = JSON.stringify({
+            "description": message.description,
+            "fb_user_id": message.fb_user_id,
+            "user_id": user_id
+        });
+
+        var requestOptions = {
+            method: 'PATCH',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
+            .then(response => response.json())
+            .then(result => { console.log(result); sendResponse({ status: "note updated" }) })
+            .catch(error => {
+                console.log('error', error);
+                sendResponse({ status: "Error" })
+            });
+        return true;
+    }
+
+    if (message.action == "delete_note") {
+        let token = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + token);
 
         var requestOptions = {
             method: 'DELETE',
             headers: myHeaders,
             redirect: 'follow'
-            };
-    
-            fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
+        };
+
+        fetch(`https://novalyabackend.novalya.com/user/api/note/${message.note_id}`, requestOptions)
             .then(response => response.json())
             .then((result) => {
                 console.log(result)
-                sendResponse({ status: "note deleted"});
+                sendResponse({ status: "note deleted" });
             })
             .catch((error) => {
                 console.log('error', error)
-                sendResponse({ status: "error"});
+                sendResponse({ status: "error" });
             });
-            return true;
+        return true;
     }
-    if(message.action == "checkProspectUser"){
+    if (message.action == "checkProspectUser") {
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
-          "fb_user_id": message.memberid,
-          "user_id": user_id
+            "fb_user_id": message.memberid,
+            "user_id": user_id
         });
 
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/prospect/setting/api/check", requestOptions)
-          .then(response => response.json())
-          .then(result => { console.log(result); sendResponse({result: result})})
-          .catch(error => console.log('error', error));
+            .then(response => response.json())
+            .then(result => { console.log(result); sendResponse({ result: result }) })
+            .catch(error => console.log('error', error));
         return true;
 
     }
-    if(message.action === "createProspectUser"){
+    if (message.action === "createProspectUser") {
         console.log(" create message recieved");
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
-          "fb_user_id": message.memberid,
-          "user_id": user_id
+            "fb_user_id": message.memberid,
+            "user_id": user_id
         });
 
         var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
 
         fetch("https://novalyabackend.novalya.com/prospect/setting/api/create", requestOptions)
-          .then(response => response.json())
-          .then(result => { console.log(result); sendResponse({result: result})})
-          .catch(error => console.log('error', error));
+            .then(response => response.json())
+            .then(result => { console.log(result); sendResponse({ result: result }) })
+            .catch(error => console.log('error', error));
         return true;
     }
-    if(message.action === "getUserName"){
+    if (message.action === "getUserName") {
         let usersId = message.ids;
         findUserName(usersId);
     }
-    if(message.action === "syncFbname"){
+    if (message.action === "syncFbname") {
         let groupId = message.groupId;
-        getGroupUser(message, sender, sendResponse); 
+        getGroupUser(message, sender, sendResponse);
     }
-// --------------------------------COMMENT AI--------------------------------
+    // --------------------------------COMMENT AI--------------------------------
     if (message.action == "getResponseFromChatGPT" && message.from == "content") {
-console.log("GPT messag recieved");
-      
-            
-                var authtoken = authToken;
-                var myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                        myHeaders.append("Authorization", "Bearer " + authtoken);
-                var requestOptions = {
-                  method: 'POST',
-                  headers: myHeaders,
-                  body: message.request,
-                  redirect: 'follow'
-                };
-                  var apiBaseUrl = 'https://novalyabackend.novalya.com/commentai/api/commentgenerate';
-                fetch(apiBaseUrl, requestOptions)
-                  .then(response => response.text())
-                  .then(result => {
-                    console.log(result)
-                    console.log('message.formfield', message.formfield);
-                    chrome.tabs.sendMessage(sender.tab.id, { from: 'background', subject: 'responseBG', result: result}, function() {
-                        // bbody console.log();
-                    });            
-                })
-                .catch(error => console.log('error', error));
-            
-        
+        console.log("GPT messag recieved");
+        var authtoken = authToken;
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authtoken);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: message.request,
+            redirect: 'follow'
+        };
+        var apiBaseUrl = 'https://novalyabackend.novalya.com/commentai/api/commentgenerate';
+        fetch(apiBaseUrl, requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                console.log(result)
+                console.log('message.formfield', message.formfield);
+                chrome.tabs.sendMessage(sender.tab.id, { from: 'background', subject: 'responseBG', result: result }, function () {
+                    // bbody console.log();
+                });
+            })
+            .catch(error => console.log('error', error));
+
+
         return true;
 
-    }    
+    }
 
 });
 var currentDate = getCurrentDate();
@@ -985,7 +983,7 @@ function checkMessengerMobileView() {
 
 // GET USER ID FROM BACKOFFICE WITH GET COOKIES
 function getCookies(domain, name, callback) {
-    chrome.cookies.get({ url: domain, name: name }, function(cookie) {
+    chrome.cookies.get({ url: domain, name: name }, function (cookie) {
         if (callback) {
             //console.log(cookie);
             //console.log(cookie.value);
@@ -1011,10 +1009,10 @@ function groupPageTabListener(tabId, changeInfo, tab) {
 function getGroupName(sendResponse, grouppage_url) {
     //console.log(grouppage_url);
     fetch(grouppage_url, { method: "GET" })
-    .then((response) => response.text())
-    .then((textResponse) => {
-        sendResponse({ groupPageDOM: textResponse });
-    });
+        .then((response) => response.text())
+        .then((textResponse) => {
+            sendResponse({ groupPageDOM: textResponse });
+        });
 }
 
 FriendRequestsNVClass.getRequestSettings();
@@ -1023,41 +1021,41 @@ FriendRequestsNVClass.getRequestSettings();
 // GET FACEBOOK LOGGED-IN USER 1ID FROM APIS AND SET CUSTOMER ID
 function GetFacebookLoginId() {
     return fetch("https://www.facebook.com/help")
-        .then(function(response) {
+        .then(function (response) {
             return response.text();
         })
-        .then(function(text) {
+        .then(function (text) {
             myUserId = text.match(/"USER_ID":"(.*?)"/)[1];
-            chrome.storage.local.set({ nv_facebook_id: myUserId }, function() {});
+            chrome.storage.local.set({ nv_facebook_id: myUserId }, function () { });
         });
 }
 
 // HEPgfcvbcER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
 async function getNumericID(facebook_id) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         fetch("https://www.facebook.com/" + facebook_id)
-        .then((response) => response.text())
-        .then((str) => {
-            var mySubString = str.substring(
-                str.lastIndexOf('"props":') + 8,
-                str.lastIndexOf(',"entryPoint"') + 0
-            );
-            //console.log(mySubString);
-            if (CS_isValidJSONString(mySubString)) {
-                decoded_data = JSON.parse(mySubString);
-                viewerID = decoded_data.viewerID;
-                userVanity = decoded_data.userVanity;
-                userID = decoded_data.userID;
-                userInfo = {
-                    viewerID: decoded_data.viewerID,
-                    userVanity: decoded_data.userVanity,
-                    userID: decoded_data.userID,
-                };
-                resolve(userInfo);
-            } else {
-                reject(false);
-            }
-        });
+            .then((response) => response.text())
+            .then((str) => {
+                var mySubString = str.substring(
+                    str.lastIndexOf('"props":') + 8,
+                    str.lastIndexOf(',"entryPoint"') + 0
+                );
+                //console.log(mySubString);
+                if (CS_isValidJSONString(mySubString)) {
+                    decoded_data = JSON.parse(mySubString);
+                    viewerID = decoded_data.viewerID;
+                    userVanity = decoded_data.userVanity;
+                    userID = decoded_data.userID;
+                    userInfo = {
+                        viewerID: decoded_data.viewerID,
+                        userVanity: decoded_data.userVanity,
+                        userID: decoded_data.userID,
+                    };
+                    resolve(userInfo);
+                } else {
+                    reject(false);
+                }
+            });
     });
 }
 
@@ -1071,28 +1069,14 @@ function CS_isValidJSONString(str) {
 }
 
 function sendMessageFromCRMOnebyOne(window_data, thread_id) {
-    chrome.storage.local.get(["messengerMobViewStatus"], function(result) {
-            if (
-                typeof result.messengerMobViewStatus != "undefined" &&
-                result.messengerMobViewStatus != ""
-            ) {
-                //let mobileViewEnable = false;
-                let mobileViewEnable = result.messengerMobViewStatus.enable;
-                if (mobileViewEnable) {
-                    mfacebook_thread_url =
-                        "https://mbasic.facebook.com/messages/compose/?ids=" +
-                        thread_id;
-                    SendMessageMembersNVClass.openSmallWindow(
-                        mfacebook_thread_url,
-                        window_data
-                    );
-                } else {
-                    SendMessageMembersNVClass.openMessengersWindow(
-                        thread_id,
-                        window_data.text_message
-                    );
-                }
-            } else {
+    chrome.storage.local.get(["messengerMobViewStatus"], function (result) {
+        if (
+            typeof result.messengerMobViewStatus != "undefined" &&
+            result.messengerMobViewStatus != ""
+        ) {
+            //let mobileViewEnable = false;
+            let mobileViewEnable = result.messengerMobViewStatus.enable;
+            if (mobileViewEnable) {
                 mfacebook_thread_url =
                     "https://mbasic.facebook.com/messages/compose/?ids=" +
                     thread_id;
@@ -1100,12 +1084,26 @@ function sendMessageFromCRMOnebyOne(window_data, thread_id) {
                     mfacebook_thread_url,
                     window_data
                 );
-                checkMessengerMobileView();
+            } else {
+                SendMessageMembersNVClass.openMessengersWindow(
+                    thread_id,
+                    window_data.text_message
+                );
             }
-        });
+        } else {
+            mfacebook_thread_url =
+                "https://mbasic.facebook.com/messages/compose/?ids=" +
+                thread_id;
+            SendMessageMembersNVClass.openSmallWindow(
+                mfacebook_thread_url,
+                window_data
+            );
+            checkMessengerMobileView();
+        }
+    });
 }
 
-async function findUserName(usersId){
+async function findUserName(usersId) {
     try {
         const fetchPromises = usersId.map(async (item) => {
             const response = await getFacebookNameByFbID(item);
@@ -1113,12 +1111,12 @@ async function findUserName(usersId){
                 const userInfo = { "fb_user_id": response.id, "name": response.name };
                 return userInfo;
             }
-            return null; 
+            return null;
         });
 
         const results = await Promise.all(fetchPromises);
         const filteredResults = results.filter(result => result !== null);
-        if(filteredResults.length > 0){
+        if (filteredResults.length > 0) {
             //call api for update data into db
         }
         console.log(filteredResults);
@@ -1141,7 +1139,7 @@ async function getFacebookNameByFbID(id) {
         if (CS_isValidJSONString(metaString)) {
             const decoded_data = JSON.parse(metaString);
             const name = decoded_data.title;
-            const temp = {id, name};
+            const temp = { id, name };
             return temp;
         } else {
             return false;
@@ -1153,12 +1151,12 @@ async function getFacebookNameByFbID(id) {
 }
 
 // get taggedUser name for syncing
-function getGroupUser(message, sender, sendResponse){
+function getGroupUser(message, sender, sendResponse) {
     let groupId = message.groupId;
     let url = `https://novalyabackend.novalya.com/user/api/group/${groupId}`;
-    
+
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer "+authToken);
+    myHeaders.append("Authorization", "Bearer " + authToken);
 
     var requestOptions = {
         method: 'GET',
@@ -1167,24 +1165,24 @@ function getGroupUser(message, sender, sendResponse){
     };
 
     fetch(url, requestOptions)
-    .then(response => response.json())
-    .then((data) => {
-        let taggedusers = data.taggedUsers;
-        getTaggedUserName(taggedusers,groupId,sender, sendResponse);
-    })
-    .catch(error => console.log('error', error));
+        .then(response => response.json())
+        .then((data) => {
+            let taggedusers = data.taggedUsers;
+            getTaggedUserName(taggedusers, groupId, sender, sendResponse);
+        })
+        .catch(error => console.log('error', error));
     return true;
 }
 
-async function getTaggedUserName(taggedusers,groupId,sender, sendResponse){
+async function getTaggedUserName(taggedusers, groupId, sender, sendResponse) {
     try {
         const fetchPromises = taggedusers.map(async (item) => {
             const response = await getFacebookNameByFbID(item.fb_user_id);
             if (response.id != null && response.name != null) {
-                const userInfo = {"id":item.id, "fb_user_id": response.id, "name": response.name };
+                const userInfo = { "id": item.id, "fb_user_id": response.id, "name": response.name };
                 return userInfo;
             }
-            return null; 
+            return null;
         });
 
         const results = await Promise.all(fetchPromises);
@@ -1192,7 +1190,7 @@ async function getTaggedUserName(taggedusers,groupId,sender, sendResponse){
         for (const [i, item] of filteredResults.entries()) {
             await syncGroupTaggedUserInDB(item);
             if (i === filteredResults.length - 1) {
-                chrome.tabs.sendMessage(sender.tab.id,{'action':'syncingComplete'})
+                chrome.tabs.sendMessage(sender.tab.id, { 'action': 'syncingComplete' })
             }
         }
     } catch (error) {
@@ -1214,7 +1212,7 @@ async function getFacebookNameByFbID(id) {
         if (CS_isValidJSONString(metaString)) {
             const decoded_data = JSON.parse(metaString);
             const name = decoded_data.title;
-            const temp = {id, name};
+            const temp = { id, name };
             return temp;
         } else {
             return false;
@@ -1225,16 +1223,16 @@ async function getFacebookNameByFbID(id) {
     }
 }
 
-async function syncGroupTaggedUserInDB(item){
+async function syncGroupTaggedUserInDB(item) {
     let id = item.id;
     let name = item.name;
     let url = `https://novalyabackend.novalya.com/user/api/taggeduser/${id}`;
     let raw = JSON.stringify({
-        "fb_name":name
+        "fb_name": name
     });
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", "Bearer "+authToken);
+    myHeaders.append("Authorization", "Bearer " + authToken);
 
     var requestOptions = {
         method: 'PATCH',
@@ -1243,11 +1241,11 @@ async function syncGroupTaggedUserInDB(item){
     };
 
     fetch(url, requestOptions)
-    .then(response => response.json())
-    .then((data) => {
-        console.log(data);
-    })
-    .catch(error => console.log('error', error));
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data);
+        })
+        .catch(error => console.log('error', error));
     return true;
 }
 

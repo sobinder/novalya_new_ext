@@ -53,7 +53,7 @@ jQuery(document).on('keyup', function (evt) {
     }
 });
 // -------------------------------------COMMENT AI CODE STARTS------------------------
-appendHTML =` <div id="quentintou">
+appendHTML = ` <div id="quentintou">
        <div class="loader" style="display:none"></div>
 <div class="agree_div">
 <ul>
@@ -64,8 +64,8 @@ appendHTML =` <div id="quentintou">
 </ul>
 <div  class="like_option" style="display:flex">
    
-    <img  style="display:none" class="reload" src="`+chrome.runtime.getURL("assets/images/reload.png")+`">
-    <span class="play"><img  src="`+chrome.runtime.getURL("assets/images/play_submit.png")+`"></span>
+    <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
+    <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
 </div>
 </div>
 <div class="opinion_option">
@@ -118,216 +118,203 @@ appendHTML =` <div id="quentintou">
 <span class="inner4"></span>
 </div>`;
 
-customBtnFound = setInterval(function () { 
-     if (window.location.href.indexOf('facebook.com') > -1 ) {
-        FacebookDOM.addReactionPannelFB();         
+customBtnFound = setInterval(function () {
+    if (window.location.href.indexOf('facebook.com') > -1) {
+        FacebookDOM.addReactionPannelFB();
     } else {
-        console.log('please go on facebook or linkedin page');        
+        console.log('please go on facebook or linkedin page');
         clearInterval(customBtnFound);
     }
 }, 500);
 
-$(document).ready(function () { 
+$(document).ready(function () {
     $(document).on("click", ".opinion", function (e) {
-    $('.agree_div ul li').removeClass('option_active')
-   // $(this).addClass("option_active")
-    $('.opinion_option').show();
-    $('.writing_option').hide();
-    $('.size_option').hide();
-    $('.tone_option').hide();
-    $('.response').show();
-})
-$(document).on("click", ".writing_style", function (e) {
-   // $('.agree_div ul li').removeClass('option_active')
-    //$(this).addClass("option_active")
-    $('.opinion_option').hide();
-    $('.writing_option').show();
-    $('.size_option').hide();
-    $('.tone_option').hide();
-    $('.response').show();
-})
-$(document).on("click", ".tone", function (e) {
-   // $('.agree_div ul li').removeClass('option_active')
-   // $(this).addClass("option_active")
-    $('.opinion_option').hide();
-    $('.writing_option').hide();
-    $('.size_option').hide();
-    $('.tone_option').show();
-    $('.response').show();
-})
-$(document).on("click", ".size", function (e) {
-  //  $('.agree_div ul li').removeClass('option_active')
-   // $(this).addClass("option_active")
-    $('.opinion_option').hide();
-    $('.writing_option').hide();
-    $('.size_option').show();
-    $('.tone_option').hide();
-    $('.response').show();
-})
-$(document).on("click", ".opinion_option ul li", function (e) {
-    let value = "";
-    $(".response_opinion").remove();
-    if($(this).hasClass("option_active")) {
-        $('.opinion_option ul li').removeClass('option_active')
-    } else {
-        $('.opinion_option ul li').removeClass('option_active');
-        $(this).addClass("option_active");
-        value = $(this).text();
-        $('<div class="response_opinion"><span>'+value+'</span></div>').insertBefore( ".inner1" )
-    }
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        let responsedata = result.responsedata;
-        responsedata.opinion = value;
-        chrome.storage.sync.set({ "responsedata": responsedata });
+        $('.agree_div ul li').removeClass('option_active')
+        // $(this).addClass("option_active")
+        $('.opinion_option').show();
+        $('.writing_option').hide();
+        $('.size_option').hide();
+        $('.tone_option').hide();
+        $('.response').show();
     })
-});
-function storageupdate(something) {
-    console.log("something", something)
-}
-
-$(document).on("click", ".writing_option ul li", function (e) {
-    if($(this).hasClass('option_active')) {
-        $(this).removeClass('option_active');
-    } else {
-        $(this).addClass('option_active');
-    }
-    let allActiveOptions = $(this).parent().find("li.option_active");
-    $(".response_writing").remove();
-    let writeText = [];;
-    allActiveOptions.map((index, val,) => {
-        let value = $(val).text();
-        writeText.push(value);
-        $('<div class="response_writing"><span>'+value+'</span></div>').insertBefore( ".inner2" )
+    $(document).on("click", ".writing_style", function (e) {
+        // $('.agree_div ul li').removeClass('option_active')
+        //$(this).addClass("option_active")
+        $('.opinion_option').hide();
+        $('.writing_option').show();
+        $('.size_option').hide();
+        $('.tone_option').hide();
+        $('.response').show();
     })
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        let responsedata = result.responsedata;
-        responsedata.writing = writeText;
-        chrome.storage.sync.set({ "responsedata": responsedata });
+    $(document).on("click", ".tone", function (e) {
+        // $('.agree_div ul li').removeClass('option_active')
+        // $(this).addClass("option_active")
+        $('.opinion_option').hide();
+        $('.writing_option').hide();
+        $('.size_option').hide();
+        $('.tone_option').show();
+        $('.response').show();
     })
-})
-
-$(document).on("click", ".tone_option ul li", function (e) {
-    if($(this).hasClass('option_active')) {
-        $(this).removeClass('option_active');
-    } else {
-        $(this).addClass('option_active');
-    }
-    let allActiveOptions = $(this).parent().find("li.option_active");
-    $(".response_tone").remove();
-    let toneText = [];;
-    allActiveOptions.map((index, val,) => {
-        let value = $(val).text();
-        toneText.push(value);
-        $('<div class="response_tone"><span>'+value+'</span></div>').insertBefore( ".inner3" )
+    $(document).on("click", ".size", function (e) {
+        //  $('.agree_div ul li').removeClass('option_active')
+        // $(this).addClass("option_active")
+        $('.opinion_option').hide();
+        $('.writing_option').hide();
+        $('.size_option').show();
+        $('.tone_option').hide();
+        $('.response').show();
     })
-    console.log('toneText-----------', toneText)
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        let responsedata = result.responsedata;
-        responsedata.tone = toneText;
-        chrome.storage.sync.set({ "responsedata": responsedata });
+    $(document).on("click", ".opinion_option ul li", function (e) {
+        let value = "";
+        $(".response_opinion").remove();
+        if ($(this).hasClass("option_active")) {
+            $('.opinion_option ul li').removeClass('option_active')
+        } else {
+            $('.opinion_option ul li').removeClass('option_active');
+            $(this).addClass("option_active");
+            value = $(this).text();
+            $('<div class="response_opinion"><span>' + value + '</span></div>').insertBefore(".inner1")
+        }
+        chrome.storage.sync.get(["responsedata"], function (result) {
+            let responsedata = result.responsedata;
+            responsedata.opinion = value;
+            chrome.storage.sync.set({ "responsedata": responsedata });
+        })
+    });
+    function storageupdate(something) {
+        console.log("something", something)
+    }
+
+    $(document).on("click", ".writing_option ul li", function (e) {
+        if ($(this).hasClass('option_active')) {
+            $(this).removeClass('option_active');
+        } else {
+            $(this).addClass('option_active');
+        }
+        let allActiveOptions = $(this).parent().find("li.option_active");
+        $(".response_writing").remove();
+        let writeText = [];;
+        allActiveOptions.map((index, val,) => {
+            let value = $(val).text();
+            writeText.push(value);
+            $('<div class="response_writing"><span>' + value + '</span></div>').insertBefore(".inner2")
+        })
+        chrome.storage.sync.get(["responsedata"], function (result) {
+            let responsedata = result.responsedata;
+            responsedata.writing = writeText;
+            chrome.storage.sync.set({ "responsedata": responsedata });
+        })
     })
-})
-$(document).on("click", ".size_option ul li", function (e) {
-    let value = "";
-    $(".response_size").remove();
-    if($(this).hasClass("option_active")) {
-        $('.size_option ul li').removeClass('option_active')
-    } else {
-        $('.size_option ul li').removeClass('option_active');
-        $(this).addClass("option_active");
-        value = $(this).text();
-        $('<div class="response_size"><span>'+value+'</span></div>').insertBefore( ".inner4" )
-    }
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        let responsedata = result.responsedata;
-        responsedata.size = value;
-        chrome.storage.sync.set({ "responsedata": responsedata });
+
+    $(document).on("click", ".tone_option ul li", function (e) {
+        if ($(this).hasClass('option_active')) {
+            $(this).removeClass('option_active');
+        } else {
+            $(this).addClass('option_active');
+        }
+        let allActiveOptions = $(this).parent().find("li.option_active");
+        $(".response_tone").remove();
+        let toneText = [];;
+        allActiveOptions.map((index, val,) => {
+            let value = $(val).text();
+            toneText.push(value);
+            $('<div class="response_tone"><span>' + value + '</span></div>').insertBefore(".inner3")
+        })
+        console.log('toneText-----------', toneText)
+        chrome.storage.sync.get(["responsedata"], function (result) {
+            let responsedata = result.responsedata;
+            responsedata.tone = toneText;
+            chrome.storage.sync.set({ "responsedata": responsedata });
+        })
     })
-})
+    $(document).on("click", ".size_option ul li", function (e) {
+        let value = "";
+        $(".response_size").remove();
+        if ($(this).hasClass("option_active")) {
+            $('.size_option ul li').removeClass('option_active')
+        } else {
+            $('.size_option ul li').removeClass('option_active');
+            $(this).addClass("option_active");
+            value = $(this).text();
+            $('<div class="response_size"><span>' + value + '</span></div>').insertBefore(".inner4")
+        }
+        chrome.storage.sync.get(["responsedata"], function (result) {
+            let responsedata = result.responsedata;
+            responsedata.size = value;
+            chrome.storage.sync.set({ "responsedata": responsedata });
+        })
+    })
 
 
 
-$(document).on('click','.option_active',function(){
-    var checktext = $(this).text();
-    var classfind = $(this).parent().parent().attr('class');
+    $(document).on('click', '.option_active', function () {
+        var checktext = $(this).text();
+        var classfind = $(this).parent().parent().attr('class');
 
-   if(classfind == 'opinion_option')
-   {
-    var check = `.opinion_option ul li:contains(${checktext})`;
-    $(check).removeClass('option_active')
-    var response1 = `.response_opinion span:contains(${checktext})`;
-$(response1).parent().remove();
-    
-   }
-  
-   if(classfind == 'writing_option')
-   {
-    var check2 = `.writing_option ul li:contains(${checktext})`;
-    $(check2).removeClass('option_active')
-    var response2 = `.response_writing span:contains(${checktext})`;
-$(response2).parent().remove();
-    
-   }
-   if(classfind == 'tone_option')
-   {
-    var check3 = `.tone_option ul li:contains(${checktext})`;
-    $(check3).removeClass('option_active')
-    var response3 = `.response_tone span:contains(${checktext})`;
-$(response3).parent().remove();
-    
-   }
-   if(classfind == 'size_option')
-   {
-    var check3 = `.size_option ul li:contains(${checktext})`;
-    $(check3).removeClass('option_active')
-    var response3 = `.size_tone span:contains(${checktext})`;
-$(response3).parent().remove();
-    
-   }
-   storageupdate($(this));
-});
+        if (classfind == 'opinion_option') {
+            var check = `.opinion_option ul li:contains(${checktext})`;
+            $(check).removeClass('option_active')
+            var response1 = `.response_opinion span:contains(${checktext})`;
+            $(response1).parent().remove();
 
-$(document).on('click','.response div p',function(){
-    var checktext = $(this).parent().children('span').text();
-   var classfind = $(this).parent().attr('class');
-   if(classfind == 'response_opinion')
-   {
-    $('.opinion_option ul li').removeClass('option_active')
-    $('.opinion').removeClass('option_active')
-   }
-   if(classfind == 'response_writing')
-   {
-    var check = `.writing_option ul li:contains(${checktext})`;
-    $(check).removeClass('option_active')
-    var checkparent = $('.response_writing span')
-    if(checkparent.length <= 1){
-        $('.writing_style').removeClass('option_active')
+        }
 
-    }
-   }
-   if(classfind == 'response_tone')
-   {
-    var check = `.tone_option ul li:contains(${checktext})`;
-    $(check).removeClass('option_active')
-    var checkparent = $('.response_tone span')
-    if(checkparent.length <= 1){
-        $('.tone').removeClass('option_active')
+        if (classfind == 'writing_option') {
+            var check2 = `.writing_option ul li:contains(${checktext})`;
+            $(check2).removeClass('option_active')
+            var response2 = `.response_writing span:contains(${checktext})`;
+            $(response2).parent().remove();
 
-    }
-   }
-   if(classfind == 'response_size')
-   {
-    $('.size_option ul li').removeClass('option_active')
-    $('.size').removeClass('option_active')
-   }
-       $(this).parent().remove();
+        }
+        if (classfind == 'tone_option') {
+            var check3 = `.tone_option ul li:contains(${checktext})`;
+            $(check3).removeClass('option_active')
+            var response3 = `.response_tone span:contains(${checktext})`;
+            $(response3).parent().remove();
+        }
+        if (classfind == 'size_option') {
+            var check3 = `.size_option ul li:contains(${checktext})`;
+            $(check3).removeClass('option_active')
+            var response3 = `.size_tone span:contains(${checktext})`;
+            $(response3).parent().remove();
+        }
+        storageupdate($(this));
+    });
 
-});
-storageupdate($(this));
-
+    $(document).on('click', '.response div p', function () {
+        var checktext = $(this).parent().children('span').text();
+        var classfind = $(this).parent().attr('class');
+        if (classfind == 'response_opinion') {
+            $('.opinion_option ul li').removeClass('option_active')
+            $('.opinion').removeClass('option_active')
+        }
+        if (classfind == 'response_writing') {
+            var check = `.writing_option ul li:contains(${checktext})`;
+            $(check).removeClass('option_active')
+            var checkparent = $('.response_writing span')
+            if (checkparent.length <= 1) {
+                $('.writing_style').removeClass('option_active');
+            }
+        }
+        if (classfind == 'response_tone') {
+            var check = `.tone_option ul li:contains(${checktext})`;
+            $(check).removeClass('option_active')
+            var checkparent = $('.response_tone span')
+            if (checkparent.length <= 1) {
+                $('.tone').removeClass('option_active')
+            }
+        }
+        if (classfind == 'response_size') {
+            $('.size_option ul li').removeClass('option_active')
+            $('.size').removeClass('option_active')
+        }
+        $(this).parent().remove();
+    });
+    storageupdate($(this));
 });
 
 $(document).on("click", ".play", function (e) {
+    clickedBtn = $(this);
     $('.loader').show();
     $('.agree_div').show();
     $('.opinion_option').hide();
@@ -336,30 +323,23 @@ $(document).on("click", ".play", function (e) {
     $('.tone_option').hide();
     $('.response').hide();
     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
-    console.log("hello",opinion)
+    console.log("hello", opinion)
     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
-    var writing =$(this).parents('#quentintou').find('.response .response_writing span');
+    var writing = $(this).parents('#quentintou').find('.response .response_writing span');
     var writing_array = [];
     if ($(writing).length > 0) {
-        $(writing).each(function(i)
-        {
-            if ($.inArray($(this).text(), writing_array) != -1)
-            {
-                console.log("hello")
-            
-            }
-            else{
+        $(writing).each(function (i) {
+            if ($.inArray($(this).text(), writing_array) != -1) {
+                console.log("hello");
+            } else {
                 writing_array.push($(this).text())
-            
-            
             }
         });
     }
     var tone = $(this).parents('#quentintou').find('.response .response_tone span');
     var tone_Array = [];
     if ($(tone).length > 0) {
-        $(tone).each(function(i)
-        {
+        $(tone).each(function (i) {
             if ($.inArray($(this).text(), tone_Array) != -1) {
                 console.log("hello")
             }
@@ -371,33 +351,21 @@ $(document).on("click", ".play", function (e) {
     var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
     $(this).addClass('current-class-ld');
 
-
-
     let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
-
-      $(post_conatainer_selector).removeClass("que-current-container");
-
-      $(this)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .find(".que-processed-class")
-        .closest(post_conatainer_selector)
-        .addClass("que-current-container que-red-border");
+    $(post_conatainer_selector).removeClass("que-current-container");
+    $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
 
     selector_post_description = $(".que-current-container").find(
         'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-      );
-      
+    );
 
-      if (selector_post_description.length > 0) {
+    if (selector_post_description.length > 0) {
         facebook_post_description = selector_post_description.text();
         //console.log(post_description);
-      }else{
+    } else {
         facebook_post_description = "Thought of today";
-      }
-    chrome.storage.sync.get(["language","job","sector"], function (result) {        
+    }
+    chrome.storage.sync.get(["language", "job", "sector"], function (result) {
         var temp = {}
         if (typeof result.language != "undefined" && result.language != "") {
             temp.language = result.language;
@@ -405,7 +373,6 @@ $(document).on("click", ".play", function (e) {
             temp.size = size;
             temp.writing = writing_array;
             temp.tone = tone_Array;
-
         }
         if (typeof result.job != "undefined" && result.job != "") {
             temp.job = result.job;
@@ -413,7 +380,6 @@ $(document).on("click", ".play", function (e) {
             temp.size = size;
             temp.writing = writing_array;
             temp.tone = tone_Array;
-
         }
         if (typeof result.sector != "undefined" && result.sector != "") {
             temp.sector = result.sector;
@@ -421,22 +387,21 @@ $(document).on("click", ".play", function (e) {
             temp.size = size;
             temp.writing = writing_array;
             temp.tone = tone_Array;
-
         }
-        else{
+        else {
             temp.size = size;
             temp.opinion = opinion;
             temp.writing = writing_array;
             temp.tone = tone_Array;
         }
-        console.log("new temp",temp)
+        console.log("new temp", temp)
         chrome.storage.sync.set({ "responsedata": temp });
-      //  $("body").scrollTop(0);
-     // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
+        //  $("body").scrollTop(0);
+        // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
 
         //$("#quentintou").animate({"scrollTop": $("#quentintou").scrollTop() + 100});
-        if (window.location.href.indexOf('facebook.com') > -1 ) { 
-            FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description);
+        if (window.location.href.indexOf('facebook.com') > -1) {
+            FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
         }
     })
 })
@@ -450,30 +415,24 @@ $(document).on("click", ".reload", function (e) {
     $('.tone_option').hide();
     $('.response').hide();
     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
-    console.log("hello",opinion)
+    console.log("hello", opinion)
     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
-    var writing =$(this).parents('#quentintou').find('.response .response_writing span');
+    var writing = $(this).parents('#quentintou').find('.response .response_writing span');
     var writing_array = [];
     if ($(writing).length > 0) {
-        $(writing).each(function(i)
-        {
-            if ($.inArray($(this).text(), writing_array) != -1)
-            {
+        $(writing).each(function (i) {
+            if ($.inArray($(this).text(), writing_array) != -1) {
                 console.log("hello")
-            
             }
-            else{
+            else {
                 writing_array.push($(this).text())
-            
-            
             }
         });
     }
     var tone = $(this).parents('#quentintou').find('.response .response_tone span');
     var tone_Array = [];
     if ($(tone).length > 0) {
-        $(tone).each(function(i)
-        {
+        $(tone).each(function (i) {
             if ($.inArray($(this).text(), tone_Array) != -1) {
                 console.log("hello")
             }
@@ -489,9 +448,9 @@ $(document).on("click", ".reload", function (e) {
 
     let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
 
-      $(post_conatainer_selector).removeClass("que-current-container");
+    $(post_conatainer_selector).removeClass("que-current-container");
 
-      $(this)
+    $(this)
         .parent()
         .parent()
         .parent()
@@ -502,17 +461,17 @@ $(document).on("click", ".reload", function (e) {
 
     selector_post_description = $(".que-current-container").find(
         'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-      );
-      console.log(selector_post_description);
-      
+    );
+    console.log(selector_post_description);
 
-      if (selector_post_description.length > 0) {
-      var facebook_post_description = selector_post_description.text();
+
+    if (selector_post_description.length > 0) {
+        var facebook_post_description = selector_post_description.text();
         //console.log(post_description);
-      }else{
+    } else {
         var facebook_post_description = "Give me random text";
-      }
-    chrome.storage.sync.get(["language","job","sector","temperature"], function (result) {        
+    }
+    chrome.storage.sync.get(["language", "job", "sector", "temperature"], function (result) {
         var temp = {}
         if (typeof result.language != "undefined" && result.language != "") {
             temp.language = result.language;
@@ -546,19 +505,19 @@ $(document).on("click", ".reload", function (e) {
             temp.tone = tone_Array;
 
         }
-        else{
+        else {
             temp.size = size;
             temp.opinion = opinion;
             temp.writing = writing_array;
             temp.tone = tone_Array;
         }
-        console.log("new temp",temp)
+        console.log("new temp", temp)
         chrome.storage.sync.set({ "responsedata": temp });
-      //  $("body").scrollTop(0);
-     // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
+        //  $("body").scrollTop(0);
+        // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
 
         //$("#quentintou").animate({"scrollTop": $("#quentintou").scrollTop() + 100});
-        if (window.location.href.indexOf('facebook.com') > -1 ) { 
+        if (window.location.href.indexOf('facebook.com') > -1) {
             FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description);
         }
     })
@@ -566,54 +525,54 @@ $(document).on("click", ".reload", function (e) {
 });
 
 
-function checkactive(){
-    chrome.storage.sync.get(["responsedata"], function (result) {  
+function checkactive() {
+    chrome.storage.sync.get(["responsedata"], function (result) {
         if (typeof result.responsedata != "undefined" && result.responsedata != "") {
-        var opinioncheck = $('.response_opinion').remove();
-        $(".response_opinion").remove();
-        $(".response_writing").remove();
-        $(".response_tone").remove();
-        $(".response_size").remove();
+            var opinioncheck = $('.response_opinion').remove();
+            $(".response_opinion").remove();
+            $(".response_writing").remove();
+            $(".response_tone").remove();
+            $(".response_size").remove();
 
-        if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
-            var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
-            // console.log("getcheck",check)
-            if (check.length > 0) {
-                $(check).addClass("option_active")
-                $('<div class="response_opinion"><span>'+result.responsedata.opinion+'</span></div>').insertBefore( ".inner1" )
+            if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
+                var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
+                // console.log("getcheck",check)
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
+                }
+            }
+
+            if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
+                $(result.responsedata.writing).each(function (i) {
+                    var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
+                    if (check2.length) {
+                        $(check2).addClass("option_active")
+                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner3")
+                    }
+                });
+            }
+
+            if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
+                $(result.responsedata.tone).each(function (i) {
+                    var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
+                    if (check3.length) {
+                        $(check3).addClass("option_active")
+                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner2")
+                    }
+                });
+            }
+
+            if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
+                var check = `.size_option ul li:contains(${result.responsedata.size})`;
+                // console.log("getcheck",check)
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
+                }
             }
         }
-
-        if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
-            $(result.responsedata.writing).each(function(i) {
-                var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
-                if(check2.length) {
-                    $(check2).addClass("option_active")
-                    $('<div class="response_writing"><span>'+result.responsedata.writing[i]+'</span></div>').insertBefore( ".inner3" )  
-                }
-            });
-        }
-
-        if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
-            $(result.responsedata.tone).each(function(i) {
-                var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
-                if(check3.length) {
-                    $(check3).addClass("option_active")
-                    $('<div class="response_tone"><span>'+result.responsedata.tone[i]+'</span></div>').insertBefore( ".inner2" )  
-                }
-            });
-        }
-
-        if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
-            var check = `.size_option ul li:contains(${result.responsedata.size})`;
-            // console.log("getcheck",check)
-            if (check.length > 0) {
-                $(check).addClass("option_active")
-                $('<div class="response_size"><span>'+result.responsedata.size+'</span></div>').insertBefore( ".inner4" )
-            }
-        } 
-    } 
-    }); 
+    });
 }
 
 
@@ -623,7 +582,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 setInterval(function () {
-checkactive();
+    checkactive();
 }, 5000);
 
 
@@ -685,7 +644,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             }
         }, 4000);
     }
-    
+
     if (message.subject === "postBirthday") {
         setTimeout(() => {
             $('.xt7dq6l[role="button"]').click();
@@ -760,25 +719,25 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             } else {
                                 facebook_member_id = member_url_splitid;
                             }
-                        
+
                             var birthdayMessage = [];
                             var birthdayMessagetextArray = birtday_response.data.message.Sections;
 
                             console.log(birthdayMessagetextArray);
 
                             birthdayMessagetextArray.forEach(function (item, i) {
-                            birthdayMessage_json = birthdayMessagetextArray[i];
-                            birthdayMessage_varient_json = birthdayMessage_json.varient;
-                            birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
-                            var randomIndex2 = Math.floor(
-                            Math.random() * birthdayMessage_varient_array.length
-                            );
-                            birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
+                                birthdayMessage_json = birthdayMessagetextArray[i];
+                                birthdayMessage_varient_json = birthdayMessage_json.varient;
+                                birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
+                                var randomIndex2 = Math.floor(
+                                    Math.random() * birthdayMessage_varient_array.length
+                                );
+                                birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
 
                             });
 
                             birthdayMessage = birthdayMessage.join('');
-                            console.log(birthdayMessage); 
+                            console.log(birthdayMessage);
                             var member_fullname = $(this).find("h2 span").text();
                             var member_names = member_fullname.split(" ");
                             birthdayMessage = birthdayMessage.replaceAll(
@@ -915,7 +874,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         });
 
                         birthdayMessage = birthdayMessage.join('');
-                        console.log(birthdayMessage);  
+                        console.log(birthdayMessage);
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
                         birthdayMessage = birthdayMessage.replaceAll(
@@ -1041,19 +1000,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         console.log(birtday_response.data);
 
                         birthdayMessagetextArray.forEach(function (item, i) {
-                        birthdayMessage_json = birthdayMessagetextArray[i];
-                        birthdayMessage_varient_json = birthdayMessage_json.varient;
-                        birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
-                        var randomIndex2 = Math.floor(
-                        Math.random() * birthdayMessage_varient_array.length
-                        );
-                        birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
+                            birthdayMessage_json = birthdayMessagetextArray[i];
+                            birthdayMessage_varient_json = birthdayMessage_json.varient;
+                            birthdayMessage_varient_array = JSON.parse(birthdayMessage_varient_json);
+                            var randomIndex2 = Math.floor(
+                                Math.random() * birthdayMessage_varient_array.length
+                            );
+                            birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
 
                         });
 
                         birthdayMessage = birthdayMessage.join('');
 
-                        console.log(birthdayMessage); 
+                        console.log(birthdayMessage);
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
                         birthdayMessage = birthdayMessage.replaceAll(
@@ -1107,7 +1066,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             }
         }, 8000);
         return true;
-    } 
+    }
     else if (message.subject === "openTheBirthdays") {
         console.log("open the event message recieved");
 
@@ -1126,18 +1085,18 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     if (message.subject == "responseBG" && message.from == "background") {
 
-     if (window.location.href.indexOf('facebook.com') > -1 ) {
+        if (window.location.href.indexOf('facebook.com') > -1) {
             $('.like_option').show();
             $('.loader').hide();
             $('.like').show();
             $('.dislike').show();
-            $('.reload').show();
-            $('.play').hide();
-            FacebookDOM.putMessageinTextArea(message.result);        
+            // $('.reload').show();
+            // $('.play').hide();
+            FacebookDOM.putMessageinTextArea(message.result);
         }
-        sendResponse({'status': 'ok'});
+        sendResponse({ 'status': 'ok' });
         return false;
-    }    
+    }
     //RECIVED MESSAGE FROM BACKGROUND
     if (message.subject === "sendMessageFromWindow") {
         //if ($('.mToken').length > 0 && $('.mToken').text().length > 0) {
@@ -1162,17 +1121,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         return true;
     }
 
-    if(message.type == "tag_update_done" && message.from == "background"){
+    if (message.type == "tag_update_done" && message.from == "background") {
         let response = message.result;
         console.log(message);
-        if(response != undefined && response != ''){
+        if (response != undefined && response != '') {
             var parsedData = response;
             // var message = response.message;
-           toastr["success"]('Tag update successfully');
+            toastr["success"]('Tag update successfully');
         } else {
             toastr["success"]('not found tag update done');
         }
-       
+
         AddLabelCRM.taggeduserapi();
         selector_members_list = AddLabelCRM.messengersMembersListSelector();
         AddLabelCRM.messengersCom();
@@ -1180,7 +1139,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         var currentLocationUrl = window.location.origin;
         chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
     }
-        //unfollow module
+    //unfollow module
     if (message.action === 'getGenderAndPlace') {
         let friendDetails = message.friend;
         (async () => {
@@ -1190,45 +1149,45 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             if (friendDetails) {
                 friendDetails.gender = gender;
                 friendDetails.lived = lived;
-                friendDetails.status= status;
+                friendDetails.status = status;
                 console.log(friendDetails);
-                chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
+                chrome.runtime.sendMessage({ 'action': 'saveFriendData', friendDetails: friendDetails });
             } else {
                 console.error("Invalid friendDetails object.");
-                chrome.runtime.sendMessage({'action':'saveFriendData',friendDetails:friendDetails});
+                chrome.runtime.sendMessage({ 'action': 'saveFriendData', friendDetails: friendDetails });
             }
         })();
     }
-    if(message.action === 'nextFetchFriend'){
-        setTimeout(()=>{
+    if (message.action === 'nextFetchFriend') {
+        setTimeout(() => {
             Unfollow.getFriendList();
-        },45000);
-    } 
-    if(message.action === 'closeFriendPopup'){
+        }, 45000);
+    }
+    if (message.action === 'closeFriendPopup') {
         $("#stop_crm").text("Close popup");
         $(".loading").remove();
-        $("h2.title_lg").text("There is an error.").css('color','red');
+        $("h2.title_lg").text("There is an error.").css('color', 'red');
     }
-    if(message.action === 'friendUnfollowProcess' &&  message.from === "background"){
+    if (message.action === 'friendUnfollowProcess' && message.from === "background") {
         console.log(message);
-        setTimeout(()=>{
+        setTimeout(() => {
             Unfollow.groupListIntial(message);
-        },1000);
+        }, 1000);
     }
-    if(message.action === 'syncingComplete'){
+    if (message.action === 'syncingComplete') {
         toastr["success"]('Sync complete');
-        setTimeout(()=>{
+        setTimeout(() => {
             location.reload();
-        },1000);
-        
+        }, 1000);
+
     }
 });
 
 if (window.location.href.indexOf(my_domain) > -1) {
-    chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {        
+    chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
         authToken = res16.authToken;
-        var clearTimeInt = setInterval( () => {
-            if($('.Mui-checked').length == 0) {
+        var clearTimeInt = setInterval(() => {
+            if ($('.Mui-checked').length == 0) {
                 $('#switch-extension').parent().mclick();
             } else {
                 $('#download-extension').hide();
@@ -1256,9 +1215,9 @@ $(document).ready(function () {
     //     );
     // }, 2000);
 
-    $(document).on("click", "#sync_fbname", function(){
+    $(document).on("click", "#sync_fbname", function () {
         let groupId = $(this).val();
-        chrome.runtime.sendMessage({ 'action': "syncFbname",'groupId': groupId});
+        chrome.runtime.sendMessage({ 'action': "syncFbname", 'groupId': groupId });
     })
 
     $(document).on("click", "#stop_run", function () {
@@ -1298,31 +1257,31 @@ $(document).ready(function () {
 
 
     // SELECTED ONLY ONE CHECKBOX FROM MULTIPLE
-     $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function() {      
-        $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);      
+    $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function () {
+        $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);
     });
 
-    $(document).on("click", "#submit-campaign", function () {        
+    $(document).on("click", "#submit-campaign", function () {
         $("#submit-campaign").prop("disabled", true);
-        $("#submit-campaign").addClass("disabled_cls");        
+        $("#submit-campaign").addClass("disabled_cls");
         let data = JSON.parse($(this).attr('attr-data'));
         let userIds = data.userIds;
         console.log(userIds);
         setTimeout(() => {
-            chrome.runtime.sendMessage({ action: "getCRMSettings", settins:data }, (res7) => {                
+            chrome.runtime.sendMessage({ action: "getCRMSettings", settins: data }, (res7) => {
                 console.log(res7);
                 //return false;
                 let status_api = res7.setting.status;
-                if(status_api == "success") {
+                if (status_api == "success") {
                     toastr["success"]('setting saved successfully! fetching members');
-                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings"}, async(res17) => {                
-                       console.log(res17);
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings" }, async (res17) => {
+                        console.log(res17);
                         let reponse17 = res17.api_data.data;
                         let crm_settings = reponse17[0];
                         //console.log(reponse17[0]);
 
                         let total_memberss = crm_settings.taggedUsers.length;
-                        if(userIds.length > 0){
+                        if (userIds.length > 0) {
                             total_memberss = userIds.length;
                         }
                         let html_processing_model = `<section class="main-app">
@@ -1347,15 +1306,15 @@ $(document).ready(function () {
                             $("#submit-campaign").removeClass("disabled_cls");
                         }, 5000);
                         var selected_group_members = crm_settings.taggedUsers;
-                        console.log('selected_group_members - ',selected_group_members);
-                        if(userIds.length > 0){
-                            selected_group_members =  selected_group_members.filter(item => userIds.includes(item.id));
+                        console.log('selected_group_members - ', selected_group_members);
+                        if (userIds.length > 0) {
+                            selected_group_members = selected_group_members.filter(item => userIds.includes(item.id));
                         }
 
-                        console.log('selected_group_members - ',selected_group_members);
+                        console.log('selected_group_members - ', selected_group_members);
 
                         const intervalValue = crm_settings.time_interval;
-                        console.log(intervalValue); 
+                        console.log(intervalValue);
                         if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                             randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
                         } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
@@ -1369,46 +1328,46 @@ $(document).ready(function () {
                         }
                         console.log(randomDelay);
                         selected_group_members.forEach(function (item, i) {
-                        if (i < total_memberss) {
-                            setTimeout(() => {
-                                var thread_id = item.fb_user_id;                            
-                                var crmMessage = [];
-                                var crmMessagetextArray = crm_settings.MessageDatum.Sections;
-                                crmMessagetextArray.forEach(function (item, i) {
-                                crmMessage_json = crmMessagetextArray[i];
-                                crmMessage_varient_json = crmMessage_json.varient;
-                                crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
-                                var randomIndex2 = Math.floor(
-                                    Math.random() * crmMessage_varient_array.length
-                                );
-                                    crmMessage.push(crmMessage_varient_array[randomIndex2]);
-                                });
+                            if (i < total_memberss) {
+                                setTimeout(() => {
+                                    var thread_id = item.fb_user_id;
+                                    var crmMessage = [];
+                                    var crmMessagetextArray = crm_settings.MessageDatum.Sections;
+                                    crmMessagetextArray.forEach(function (item, i) {
+                                        crmMessage_json = crmMessagetextArray[i];
+                                        crmMessage_varient_json = crmMessage_json.varient;
+                                        crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
+                                        var randomIndex2 = Math.floor(
+                                            Math.random() * crmMessage_varient_array.length
+                                        );
+                                        crmMessage.push(crmMessage_varient_array[randomIndex2]);
+                                    });
 
-                                crmMessage = crmMessage.join('');
+                                    crmMessage = crmMessage.join('');
 
-                                var thread_id = item.fb_user_id;
-                                var member_fullname = item.fb_name;
-                                var member_names = member_fullname.split(" ");
+                                    var thread_id = item.fb_user_id;
+                                    var member_fullname = item.fb_name;
+                                    var member_names = member_fullname.split(" ");
 
-                                console.log(thread_id, '######', crmMessage); 
+                                    console.log(thread_id, '######', crmMessage);
 
 
-                                crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
-                                crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
-                                chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
-                                    $('#processed_member').text(i + 1);
-                                    if (i === selected_group_members.length - 1) {
-                                        console.log('End of loop reached.');
-                                        $("#stop_crm").text("Close popup");
-                                        $(".loading").remove();
-                                        $("h3.title_lg").text("Completed");
-                                    }
-                                })
-                            }, i * randomDelay)
-                        }
-                    })
-                    });                     
-                } 
+                                    crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
+                                    crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
+                                    chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
+                                        $('#processed_member').text(i + 1);
+                                        if (i === selected_group_members.length - 1) {
+                                            console.log('End of loop reached.');
+                                            $("#stop_crm").text("Close popup");
+                                            $(".loading").remove();
+                                            $("h3.title_lg").text("Completed");
+                                        }
+                                    })
+                                }, i * randomDelay)
+                            }
+                        })
+                    });
+                }
                 else {
                     toastr["error"]('setting not saved successfully!');
                 }
@@ -1458,8 +1417,8 @@ $(document).ready(function () {
                 }, 5000);
 
                 var selected_group_members = res17.api_data.tagged_user;
-                const intervalValue = res17.api_data.time_interval; 
-                console.log(intervalValue); 
+                const intervalValue = res17.api_data.time_interval;
+                console.log(intervalValue);
                 if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                     randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
                 } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
@@ -1483,7 +1442,7 @@ $(document).ready(function () {
                     if (i < total_memberss) {
                         setTimeout(() => {
                             var thread_id = item.fb_user_id;
-                            console.log(thread_id);   
+                            console.log(thread_id);
                             text_messageArray = res17.api_data.message;
                             var randomIndex = Math.floor(Math.random() * text_messageArray.length);
                             text_message = text_messageArray[randomIndex];
@@ -1492,7 +1451,7 @@ $(document).ready(function () {
                             var member_names = member_fullname.split(" ");
                             var messageText = "";
                             messageText = text_message.replaceAll("[first name]", member_names[0]);
-                            messageText = messageText.replaceAll("[last name]", member_names[1]); 
+                            messageText = messageText.replaceAll("[last name]", member_names[1]);
                             chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: messageText, thread_id: thread_id }, (res18) => {
                                 $('#processed_member').text(i + 1);
                                 if (i === selected_group_members.length - 1) {
@@ -1520,7 +1479,7 @@ $(document).ready(function () {
         console.log(result);
         if (
             typeof result.requestSettings != "undefined" &&
-            result.requestSettings != "" && result.requestSettings != null 
+            result.requestSettings != "" && result.requestSettings != null
         ) {
             console.log(result);
             requestSettings1 = result.requestSettings;
@@ -1606,9 +1565,9 @@ $(document).ready(function () {
         );
     });
 
-    $(document).on("click", "#add-group-btn", function () { 
-        
-        $("#add-group-btn").text('Adding group...');  
+    $(document).on("click", "#add-group-btn", function () {
+
+        $("#add-group-btn").text('Adding group...');
         let group_url_value = window.location.href;
         if (group_url_value.includes("/things_in_common")) {
             group_url_value = group_url_value.replace("/things_in_common", "");
@@ -1633,7 +1592,7 @@ $(document).ready(function () {
     $(document).on("click", "#add-group-btn2", function () {
         console.log("clicked");
         let group_url_value = window.location.href;
-         $("#add-group-btn2").text('Adding group...'); 
+        $("#add-group-btn2").text('Adding group...');
         if (group_url_value.includes("things_in_common")) {
             group_url_value = group_url_value.replace("things_in_common", "");
             group_url_value = group_url_value + "things_in_common";
@@ -1686,7 +1645,7 @@ $(document).ready(function () {
                     // console.log(title);
                     $("#group_name").text("Group Name:- " + title + "( VERIFIED )");
                     $("#verfiyurlfbgroup").text("Saving..");
-                    chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title,token:token },
+                    chrome.runtime.sendMessage({ action: "addgroupapi", url: group_url_value, name: title, token: token },
                         (res9) => {
                             console.log(res9);
                             if (res9.status == "ok") {
@@ -1704,7 +1663,7 @@ $(document).ready(function () {
                                 $("#group_name").text("Error to saved group");
                                 $("#group_name").css("color", "red");
                                 $("#verfiyurlfbgroup").text("Error");
-                                 toastr["error"]('Error to saved group');
+                                toastr["error"]('Error to saved group');
                             }
                         }
                     );
@@ -1725,17 +1684,17 @@ $(document).ready(function () {
 });
 
 
-$(document).on("click", ".send_birthday_message", function (event) {    
+$(document).on("click", ".send_birthday_message", function (event) {
     setTimeout(() => {
         chrome.runtime.sendMessage({ action: "openBirthdayEventNew" });
         console.log("button clicked");
     }, 4000);
 });
 
-$(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function() {
+$(document).on("click", ".MuiButtonBase-root:contains('SEND BIRTHDAY MESSAGES')", function () {
     // Perform your actions here
     alert("Button with text 'SEND BIRTHDAY MESSAGES' was clicked!");
-  });
+});
 
 function sendMessageFromMessengers(thread_id, templateMessage) {
     let msgBox = 'div[aria-label="Message"]';

@@ -10,6 +10,7 @@ let FacebookDOM;
   let $this;
   let description;
   let feelingsvalue;
+  let clickedBtn;
   var custom_data = {
     baseUrl: 'https://extenionbackend.techrit.tech/',
     sendBulkMessageEnable: true, // true/false = true for enable , false for disable
@@ -48,17 +49,15 @@ let FacebookDOM;
     },
     appendresponse: function () {
       chrome.storage.sync.get(['responsedata'], function (result) {
-        console.log(result);
         var opinioncheck = $('.response_opinion').remove();
-
         if (
           typeof result.responsedata.opinion != 'undefined' &&
           result.responsedata.opinion != ''
         ) {
           $(
             '<div class="response_opinion"><span>' +
-              result.responsedata.opinion +
-              '</span><p>x</p></div>'
+            result.responsedata.opinion +
+            '</span><p>x</p></div>'
           ).insertBefore('.inner1');
         }
 
@@ -69,12 +68,12 @@ let FacebookDOM;
           $(result.responsedata.tone).each(function (i) {
             $(
               '<div class="response_tone"><span>' +
-                result.responsedata.tone[i] +
-                '</span><p>x</p></div>'
+              result.responsedata.tone[i] +
+              '</span><p>x</p></div>'
             ).insertBefore('.inner2');
           });
         }
-        
+
         $('.response_writing').remove();
         if (
           typeof result.responsedata.writing != 'undefined' &&
@@ -83,8 +82,8 @@ let FacebookDOM;
           $(result.responsedata.writing).each(function (i) {
             $(
               '<div class="response_writing"><span>' +
-                result.responsedata.writing[i] +
-                '</span><p>x</p></div>'
+              result.responsedata.writing[i] +
+              '</span><p>x</p></div>'
             ).insertBefore('.inner3');
           });
         }
@@ -95,26 +94,20 @@ let FacebookDOM;
         ) {
           $(
             '<div class="response_size"><span>' +
-              result.responsedata.size +
-              '</span><p>x</p></div>'
+            result.responsedata.size +
+            '</span><p>x</p></div>'
           ).insertBefore('.inner4');
         }
       });
     },
     addReactionPannelFB: function () {
-      // console.log(
-      //   $(
-      //     `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]:not(".que-processed-class")`
-      //   )
-      // );
+      let url = window.location.href;
       $comment_box = $(
         `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]:not(".que-processed-class")`
       );
+      // Find the Comment Box to append ChatGPT HTML 
       if ($comment_box.length > 0) {
-        if (
-          window.location.href.indexOf('facebook.com') > -1 &&
-          window.location.href.indexOf('/messages/t/') > -1
-        ) {
+        if (url.indexOf('facebook.com') > -1 && url.indexOf('/messages/t/') > -1) {
           $comment_box
             .parent()
             .parent()
@@ -135,6 +128,8 @@ let FacebookDOM;
             .parent()
             .parent()
             .addClass('ai2-feed-page');
+          $('.que-current-container').find('#quentintou').remove();
+          $('.que-current-container').removeClass('que-current-container');
         }
         replyBtn = $comment_box
           .parent()
@@ -152,7 +147,6 @@ let FacebookDOM;
           .parent()
           .parent()
           .find('li:contains(Reply)');
-
         $comment_box
           .parent()
           .parent()
@@ -173,22 +167,23 @@ let FacebookDOM;
             .find('#quentintou')
             .remove();
         }
+
         $('.ai2-message-page').find('#quentintou').remove();
         $comment_box.addClass('que-processed-class');
         $this.appendresponse();
       }
     },
     addChatGPTforFacebook: function (elem, feelings, post_description) {
-      console.log(post_description);
+      clickedBtn = $(elem);
       description = post_description;
       feelingsvalue = feelings;
       chrome.storage.sync.set({ post_description: '' });
       chrome.storage.sync.set({ post_description: post_description });
-      selector_comment_btn =
-        '.que-current-container div[aria-label="Write a comment"]';
-
+      selector_comment_btn = '.que-current-container div[aria-label="Write a comment"]';
+      if ($(selector_comment_btn).length == 0) {
+        selector_comment_btn = '.que-current-container div[aria-label="Write a comment…"]';
+      }
       $(selector_comment_btn).click();
-
       raw = JSON.stringify({
         text: post_description,
         temp: feelings,
@@ -202,19 +197,23 @@ let FacebookDOM;
       );
     },
     putMessageinTextArea: function (apiResp, elem) {
-      // Define the selector based on the URL
-      const selector = window.location.href.includes('facebook.com') && window.location.href.includes('/messages/t/')
-        ? '.ai2-message-page div[aria-label][contenteditable="true"]'
-        : '.ai2-feed-page div[aria-label][contenteditable="true"]';
-    
+      const isFacebookMessagePage = window.location.href.includes('facebook.com') && window.location.href.includes('/messages/t/');
+      let selector;
+      if (isFacebookMessagePage) {
+        selector = '.ai2-message-page div[aria-label][contenteditable="true"]';
+      } else {
+        selector = '.que-current-container form div[aria-label][contenteditable="true"]';
+      }
+
       // Hide/show various elements
-      $('.loader, .play').hide();
-      $('.agree_div, .response, .like, .dislike, .reload').show();
-    
+      const $parent = $(clickedBtn).parent();
+      $parent.find('.play').hide();
+      $parent.find('.reload').show();
+      $('.loader').hide();
+      $('.agree_div, .response, .like, .dislike').show();
+
       // Process the API response
       const result = JSON.parse(apiResp).data.replace(/\n\n/g, ' ').replace(/"/g, '');
-      console.log(result);
-    
       // Find and select the appropriate element
       const pElement = document.querySelector(selector + ' p') || document.querySelector('p.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xdpxx8g');
       if (pElement) {
@@ -224,27 +223,27 @@ let FacebookDOM;
         selection.removeAllRanges();
         selection.addRange(range);
       }
-    
 
       if ($(selector + ' p br').length) {
         // Copy the result to the clipboard
         navigator.clipboard.writeText(result).then(async () => {
           await waitForElm(selector);
           const data = $(selector).children('p');
-          data.each(function (key) {
-            const className = document.getElementsByClassName($(this).attr('class'));
-            $(className).each(function (key) {
-              if ($(this).find("span[data-lexical-text='true']").length > 0 && key > 0) {
-                $(this).css('display', 'none');
+          data.each(function () {
+            const elementsWithClass = document.getElementsByClassName($(this).attr('class'));
+            $(elementsWithClass).each(function (index) {
+              const $element = $(this);
+              const lexicalSpans = $element.find("span[data-lexical-text='true']");
+              const lineBreaks = $element.find('br');
+              if (lexicalSpans.length > 0 && index > 0) {
+                $element.css('display', 'none');
               }
-              const spans = $(this).find("span[data-lexical-text='true']");
-              spans.each(function (key) {
+              lexicalSpans.each(function (key) {
                 if (key > 0) {
                   $(this).css('display', 'none');
                 }
               });
-              const brs = $(this).find('br');
-              brs.each(function (key) {
+              lineBreaks.each(function (key) {
                 if (key > 0) {
                   $(this).css('display', 'none');
                 }
@@ -253,7 +252,7 @@ let FacebookDOM;
           });
           document.execCommand('paste');
         });
-    
+
         // Create and dispatch an 'input' event
         const evt = new Event('input', { bubbles: true });
         if ($(selector + ' p br').length) {
@@ -261,14 +260,9 @@ let FacebookDOM;
           $(input).html('');
           input.innerHTML = result;
           input.dispatchEvent(evt);
-          
-          // Add the focus to the input field
-         
-          // $(selector + ' p br'). after('<span data-text="true" class="ai2-custom-text">' + result + '</span>');
         }
       }
-    }
-    ,
+    },
     like: function (elem) {
       $('.loader').show();
       $('.agree_div').hide();
@@ -427,6 +421,7 @@ let FacebookDOM;
         }
       );
     },
+
   };
   FacebookDOM.initilaize();
 })(jQuery);
