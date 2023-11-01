@@ -130,7 +130,6 @@ customBtnFound = setInterval(function () {
 $(document).ready(function () {
     $(document).on("click", ".opinion", function (e) {
         $('.agree_div ul li').removeClass('option_active')
-        // $(this).addClass("option_active")
         $('.opinion_option').show();
         $('.writing_option').hide();
         $('.size_option').hide();
@@ -138,8 +137,6 @@ $(document).ready(function () {
         $('.response').show();
     })
     $(document).on("click", ".writing_style", function (e) {
-        // $('.agree_div ul li').removeClass('option_active')
-        //$(this).addClass("option_active")
         $('.opinion_option').hide();
         $('.writing_option').show();
         $('.size_option').hide();
@@ -147,8 +144,6 @@ $(document).ready(function () {
         $('.response').show();
     })
     $(document).on("click", ".tone", function (e) {
-        // $('.agree_div ul li').removeClass('option_active')
-        // $(this).addClass("option_active")
         $('.opinion_option').hide();
         $('.writing_option').hide();
         $('.size_option').hide();
@@ -156,8 +151,6 @@ $(document).ready(function () {
         $('.response').show();
     })
     $(document).on("click", ".size", function (e) {
-        //  $('.agree_div ul li').removeClass('option_active')
-        // $(this).addClass("option_active")
         $('.opinion_option').hide();
         $('.writing_option').hide();
         $('.size_option').show();
@@ -245,8 +238,6 @@ $(document).ready(function () {
         })
     })
 
-
-
     $(document).on('click', '.option_active', function () {
         var checktext = $(this).text();
         var classfind = $(this).parent().parent().attr('class');
@@ -256,7 +247,6 @@ $(document).ready(function () {
             $(check).removeClass('option_active')
             var response1 = `.response_opinion span:contains(${checktext})`;
             $(response1).parent().remove();
-
         }
 
         if (classfind == 'writing_option') {
@@ -264,7 +254,6 @@ $(document).ready(function () {
             $(check2).removeClass('option_active')
             var response2 = `.response_writing span:contains(${checktext})`;
             $(response2).parent().remove();
-
         }
         if (classfind == 'tone_option') {
             var check3 = `.tone_option ul li:contains(${checktext})`;
@@ -323,14 +312,12 @@ $(document).on("click", ".play", function (e) {
     $('.tone_option').hide();
     $('.response').hide();
     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
-    console.log("hello", opinion)
     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
     var writing_array = [];
     if ($(writing).length > 0) {
         $(writing).each(function (i) {
             if ($.inArray($(this).text(), writing_array) != -1) {
-                console.log("hello");
             } else {
                 writing_array.push($(this).text())
             }
@@ -361,49 +348,31 @@ $(document).on("click", ".play", function (e) {
 
     if (selector_post_description.length > 0) {
         facebook_post_description = selector_post_description.text();
-        //console.log(post_description);
     } else {
         facebook_post_description = "Thought of today";
     }
     chrome.storage.sync.get(["language", "job", "sector"], function (result) {
-        var temp = {}
-        if (typeof result.language != "undefined" && result.language != "") {
-            temp.language = result.language;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
+        var temp = {
+          opinion: opinion,
+          size: size,
+          writing: writing_array,
+          tone: tone_Array,
+        };
+      
+        if (result.language) {
+          temp.language = result.language;
         }
-        if (typeof result.job != "undefined" && result.job != "") {
-            temp.job = result.job;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
+        if (result.job) {
+          temp.job = result.job;
         }
-        if (typeof result.sector != "undefined" && result.sector != "") {
-            temp.sector = result.sector;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
+        if (result.sector) {
+          temp.sector = result.sector;
         }
-        else {
-            temp.size = size;
-            temp.opinion = opinion;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
+        chrome.storage.sync.set({ responsedata: temp });
+        if (window.location.href.includes("facebook.com")) {
+          FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
         }
-        console.log("new temp", temp)
-        chrome.storage.sync.set({ "responsedata": temp });
-        //  $("body").scrollTop(0);
-        // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
-
-        //$("#quentintou").animate({"scrollTop": $("#quentintou").scrollTop() + 100});
-        if (window.location.href.indexOf('facebook.com') > -1) {
-            FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
-        }
-    })
+    });
 })
 
 $(document).on("click", ".reload", function (e) {
@@ -536,7 +505,6 @@ function checkactive() {
 
             if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
                 var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
-                // console.log("getcheck",check)
                 if (check.length > 0) {
                     $(check).addClass("option_active")
                     $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
@@ -548,7 +516,7 @@ function checkactive() {
                     var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
                     if (check2.length) {
                         $(check2).addClass("option_active")
-                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner3")
+                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner2")
                     }
                 });
             }
@@ -558,7 +526,7 @@ function checkactive() {
                     var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
                     if (check3.length) {
                         $(check3).addClass("option_active")
-                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner2")
+                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner3")
                     }
                 });
             }
@@ -1084,14 +1052,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 
     if (message.subject == "responseBG" && message.from == "background") {
-
         if (window.location.href.indexOf('facebook.com') > -1) {
             $('.like_option').show();
             $('.loader').hide();
             $('.like').show();
             $('.dislike').show();
-            // $('.reload').show();
-            // $('.play').hide();
             FacebookDOM.putMessageinTextArea(message.result);
         }
         sendResponse({ 'status': 'ok' });

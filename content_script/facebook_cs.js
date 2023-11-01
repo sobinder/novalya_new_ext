@@ -49,54 +49,49 @@ let FacebookDOM;
     },
     appendresponse: function () {
       chrome.storage.sync.get(['responsedata'], function (result) {
-        var opinioncheck = $('.response_opinion').remove();
-        if (
-          typeof result.responsedata.opinion != 'undefined' &&
-          result.responsedata.opinion != ''
-        ) {
-          $(
-            '<div class="response_opinion"><span>' +
-            result.responsedata.opinion +
-            '</span><p>x</p></div>'
-          ).insertBefore('.inner1');
+        const $responseOpinion = $('.response_opinion');
+        if ($responseOpinion.length > 0) {
+          $responseOpinion.remove();
+          if (
+            typeof result.responsedata.opinion != 'undefined' &&
+            result.responsedata.opinion != ''
+          ) {
+            $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore('.inner1');
+          }
         }
 
-        if (
-          typeof result.responsedata.tone != 'undefined' &&
-          result.responsedata.tone.length != 0
-        ) {
-          $(result.responsedata.tone).each(function (i) {
-            $(
-              '<div class="response_tone"><span>' +
-              result.responsedata.tone[i] +
-              '</span><p>x</p></div>'
-            ).insertBefore('.inner2');
-          });
+        // Check if there are elements with the class "response_tone"
+        const $responseToneElements = $('.response_tone');
+        if ($responseToneElements.length > 0) {
+          $responseToneElements.remove();
+          if (result.responsedata.tone && result.responsedata.tone.length > 0) {
+            const $inner2 = $('.inner2');
+            $.each(result.responsedata.tone, function (i, tone) {
+              $('<div class="response_tone"><span>' + tone + '</span></div>').insertBefore($inner2);
+            });
+          }
         }
 
-        $('.response_writing').remove();
-        if (
-          typeof result.responsedata.writing != 'undefined' &&
-          result.responsedata.writing.length != ''
-        ) {
-          $(result.responsedata.writing).each(function (i) {
-            $(
-              '<div class="response_writing"><span>' +
-              result.responsedata.writing[i] +
-              '</span><p>x</p></div>'
-            ).insertBefore('.inner3');
-          });
+        // Check if there are elements with the class "response_writing"
+        const $responseWritingElements = $('.response_writing');
+        if ($responseWritingElements.length > 0) {
+          $responseWritingElements.remove();
+          if (result.responsedata.writing && result.responsedata.writing.length > 0) {
+            const $inner3 = $('.inner3');
+            $.each(result.responsedata.writing, function (i, text) {
+              $('<div class="response_writing"><span>' + text + '</span></div>').insertBefore($inner3);
+            });
+          }
         }
-        $('.response_size').remove();
-        if (
-          typeof result.responsedata.size != 'undefined' &&
-          result.responsedata.size != ''
-        ) {
-          $(
-            '<div class="response_size"><span>' +
-            result.responsedata.size +
-            '</span><p>x</p></div>'
-          ).insertBefore('.inner4');
+
+        // Check if there are elements with the class "response_size"
+        const $responseSizeElements = $('.response_size');
+        if ($responseSizeElements.length > 0) {
+          $responseSizeElements.remove();
+          if (result.responsedata.size) {
+            const $newResponseSizeElement = $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>');
+            $newResponseSizeElement.insertBefore('.inner4');
+          }
         }
       });
     },
@@ -265,16 +260,10 @@ let FacebookDOM;
     },
     like: function (elem) {
       $('.loader').show();
-      $('.agree_div').hide();
-      $('.opinion_option').hide();
-      $('.writing_option').hide();
-      $('.size_option').hide();
-      $('.tone_option').hide();
-      $('.response').hide();
-      $('.like').show();
-      $('.dislike').show();
-      $('.reload').show();
+      $('.agree_div, .opinion_option, .writing_option, .size_option, .tone_option, .response').hide();
+      $('.like, .dislike, .reload').show();
       $('.play').hide();
+
       var apiBaseUrl = custom_data.baseUrl + 'api/likedislike';
       chrome.storage.sync.get(['jwt_token'], function (result) {
         if (typeof result.jwt_token != 'undefined' && result.jwt_token != '') {
@@ -290,7 +279,7 @@ let FacebookDOM;
             data: { response: response, status: status },
             headers: { Authorization: 'Bearer ' + authtoken },
             dataType: 'json',
-          })
+            })
             .done(function (response) {
               if (response.status == 200 && response.data == 'like') {
                 $('.loader').hide();
@@ -323,8 +312,6 @@ let FacebookDOM;
       var token = $(elem).val();
       chrome.storage.sync.set({ lengthshortner: '' });
       chrome.storage.sync.set({ lengthshortner: token });
-      console.log('hello', token);
-
       chrome.storage.sync.get(
         ['feelings', 'post_description'],
         function (result) {
@@ -350,7 +337,6 @@ let FacebookDOM;
               }
             );
           }
-          // $('.loader').hide();
         }
       );
     },
@@ -358,8 +344,6 @@ let FacebookDOM;
       var token = $(elem).val();
       chrome.storage.sync.set({ lengthshortner: '' });
       chrome.storage.sync.set({ lengthshortner: token });
-      console.log('hello', token);
-
       chrome.storage.sync.get(
         ['feelings', 'post_description'],
         function (result) {
@@ -379,11 +363,11 @@ let FacebookDOM;
                 action: 'getResponseFromChatGPT',
                 request: raw,
               },
-              function () {
-                //console.log('hi', response);
-              });
+              function (response) {
+                console.log('Received a response:', response);
+              }
+            );
           }
-
         }
       );
     },
