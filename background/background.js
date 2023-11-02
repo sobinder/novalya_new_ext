@@ -306,7 +306,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
-
     if (message.action === "addgroupapinew") {
         let token = authToken;
         var myHeaders = new Headers();
@@ -330,8 +329,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .catch((error) => sendResponse({ data: error, status: "error" }));
         return true;
     }
-
-
 
     if (message.action === "getMessageSections") {
         console.log(authToken);
@@ -722,6 +719,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+
     if (message.action == "sendMessageFromCRMOnebyOne") {
         let window_data = {
             text_message: message.textMsg,
@@ -934,6 +932,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true;
 
+    }
+
+
+    if(message.action === "updateNoOfsendMessage"){
+        updateUserLimit(message,sendResponse);
     }
 
 });
@@ -1249,7 +1252,6 @@ async function syncGroupTaggedUserInDB(item) {
     return true;
 }
 
-
 async function getUserLimit() {
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/check";
@@ -1267,13 +1269,39 @@ async function getUserLimit() {
             const result = await response.json();
             return result.data.no_of_send_message;
         } else {
-            // Handle the error here if needed
             console.log('Error:', response.status, response.statusText);
-            return null; // Or you can throw an error
+            return null;
         }
     } catch (error) {
-        // Handle any other errors that may occur during the request
         console.error('Error:', error);
-        return null; // Or you can throw an error
+        return null;
+    }
+}
+
+async function updateUserLimit(message,sendResponse){
+    try {
+        const url = "https://novalyabackend.novalya.com/userlimit/api/update-message";
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authToken);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body :message.request
+        };
+        const response = await fetch(url, requestOptions);
+        if (response.ok) {
+            const result = await response.json();
+            sendResponse(result);
+            return result;
+        } else {
+            console.log('Error:', response.status, response.statusText);
+            sendResponse(null);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        sendResponse(null);
+        return null;
     }
 }

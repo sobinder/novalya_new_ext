@@ -4,8 +4,7 @@ var loopValue = 0;
 var segementMessage = "";
 let timeOutIdsArray = [];
 let clearMessageInt = [];
-let usersubscriptionDate = "24-10-2023";
-let messageLimit = 5;
+let total_message_limit = 300000; // read by api or by storage of specific user settings.
 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
@@ -353,24 +352,24 @@ $(document).on("click", ".play", function (e) {
     }
     chrome.storage.sync.get(["language", "job", "sector"], function (result) {
         var temp = {
-          opinion: opinion,
-          size: size,
-          writing: writing_array,
-          tone: tone_Array,
+            opinion: opinion,
+            size: size,
+            writing: writing_array,
+            tone: tone_Array,
         };
-      
+
         if (result.language) {
-          temp.language = result.language;
+            temp.language = result.language;
         }
         if (result.job) {
-          temp.job = result.job;
+            temp.job = result.job;
         }
         if (result.sector) {
-          temp.sector = result.sector;
+            temp.sector = result.sector;
         }
         chrome.storage.sync.set({ responsedata: temp });
         if (window.location.href.includes("facebook.com")) {
-          FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
+            FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
         }
     });
 })
@@ -1231,20 +1230,16 @@ $(document).ready(function () {
         $("#submit-campaign").addClass("disabled_cls");
         let data = JSON.parse($(this).attr('attr-data'));
         let userIds = data.userIds;
-        console.log(userIds);
         setTimeout(() => {
             chrome.runtime.sendMessage({ action: "getCRMSettings", settins: data }, (res7) => {
-                console.log(res7);
-                //return false;
+                let no_of_send_message = res7.no_of_send_message;
+                let errorShown = false;
                 let status_api = res7.setting.status;
                 if (status_api == "success") {
                     toastr["success"]('setting saved successfully! fetching members');
                     chrome.runtime.sendMessage({ action: "getMessagesANDSettings" }, async (res17) => {
-                        console.log(res17);
                         let reponse17 = res17.api_data.data;
                         let crm_settings = reponse17[0];
-                        //console.log(reponse17[0]);
-
                         let total_memberss = crm_settings.taggedUsers.length;
                         if (userIds.length > 0) {
                             total_memberss = userIds.length;
@@ -1271,15 +1266,10 @@ $(document).ready(function () {
                             $("#submit-campaign").removeClass("disabled_cls");
                         }, 5000);
                         var selected_group_members = crm_settings.taggedUsers;
-                        console.log('selected_group_members - ', selected_group_members);
                         if (userIds.length > 0) {
                             selected_group_members = selected_group_members.filter(item => userIds.includes(item.id));
                         }
-
-                        console.log('selected_group_members - ', selected_group_members);
-
                         const intervalValue = crm_settings.time_interval;
-                        console.log(intervalValue);
                         if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                             randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
                         } else if (intervalValue == "1-3 min" || intervalValue == "1-3 Min") {
@@ -1291,35 +1281,33 @@ $(document).ready(function () {
                         } else {
                             randomDelay = 60000;
                         }
-                        console.log(randomDelay);
-                        selected_group_members.forEach(function (item, i) {
-                            if (i < total_memberss) {
-                                setTimeout(() => {
-                                    var thread_id = item.fb_user_id;
-                                    var crmMessage = [];
-                                    var crmMessagetextArray = crm_settings.MessageDatum.Sections;
+
+                        selected_group_members.map((item, i)=>{
+                            setTimeout(() => {
+                                if (i < total_memberss && parseInt(total_message_limit) > parseInt(no_of_send_message)) {
+                                    no_of_send_message++;
+                                    let thread_id = item.fb_user_id;
+                                    let crmMessage = [];
+                                    let crmMessagetextArray = crm_settings.MessageDatum.Sections;
                                     crmMessagetextArray.forEach(function (item, i) {
-                                        crmMessage_json = crmMessagetextArray[i];
-                                        crmMessage_varient_json = crmMessage_json.varient;
-                                        crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
-                                        var randomIndex2 = Math.floor(
-                                            Math.random() * crmMessage_varient_array.length
-                                        );
+                                        let crmMessage_json = crmMessagetextArray[i];
+                                        let crmMessage_varient_json = crmMessage_json.varient;
+                                        let crmMessage_varient_array = JSON.parse(crmMessage_varient_json);
+                                        let randomIndex2 = Math.floor(Math.random() * crmMessage_varient_array.length);
                                         crmMessage.push(crmMessage_varient_array[randomIndex2]);
                                     });
-
                                     crmMessage = crmMessage.join('');
-
-                                    var thread_id = item.fb_user_id;
-                                    var member_fullname = item.fb_name;
-                                    var member_names = member_fullname.split(" ");
-
-                                    console.log(thread_id, '######', crmMessage);
-
-
+                                    let member_fullname = item.fb_name;
+                                    let member_names = member_fullname.split(" ");
                                     crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
                                     crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
                                     chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
+                                        if(res18.status === "ok"){
+                                            raw = JSON.stringify({
+                                                'no_of_send_message':1,
+                                            });
+                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw});
+                                        }
                                         $('#processed_member').text(i + 1);
                                         if (i === selected_group_members.length - 1) {
                                             console.log('End of loop reached.');
@@ -1328,8 +1316,16 @@ $(document).ready(function () {
                                             $("h3.title_lg").text("Completed");
                                         }
                                     })
-                                }, i * randomDelay)
-                            }
+                                } else {
+                                    if (!errorShown) {
+                                        toastr["error"]('Your message limit is reached. Please consider upgrading your plan.');
+                                        $("#stop_crm").text("Close popup");
+                                        $(".loading").remove();
+                                        $("h3.title_lg").text("Message limit over");
+                                        errorShown = true; 
+                                    }
+                                }
+                            }, i * randomDelay);    
                         })
                     });
                 }
