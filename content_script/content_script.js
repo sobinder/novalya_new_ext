@@ -570,7 +570,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.subject === "addTargetProcess") {
         //console.log('result', message);
         chrome.storage.local.get(
-            ["nvFriendReqInputs", "nvAddFriendProcess"],
+            ["nvFriendReqInputs", "nvAddFriendProcess" , "no_of_send_message"],
             function (result) {
                 console.log(result);
                 if (
@@ -578,6 +578,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     result.nvFriendReqInputs != ""
                 ) {
                     add_friend_settings = result.nvFriendReqInputs;
+                   var no_of_send_message = result.no_of_send_message;
                     if (
                         typeof result.nvAddFriendProcess != "undefined" &&
                         result.nvAddFriendProcess != "" &&
@@ -585,7 +586,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     ) {
                         console.log(add_friend_settings);
                         extTabId = message.extTabId;
-                        AddTargetFriendNV.startAddingFriend(add_friend_settings, extTabId);
+                        AddTargetFriendNV.startAddingFriend(add_friend_settings,no_of_send_message, extTabId);
                         sendResponse({ status: "ok" });
                     }
                 }

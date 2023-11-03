@@ -342,12 +342,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         fetch("https://novalyabackend.novalya.com/target/setting/api/all", requestOptions)
             .then(response => response.json())
-            .then(res1 => {
+            .then(async res1 => {
                 console.log(res1);
                 if (res1.status == "error") {
                     console.log(res1.message);
                 } else {
-                    chrome.storage.local.set({ nvFriendReqInputs: res1.data }, function () {
+                let no_of_send_message = await getConnectMessageSent();
+                console.log(no_of_send_message);
+                    chrome.storage.local.set({ nvFriendReqInputs: res1.data , no_of_send_message : no_of_send_message}, function () {
                         chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
                             function (tabs) {
                                 groupPageTabId = tabs.id;
@@ -939,6 +941,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         updateUserLimit(message,sendResponse);
     }
 
+    if(message.action === "updateNoSendConnects"){
+        updateNoOfConnects(message,sendResponse);
+    }
+
 });
 var currentDate = getCurrentDate();
 
@@ -1253,6 +1259,7 @@ async function syncGroupTaggedUserInDB(item) {
 }
 
 async function getUserLimit() {
+    console.log("getUserLimit is called ");
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/check";
         const myHeaders = new Headers();
@@ -1267,6 +1274,7 @@ async function getUserLimit() {
         const response = await fetch(url, requestOptions);
         if (response.ok) {
             const result = await response.json();
+            console.log(result.data.no_of_send_message);
             return result.data.no_of_send_message;
         } else {
             console.log('Error:', response.status, response.statusText);
@@ -1303,5 +1311,64 @@ async function updateUserLimit(message,sendResponse){
         console.error('Error:', error);
         sendResponse(null);
         return null;
+    }
+}
+
+async function updateNoOfConnects(message,sendResponse){
+    try {
+        const url = "https://novalyabackend.novalya.com/userlimit/api/update-connect";
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authToken);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body :message.request
+        };
+        const response = await fetch(url, requestOptions);
+        if (response.ok) {
+            const result = await response.json();
+            sendResponse(result);
+            return result;
+        } else {
+            console.log('Error:', response.status, response.statusText);
+            sendResponse(null);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        sendResponse(null);
+        return null;
+    }
+}
+
+
+async function getConnectMessageSent() {
+    console.log("getConnectLimit is called ");
+    try {
+        const url = "https://novalyabackend.novalya.com/userlimit/api/check";
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authToken);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+        };
+
+        const response = await fetch(url, requestOptions);
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result.data.no_of_connect);
+            return result.data.no_of_connect;
+        } else {
+            // Handle the error here if needed
+            console.log('Error:', response.status, response.statusText);
+            return null; // Or you can throw an error
+        }
+    } catch (error) {
+        // Handle any other errors that may occur during the request
+        console.error('Error:', error);
+        return null; // Or you can throw an error
     }
 }
