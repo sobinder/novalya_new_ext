@@ -151,11 +151,11 @@ let totalFriends = 0;
         },
         extractTotalFriends: async function() {
             return new Promise((resolve) => {
-              var totalFriendsElement = $('h1:eq(2)').parent().parent().parent().parent().next().find('span a').text();
+              var totalFriendsElement = $('h1:eq(1)').parent().parent().parent().parent().next().find('span a').text();
              let getCountInterval = setInterval(()=>{
-                if($('h1:eq(2)').length > 0){
+                if($('h1:eq(1)').length > 0){
                     clearInterval(getCountInterval);
-                    totalFriendsElement = $('h1:eq(2)').parent().parent().parent().parent().next().find('span a').text();
+                    totalFriendsElement = $('h1:eq(1)').parent().parent().parent().parent().next().find('span a').text();
                     var totalFriends = totalFriendsElement.match(/\d+/); // Extract numeric digits
                     console.log(totalFriends);
                     if (totalFriends) {
