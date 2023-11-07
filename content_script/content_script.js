@@ -4,7 +4,8 @@ var loopValue = 0;
 var segementMessage = "";
 let timeOutIdsArray = [];
 let clearMessageInt = [];
-let total_message_limit = 300000; // read by api or by storage of specific user settings.
+let total_message_limit = 30000; // read by api or by storage of specific user settings.
+let total_birthday_message_limit = 30000;  // read by api or by storage of specific user settings.
 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
@@ -656,6 +657,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 
     if (message.subject === "scrapTodayBirthday") {
+        console.log(message);
+        let no_of_birthday = message.no_of_birthday;
         let extBirthdayTabID = message.birthday_tabId;
         let class_today_heading = 'today_birthday_heading';
         let class_today_div = 'today_birthday_div';
@@ -702,7 +705,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                     Math.random() * birthdayMessage_varient_array.length
                                 );
                                 birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
-
                             });
 
                             birthdayMessage = birthdayMessage.join('');
@@ -717,15 +719,33 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 member_names[1]
                             );
                             if (birthday_wish_type == "message") {
-                                chrome.runtime.sendMessage({
-                                    action: "sendMessageBirthday",
-                                    member_fb_id: facebook_member_id,
-                                    messagtext: birthdayMessage,
-                                },
-                                    function (res15) {
-                                        // body
+                                if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                    console.log('inside birthday messge limit')
+                                    no_of_birthday++;
+                                    chrome.runtime.sendMessage({
+                                        action: "sendMessageBirthday",
+                                        member_fb_id: facebook_member_id,
+                                        messagtext: birthdayMessage,
+                                    },
+                                        function (res15) {
+                                            console.log(res15);
+                                            if(res15.status === "ok"){
+                                                raw = JSON.stringify({
+                                                    'no_of_birthday':1,
+                                                });
+                                                chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw});
+                                            }
+                                        }
+                                    );
+                                }else{
+                                    if (!errorShown) {
+                                        toastr["error"]('Your message limit is reached. Please consider upgrading your plan.');
+                                        $("#stop_crm").text("Close popup");
+                                        $(".loading").remove();
+                                        $("h3.title_lg").text("Birthday message limit over");
+                                        errorShown = true; 
                                     }
-                                );
+                                }
                             } else {
                                 chrome.runtime.sendMessage({
                                     action: "postFeedBirthday",
@@ -738,14 +758,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 );
                             }
                             if (loopValue + 1 > secondChild.children().length) {
-                                console.log("stooped");
-                                $("#loop1").text(loopValue);
-                                $("#stop_run").text("STOPPED");
-                                $(".loading").remove();
-                                $("h3.title_lg").text("Completed");
+                                if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                    console.log("stooped");
+                                    $("#loop1").text(loopValue);
+                                    $("#stop_run").text("STOPPED");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Completed");
+                                }else{
+                                    $("#stop_crm").text("Close popup");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Birthday message limit over");
+                                }
                             }
                         }, delay * index);
-                        //}, 10000*index)
                     }
                 });
             }
@@ -761,6 +786,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     else if (message.subject === "scrapYesterdayBirthday") {
         console.log("in the yesterday");
+        let no_of_birthday = message.no_of_birthday;
         let extBirthdayTabID = message.birthday_tabId;
         appendHTMLOnBirthday(extBirthdayTabID);
         let cleartimeout2 = setInterval(() => {
@@ -820,6 +846,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     }
                 });
                 $(".total1").text(facebook_member_ids.length);
+                let errorShown = false;
                 facebook_member_ids.forEach((item, index) => {
                     setTimeout(() => {
                         loopValue = parseInt($("#loop1").text(), 10);
@@ -854,15 +881,31 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             member_names[1]
                         );
                         if (birthday_wish_type == "message") {
-                            chrome.runtime.sendMessage({
-                                action: "sendMessageBirthday",
-                                member_fb_id: item.id,
-                                messagtext: birthdayMessage,
-                            },
-                                function (res15) {
-                                    // body
+                            if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                no_of_birthday++;
+                                chrome.runtime.sendMessage({
+                                    action: "sendMessageBirthday",
+                                    member_fb_id: item.id,
+                                    messagtext: birthdayMessage,
+                                },
+                                    function (res15) {
+                                        if(res15.status === "ok"){
+                                            raw = JSON.stringify({
+                                                'no_of_birthday':1,
+                                            });
+                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw});
+                                        }
+                                    }
+                                );
+                            }else{
+                                if (!errorShown) {
+                                    toastr["error"]('Your message limit is reached. Please consider upgrading your plan.');
+                                    $("#stop_crm").text("Close popup");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Birthday message limit over");
+                                    errorShown = true; 
                                 }
-                            );
+                            }
                         } else {
                             chrome.runtime.sendMessage({
                                 action: "postFeedBirthday",
@@ -875,11 +918,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             );
                         }
                         if (index === facebook_member_ids.length - 1) {
-                            console.log("stooped");
                             $("#loop1").text(loopValue);
-                            $("#stop_run").text("STOPPED");
-                            $(".loading").remove();
-                            $("h3.title_lg").text("Completed");
+                            if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                console.log("stooped");
+                                $("#stop_run").text("STOPPED");
+                                $(".loading").remove();
+                                $("h3.title_lg").text("Completed");
+                            }else{
+                                $("#stop_crm").text("Close popup");
+                                $(".loading").remove();
+                                $("h3.title_lg").text("Birthday message limit over");
+                            }
                         }
                     }, delay * index);
                     // }, 10000*index)
@@ -898,6 +947,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     else if (message.subject === "scrap2dayagoBirthday") {
         console.log("in the 2 days ago");
+        let no_of_birthday = message.no_of_birthday;
         let extBirthdayTabID = message.birthday_tabId;
         appendHTMLOnBirthday(extBirthdayTabID);
         let cleartimeout3 = setInterval(() => {
@@ -957,6 +1007,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     }
                 });
                 $(".total1").text(facebook_member_ids.length);
+                let errorShown = false;
                 facebook_member_ids.forEach((item, index) => {
                     setTimeout(() => {
                         loopValue = parseInt($("#loop1").text(), 10);
@@ -975,11 +1026,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 Math.random() * birthdayMessage_varient_array.length
                             );
                             birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
-
                         });
 
                         birthdayMessage = birthdayMessage.join('');
-
                         console.log(birthdayMessage);
                         var member_fullname = item.name;
                         var member_names = member_fullname.split(" ");
@@ -993,15 +1042,35 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         );
                         //console.log(birthdayMessage);
                         if (birthday_wish_type == "message") {
-                            chrome.runtime.sendMessage({
-                                action: "sendMessageBirthday",
-                                member_fb_id: item.id,
-                                messagtext: birthdayMessage,
-                            },
-                                function (res15) {
-                                    // body
-                                }
-                            );
+                            console.log(parseInt(total_birthday_message_limit));
+                            console.log(parseInt(no_of_birthday));
+                            if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                console.log('inside birthday messge limit')
+                                    no_of_birthday++;
+                                chrome.runtime.sendMessage({
+                                    action: "sendMessageBirthday",
+                                    member_fb_id: item.id,
+                                    messagtext: birthdayMessage,
+                                },
+                                    function (res15) {
+                                        // body
+                                        if(res15.status === "ok"){
+                                            raw = JSON.stringify({
+                                                'no_of_birthday':1,
+                                            });
+                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw});
+                                        }
+                                    }
+                                );
+                            }else{
+                                if (!errorShown) {
+                                    toastr["error"]('Your message limit is reached. Please consider upgrading your plan.');
+                                    $("#stop_crm").text("Close popup");
+                                    $(".loading").remove();
+                                    $("h3.title_lg").text("Birthday message limit over");
+                                    errorShown = true; 
+                                }     
+                            }   
                         } else {
                             chrome.runtime.sendMessage({
                                 action: "postFeedBirthday",
@@ -1014,14 +1083,20 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             );
                         }
                         if (index === facebook_member_ids.length - 1) {
-                            console.log("stooped");
-                            $("#loop1").text(loopValue);
-                            $("#stop_run").text("STOPPED");
-                            $(".loading").remove();
-                            $("h3.title_lg").text("Completed");
+                            if(parseInt(total_birthday_message_limit) > parseInt(no_of_birthday)){
+                                $("#loop1").text(loopValue);
+                                $("#stop_run").text("STOPPED");
+                                $(".loading").remove();
+                                $("h3.title_lg").text("Completed");
+                            }else{
+                                console.log("stooped");
+                                $("#loop1").text(loopValue);
+                                $("#stop_crm").text("Close popup");
+                                $(".loading").remove();
+                                $("h3.title_lg").text("Birthday message limit over");
+                            }    
                         }
                     }, delay * index);
-                    // }, 10000*index)
                 })
 
             }

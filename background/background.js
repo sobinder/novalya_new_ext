@@ -6,7 +6,6 @@ importScripts(
     "birthday.js",
     "unfollow_friends.js"
 );
-
 //****************************** DEFINE VARIABLES *****************************************//
 // GET HEIGHT WIDTH OF CHROME WINDOWS
 var user_id;
@@ -36,7 +35,6 @@ chrome.management.onEnabled.addListener(function (extensionInfo) {
     reloadAllGroupTabs();
     reloadAllFriendsTabs();
     reloadMessengersTabs();
-
 });
 
 chrome.management.onDisabled.addListener(function (extensionInfo) {
@@ -46,7 +44,6 @@ chrome.management.onDisabled.addListener(function (extensionInfo) {
     reloadAllGroupTabs();
     reloadAllFriendsTabs();
     reloadMessengersTabs();
-
 });
 
 getCookies(site_url, "user_id", function (id) {
@@ -144,8 +141,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.currentLocationUrl.indexOf('messenger') > -1) {
             reloadAllNovalyaTabs();
         }
-
     }
+
     if (message.action === "tagsApiCall") {
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer " + authToken);
@@ -242,7 +239,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
-
     if (message.action === "all_users_tag_get") {
         console.log(user_id);
         let token = authToken;
@@ -270,7 +266,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         return true;
     }
-
 
     if (message.action === "verifyGroupURL") {
         let grouppage_url = message.url.replace("www", "mbasic");
@@ -410,14 +405,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         var raw = JSON.stringify({
             name: message.name,
         });
-
         var requestOptions = {
             method: "POST",
             headers: myHeaders,
             body: raw,
             redirect: "follow",
         };
-
         fetch(
             "https://z7c5j0fjy8.execute-api.us-east-2.amazonaws.com/dev/tiersai",
             requestOptions
@@ -489,8 +482,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         BirthdayNovaClass.getBirthdaySettingsNew(message, sendResponse, sender);
         return true;
     }
-
-
 
     // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON CONFIRM REQUEST BUTTON
     if (message.action == "confirmRequest") {
@@ -713,14 +704,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(response => response.json())
             .then(async (result) => {
                 console.log(result);
-                let no_of_send_message = await getUserLimit();
+                let response = await getUserLimit();
+                let no_of_send_message = response.data.no_of_send_message;
                 console.log(no_of_send_message);
                 sendResponse({ setting: result, no_of_send_message: no_of_send_message })
             })
             .catch(error => console.log('error', error));
         return true;
     }
-
 
     if (message.action == "sendMessageFromCRMOnebyOne") {
         let window_data = {
@@ -831,7 +822,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer " + token);
-
         var requestOptions = {
             method: 'DELETE',
             headers: myHeaders,
@@ -936,7 +926,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     }
 
-
     if(message.action === "updateNoOfsendMessage"){
         updateUserLimit(message,sendResponse);
     }
@@ -944,10 +933,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if(message.action === "updateNoSendConnects"){
         updateNoOfConnects(message,sendResponse);
     }
-
 });
-var currentDate = getCurrentDate();
 
+var currentDate = getCurrentDate();
 function getCurrentDate() {
     var d = new Date();
     var month = d.getMonth() + 1,
@@ -994,8 +982,6 @@ function checkMessengerMobileView() {
 function getCookies(domain, name, callback) {
     chrome.cookies.get({ url: domain, name: name }, function (cookie) {
         if (callback) {
-            //console.log(cookie);
-            //console.log(cookie.value);
             if (typeof cookie != undefined && cookie != null) {
                 callback(cookie.value);
             }
@@ -1242,7 +1228,6 @@ async function syncGroupTaggedUserInDB(item) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer " + authToken);
-
     var requestOptions = {
         method: 'PATCH',
         headers: myHeaders,
@@ -1259,7 +1244,6 @@ async function syncGroupTaggedUserInDB(item) {
 }
 
 async function getUserLimit() {
-    console.log("getUserLimit is called ");
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/check";
         const myHeaders = new Headers();
@@ -1274,8 +1258,8 @@ async function getUserLimit() {
         const response = await fetch(url, requestOptions);
         if (response.ok) {
             const result = await response.json();
-            console.log(result.data.no_of_send_message);
-            return result.data.no_of_send_message;
+            console.log(result);
+            return result;
         } else {
             console.log('Error:', response.status, response.statusText);
             return null;
@@ -1342,9 +1326,7 @@ async function updateNoOfConnects(message,sendResponse){
     }
 }
 
-
 async function getConnectMessageSent() {
-    console.log("getConnectLimit is called ");
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/check";
         const myHeaders = new Headers();
