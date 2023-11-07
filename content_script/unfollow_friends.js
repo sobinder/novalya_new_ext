@@ -157,18 +157,11 @@ let totalFriends = 0;
                     clearInterval(getCountInterval);
                     totalFriendsElement = $('h1:eq(1)').parent().parent().parent().parent().next().find('span a').text();
                     var totalFriends = totalFriendsElement.match(/\d+/); // Extract numeric digits
-                    console.log(totalFriends);
                     if (totalFriends) {
-                        if (totalFriendsElement.indexOf('k') > 0) {
-                            // If 'k' is found in the text, convert to thousands
-                            $this.convertIntoThousand(totalFriends[0]).then((convertedValue) => {
-                                resolve(convertedValue);
-                                $('.total_members').text(convertedValue);
-                                $('#count-show').show();
-                            }).catch((error) => {
-                                console.error(error);
-                                resolve(0); // Handle the error, resolve with 0
-                            });
+                        if (totalFriends.input.indexOf('K') > 0) {
+                            numericValue = parseFloat(totalFriends.input.match(/[\d.]+/)[0]);
+                            var result = numericValue * 1000;                        
+                            resolve(parseInt(result));
                         } else {
                             resolve(parseInt(totalFriends[0], 10)); // Parse the numeric value
                         }
@@ -182,7 +175,9 @@ let totalFriends = 0;
           
         convertIntoThousand:function(value) {
             var numericValue = parseFloat(value);
+            console.log(numericValue);
             var result = numericValue * 1000;
+            console.log(result);
             return result;
         },
         novaDataProgressModel: function (extTabId) {
