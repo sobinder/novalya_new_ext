@@ -53,512 +53,564 @@ jQuery(document).on('keyup', function (evt) {
     }
 });
 // -------------------------------------COMMENT AI CODE STARTS------------------------
-appendHTML = ` <div id="quentintou">
-       <div class="loader" style="display:none"></div>
-<div class="agree_div">
-<ul>
-<li class="opinion">Opinion</li>
-<li class="writing_style">Writing</li>
-<li class="tone">Tone</li>
-<li class="size">Size</li>
-</ul>
-<div  class="like_option" style="display:flex">
+// appendHTML = ` <div id="quentintou">
+//        <div class="loader" style="display:none"></div>
+// <div class="agree_div">
+// <ul>
+// <li class="opinion">Opinion</li>
+// <li class="writing_style">Writing</li>
+// <li class="tone">Tone</li>
+// <li class="size">Size</li>
+// <li class="language">Language</li>
+// </ul>
+// <div  class="like_option" style="display:flex">
    
-    <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
-    <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
-</div>
-</div>
-<div class="opinion_option">
-<ul>
-    <li>Agreed</li>
-    <li>Disagreed</li>
-    <li>Question</li>
-    <li>Congratulations</li>
-    <li>Encouragement</li>
-    <li>Neutral</li>
-    </ul>
-</div>
-<div class="tone_option">
-<ul>
-    <li>Funny</li>
-    <li>Emotional</li>
-    <li>Informative</li>
-    <li>Narative</li>
-    <li>iRONIC</li>
-    <li>Enthusiastic</li>
-    <li>Serious</li>
-    <li>Respectful</li>
-    <li>Professional</li>
-    </ul>
-</div>
-<div class="writing_option">
-<ul>
-    <li>Academic</li>
-    <li>Analytical</li>
-    <li>Argumentative</li>
-    <li>Conversational</li>
-    <li>Creative</li>
-    <li>Critical</li>
-    <li>Descriptive</li>
-    <li>Concise and witty</li>
-    <li>Personal and direct</li>
-    </ul>
-</div>
-<div class="size_option">
-<ul>
-    <li>Long</li>
-    <li>Medium</li>
-    <li>Short</li>
-    </ul>
-</div>
-<div class="response">
-<span class="inner1"></span>
-<span class="inner2"></span>
-<span class="inner3"></span>
-<span class="inner4"></span>
-</div>`;
+//     <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
+//     <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
+// </div>
+// </div>
+// <div class="opinion_option">
+// <ul>
+//     <li>Agreed</li>
+//     <li>Disagreed</li>
+//     <li>Question</li>
+//     <li>Congratulations</li>
+//     <li>Encouragement</li>
+//     <li>Neutral</li>
+//     </ul>
+// </div>
+// <div class="tone_option">
+// <ul>
+//     <li>Funny</li>
+//     <li>Emotional</li>
+//     <li>Informative</li>
+//     <li>Narative</li>
+//     <li>iRONIC</li>
+//     <li>Enthusiastic</li>
+//     <li>Serious</li>
+//     <li>Respectful</li>
+//     <li>Professional</li>
+//     </ul>
+// </div>
+// <div class="writing_option">
+// <ul>
+//     <li>Academic</li>
+//     <li>Analytical</li>
+//     <li>Argumentative</li>
+//     <li>Conversational</li>
+//     <li>Creative</li>
+//     <li>Critical</li>
+//     <li>Descriptive</li>
+//     <li>Concise and witty</li>
+//     <li>Personal and direct</li>
+//     </ul>
+// </div>
+// <div class="size_option">
+// <ul>
+//     <li>Long</li>
+//     <li>Medium</li>
+//     <li>Short</li>
+//     </ul>
+// </div>
 
-customBtnFound = setInterval(function () {
-    if (window.location.href.indexOf('facebook.com') > -1) {
-        FacebookDOM.addReactionPannelFB();
-    } else {
-        console.log('please go on facebook or linkedin page');
-        clearInterval(customBtnFound);
-    }
-}, 500);
+// <div class="language_option">
+//     <ul>
+//         <li>English</li>
+//         <li>French</li>
+//     </ul>
+// </div>
+// <div class="response">
+// <span class="inner1"></span>
+// <span class="inner2"></span>
+// <span class="inner3"></span>
+// <span class="inner4"></span>
+// <span class="inner5"></span>
+// </div>`;
 
-$(document).ready(function () {
-    $(document).on("click", ".opinion", function (e) {
-        $('.agree_div ul li').removeClass('option_active')
-        $('.opinion_option').show();
-        $('.writing_option').hide();
-        $('.size_option').hide();
-        $('.tone_option').hide();
-        $('.response').show();
-    })
-    $(document).on("click", ".writing_style", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').show();
-        $('.size_option').hide();
-        $('.tone_option').hide();
-        $('.response').show();
-    })
-    $(document).on("click", ".tone", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').hide();
-        $('.size_option').hide();
-        $('.tone_option').show();
-        $('.response').show();
-    })
-    $(document).on("click", ".size", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').hide();
-        $('.size_option').show();
-        $('.tone_option').hide();
-        $('.response').show();
-    })
-    $(document).on("click", ".opinion_option ul li", function (e) {
-        let value = "";
-        $(".response_opinion").remove();
-        if ($(this).hasClass("option_active")) {
-            $('.opinion_option ul li').removeClass('option_active')
-        } else {
-            $('.opinion_option ul li').removeClass('option_active');
-            $(this).addClass("option_active");
-            value = $(this).text();
-            $('<div class="response_opinion"><span>' + value + '</span></div>').insertBefore(".inner1")
-        }
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.opinion = value;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    });
-    function storageupdate(something) {
-        console.log("something", something)
-    }
+// customBtnFound = setInterval(function () {
+//     if (window.location.href.indexOf('facebook.com') > -1) {
+//         FacebookDOM.addReactionPannelFB();
+//     } else {
+//         console.log('please go on facebook or linkedin page');
+//         clearInterval(customBtnFound);
+//     }
+// }, 500);
 
-    $(document).on("click", ".writing_option ul li", function (e) {
-        if ($(this).hasClass('option_active')) {
-            $(this).removeClass('option_active');
-        } else {
-            $(this).addClass('option_active');
-        }
-        let allActiveOptions = $(this).parent().find("li.option_active");
-        $(".response_writing").remove();
-        let writeText = [];;
-        allActiveOptions.map((index, val,) => {
-            let value = $(val).text();
-            writeText.push(value);
-            $('<div class="response_writing"><span>' + value + '</span></div>').insertBefore(".inner2")
-        })
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.writing = writeText;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    })
+// $(document).ready(function () {
+//     $(document).on("click", ".opinion", function (e) {
+//         $('.agree_div ul li').removeClass('option_active')
+//         $('.opinion_option').show();
+//         $('.writing_option').hide();
+//         $('.size_option').hide();
+//         $('.tone_option').hide();
+//         $('.language_option').hide();
+//         $('.response').show();
+//     })
+//     $(document).on("click", ".writing_style", function (e) {
+//         $('.opinion_option').hide();
+//         $('.writing_option').show();
+//         $('.size_option').hide();
+//         $('.tone_option').hide();
+//         $('.language_option').hide();
+//         $('.response').show();
+//     })
+//     $(document).on("click", ".tone", function (e) {
+//         $('.opinion_option').hide();
+//         $('.writing_option').hide();
+//         $('.size_option').hide();
+//         $('.tone_option').show();
+//         $('.language_option').hide();
+//         $('.response').show();
+//     })
 
-    $(document).on("click", ".tone_option ul li", function (e) {
-        if ($(this).hasClass('option_active')) {
-            $(this).removeClass('option_active');
-        } else {
-            $(this).addClass('option_active');
-        }
-        let allActiveOptions = $(this).parent().find("li.option_active");
-        $(".response_tone").remove();
-        let toneText = [];;
-        allActiveOptions.map((index, val,) => {
-            let value = $(val).text();
-            toneText.push(value);
-            $('<div class="response_tone"><span>' + value + '</span></div>').insertBefore(".inner3")
-        })
-        console.log('toneText-----------', toneText)
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.tone = toneText;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    })
-    $(document).on("click", ".size_option ul li", function (e) {
-        let value = "";
-        $(".response_size").remove();
-        if ($(this).hasClass("option_active")) {
-            $('.size_option ul li').removeClass('option_active')
-        } else {
-            $('.size_option ul li').removeClass('option_active');
-            $(this).addClass("option_active");
-            value = $(this).text();
-            $('<div class="response_size"><span>' + value + '</span></div>').insertBefore(".inner4")
-        }
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.size = value;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    })
+//     $(document).on("click", ".size", function (e) {
+//         $('.opinion_option').hide();
+//         $('.writing_option').hide();
+//         $('.size_option').show();
+//         $('.tone_option').hide();
+//         $('.language_option').hide();
+//         $('.response').show();
+//     })
 
-    $(document).on('click', '.option_active', function () {
-        var checktext = $(this).text();
-        var classfind = $(this).parent().parent().attr('class');
+//     $(document).on("click", ".language", function (e) {
+//         $('.opinion_option').hide();
+//         $('.writing_option').hide();
+//         $('.size_option').hide();
+//         $('.tone_option').hide();
+//         $('.language_option').show();
+//         $('.response').show();
+//     });
+//     $(document).on("click", ".opinion_option ul li", function (e) {
+//         let value = "";
+//         $(".response_opinion").remove();
+//         if ($(this).hasClass("option_active")) {
+//             $('.opinion_option ul li').removeClass('option_active')
+//         } else {
+//             $('.opinion_option ul li').removeClass('option_active');
+//             $(this).addClass("option_active");
+//             value = $(this).text();
+//             $('<div class="response_opinion"><span>' + value + '</span></div>').insertBefore(".inner1")
+//         }
+//         chrome.storage.sync.get(["responsedata"], function (result) {
+//             let responsedata = result.responsedata;
+//             responsedata.opinion = value;
+//             chrome.storage.sync.set({ "responsedata": responsedata });
+//         })
+//     });
+//     function storageupdate(something) {
+//         console.log("something", something)
+//     }
 
-        if (classfind == 'opinion_option') {
-            var check = `.opinion_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var response1 = `.response_opinion span:contains(${checktext})`;
-            $(response1).parent().remove();
-        }
+//     $(document).on("click", ".writing_option ul li", function (e) {
+//         if ($(this).hasClass('option_active')) {
+//             $(this).removeClass('option_active');
+//         } else {
+//             $(this).addClass('option_active');
+//         }
+//         let allActiveOptions = $(this).parent().find("li.option_active");
+//         $(".response_writing").remove();
+//         let writeText = [];;
+//         allActiveOptions.map((index, val,) => {
+//             let value = $(val).text();
+//             writeText.push(value);
+//             $('<div class="response_writing"><span>' + value + '</span></div>').insertBefore(".inner2")
+//         })
+//         chrome.storage.sync.get(["responsedata"], function (result) {
+//             let responsedata = result.responsedata;
+//             responsedata.writing = writeText;
+//             chrome.storage.sync.set({ "responsedata": responsedata });
+//         })
+//     })
 
-        if (classfind == 'writing_option') {
-            var check2 = `.writing_option ul li:contains(${checktext})`;
-            $(check2).removeClass('option_active')
-            var response2 = `.response_writing span:contains(${checktext})`;
-            $(response2).parent().remove();
-        }
-        if (classfind == 'tone_option') {
-            var check3 = `.tone_option ul li:contains(${checktext})`;
-            $(check3).removeClass('option_active')
-            var response3 = `.response_tone span:contains(${checktext})`;
-            $(response3).parent().remove();
-        }
-        if (classfind == 'size_option') {
-            var check3 = `.size_option ul li:contains(${checktext})`;
-            $(check3).removeClass('option_active')
-            var response3 = `.size_tone span:contains(${checktext})`;
-            $(response3).parent().remove();
-        }
-        storageupdate($(this));
-    });
-
-    $(document).on('click', '.response div p', function () {
-        var checktext = $(this).parent().children('span').text();
-        var classfind = $(this).parent().attr('class');
-        if (classfind == 'response_opinion') {
-            $('.opinion_option ul li').removeClass('option_active')
-            $('.opinion').removeClass('option_active')
-        }
-        if (classfind == 'response_writing') {
-            var check = `.writing_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var checkparent = $('.response_writing span')
-            if (checkparent.length <= 1) {
-                $('.writing_style').removeClass('option_active');
-            }
-        }
-        if (classfind == 'response_tone') {
-            var check = `.tone_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var checkparent = $('.response_tone span')
-            if (checkparent.length <= 1) {
-                $('.tone').removeClass('option_active')
-            }
-        }
-        if (classfind == 'response_size') {
-            $('.size_option ul li').removeClass('option_active')
-            $('.size').removeClass('option_active')
-        }
-        $(this).parent().remove();
-    });
-    storageupdate($(this));
-});
-
-$(document).on("click", ".play", function (e) {
-    clickedBtn = $(this);
-    $('.loader').show();
-    $('.agree_div').show();
-    $('.opinion_option').hide();
-    $('.writing_option').hide();
-    $('.size_option').hide();
-    $('.tone_option').hide();
-    $('.response').hide();
-    var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
-    var size = $(this).parents('#quentintou').find('.response .response_size span').text();
-    var writing = $(this).parents('#quentintou').find('.response .response_writing span');
-    var writing_array = [];
-    if ($(writing).length > 0) {
-        $(writing).each(function (i) {
-            if ($.inArray($(this).text(), writing_array) != -1) {
-            } else {
-                writing_array.push($(this).text())
-            }
-        });
-    }
-    var tone = $(this).parents('#quentintou').find('.response .response_tone span');
-    var tone_Array = [];
-    if ($(tone).length > 0) {
-        $(tone).each(function (i) {
-            if ($.inArray($(this).text(), tone_Array) != -1) {
-                console.log("hello")
-            }
-            else {
-                tone_Array.push($(this).text())
-            }
-        });
-    }
-    var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
-    $(this).addClass('current-class-ld');
-
-    let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
-    $(post_conatainer_selector).removeClass("que-current-container");
-    $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
-
-    selector_post_description = $(".que-current-container").find(
-        'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-    );
-
-    if (selector_post_description.length > 0) {
-        facebook_post_description = selector_post_description.text();
-    } else {
-        facebook_post_description = "Thought of today";
-    }
-    chrome.storage.sync.get(["language", "job", "sector"], function (result) {
-        var temp = {
-            opinion: opinion,
-            size: size,
-            writing: writing_array,
-            tone: tone_Array,
-        };
-
-        if (result.language) {
-            temp.language = result.language;
-        }
-        if (result.job) {
-            temp.job = result.job;
-        }
-        if (result.sector) {
-            temp.sector = result.sector;
-        }
-        chrome.storage.sync.set({ responsedata: temp });
-        if (window.location.href.includes("facebook.com")) {
-            FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
-        }
-    });
-})
-
-$(document).on("click", ".reload", function (e) {
-    $('.loader').show();
-    $('.agree_div').show();
-    $('.opinion_option').hide();
-    $('.writing_option').hide();
-    $('.size_option').hide();
-    $('.tone_option').hide();
-    $('.response').hide();
-    var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
-    console.log("hello", opinion)
-    var size = $(this).parents('#quentintou').find('.response .response_size span').text();
-    var writing = $(this).parents('#quentintou').find('.response .response_writing span');
-    var writing_array = [];
-    if ($(writing).length > 0) {
-        $(writing).each(function (i) {
-            if ($.inArray($(this).text(), writing_array) != -1) {
-                console.log("hello")
-            }
-            else {
-                writing_array.push($(this).text())
-            }
-        });
-    }
-    var tone = $(this).parents('#quentintou').find('.response .response_tone span');
-    var tone_Array = [];
-    if ($(tone).length > 0) {
-        $(tone).each(function (i) {
-            if ($.inArray($(this).text(), tone_Array) != -1) {
-                console.log("hello")
-            }
-            else {
-                tone_Array.push($(this).text())
-            }
-        });
-    }
-    var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
-    $(this).addClass('current-class-ld');
+//     $(document).on("click", ".tone_option ul li", function (e) {
+//         if ($(this).hasClass('option_active')) {
+//             $(this).removeClass('option_active');
+//         } else {
+//             $(this).addClass('option_active');
+//         }
+//         let allActiveOptions = $(this).parent().find("li.option_active");
+//         $(".response_tone").remove();
+//         let toneText = [];;
+//         allActiveOptions.map((index, val,) => {
+//             let value = $(val).text();
+//             toneText.push(value);
+//             $('<div class="response_tone"><span>' + value + '</span></div>').insertBefore(".inner3")
+//         })
+//         console.log('toneText-----------', toneText)
+//         chrome.storage.sync.get(["responsedata"], function (result) {
+//             let responsedata = result.responsedata;
+//             responsedata.tone = toneText;
+//             chrome.storage.sync.set({ "responsedata": responsedata });
+//         })
+//     });
 
 
+//     $(document).on("click", ".size_option ul li", function (e) {
+//         let value = "";
+//         $(".response_size").remove();
+//         if ($(this).hasClass("option_active")) {
+//             $('.size_option ul li').removeClass('option_active')
+//         } else {
+//             $('.size_option ul li').removeClass('option_active');
+//             $(this).addClass("option_active");
+//             value = $(this).text();
+//             $('<div class="response_size"><span>' + value + '</span></div>').insertBefore(".inner4")
+//         }
+//         chrome.storage.sync.get(["responsedata"], function (result) {
+//             let responsedata = result.responsedata;
+//             responsedata.size = value;
+//             chrome.storage.sync.set({ "responsedata": responsedata });
+//         })
+//     });
 
-    let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
-
-    $(post_conatainer_selector).removeClass("que-current-container");
-
-    $(this)
-        .parent()
-        .parent()
-        .parent()
-        .parent()
-        .find(".que-processed-class")
-        .closest(post_conatainer_selector)
-        .addClass("que-current-container que-red-border");
-
-    selector_post_description = $(".que-current-container").find(
-        'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-    );
-    console.log(selector_post_description);
-
-
-    if (selector_post_description.length > 0) {
-        var facebook_post_description = selector_post_description.text();
-        //console.log(post_description);
-    } else {
-        var facebook_post_description = "Give me random text";
-    }
-    chrome.storage.sync.get(["language", "job", "sector", "temperature"], function (result) {
-        var temp = {}
-        if (typeof result.language != "undefined" && result.language != "") {
-            temp.language = result.language;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
-
-        }
-        if (typeof result.job != "undefined" && result.job != "") {
-            temp.job = result.job;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
-
-        }
-        if (typeof result.sector != "undefined" && result.sector != "") {
-            temp.sector = result.sector;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
-
-        }
-        if (typeof result.temperature != "undefined" && result.temperature != "") {
-            temp.temperature = result.temperature;
-            temp.opinion = opinion;
-            temp.size = size;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
-
-        }
-        else {
-            temp.size = size;
-            temp.opinion = opinion;
-            temp.writing = writing_array;
-            temp.tone = tone_Array;
-        }
-        console.log("new temp", temp)
-        chrome.storage.sync.set({ "responsedata": temp });
-        //  $("body").scrollTop(0);
-        // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
-
-        //$("#quentintou").animate({"scrollTop": $("#quentintou").scrollTop() + 100});
-        if (window.location.href.indexOf('facebook.com') > -1) {
-            FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description);
-        }
-    })
-
-});
+   
+    
+//     $(document).on("click", ".language_option ul li", function (e) {
+//         let value = "";
+//         // $(".response_language").remove();
+//         if ($(this).hasClass("option_active")) {
+//             $('.language_option ul li').removeClass('option_active');
+//         } else {
+//             $('.language_option ul li').removeClass('option_active');
+//             $(this).addClass("option_active");
+//             value = $(this).text();
+//             $('<div class="response_language"><span>' + value + '</span></div>').insertBefore(".inner5");
+//         }
+//         chrome.storage.sync.get(["responsedata"], function (result) {
+//             let responsedata = result.responsedata;
+//             responsedata.language = value;
+//             chrome.storage.sync.set({ "responsedata": responsedata });
+//         });
+//     });
 
 
-function checkactive() {
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        if (typeof result.responsedata != "undefined" && result.responsedata != "") {
-            var opinioncheck = $('.response_opinion').remove();
-            $(".response_opinion").remove();
-            $(".response_writing").remove();
-            $(".response_tone").remove();
-            $(".response_size").remove();
+//     $(document).on('click', '.option_active', function () {
+//         var checktext = $(this).text();
+//         var classfind = $(this).parent().parent().attr('class');
 
-            if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
-                var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
-                if (check.length > 0) {
-                    $(check).addClass("option_active")
-                    $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
-                }
-            }
+//         if (classfind == 'opinion_option') {
+//             var check = `.opinion_option ul li:contains(${checktext})`;
+//             $(check).removeClass('option_active')
+//             var response1 = `.response_opinion span:contains(${checktext})`;
+//             $(response1).parent().remove();
+//         }
 
-            if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
-                $(result.responsedata.writing).each(function (i) {
-                    var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
-                    if (check2.length) {
-                        $(check2).addClass("option_active")
-                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner2")
-                    }
-                });
-            }
+//         if (classfind == 'writing_option') {
+//             var check2 = `.writing_option ul li:contains(${checktext})`;
+//             $(check2).removeClass('option_active')
+//             var response2 = `.response_writing span:contains(${checktext})`;
+//             $(response2).parent().remove();
+//         }
+//         if (classfind == 'tone_option') {
+//             var check3 = `.tone_option ul li:contains(${checktext})`;
+//             $(check3).removeClass('option_active')
+//             var response3 = `.response_tone span:contains(${checktext})`;
+//             $(response3).parent().remove();
+//         }
+//         if (classfind == 'size_option') {
+//             var check3 = `.size_option ul li:contains(${checktext})`;
+//             $(check3).removeClass('option_active')
+//             var response3 = `.size_tone span:contains(${checktext})`;
+//             $(response3).parent().remove();
+//         }
+//         storageupdate($(this));
+//     });
 
-            if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
-                $(result.responsedata.tone).each(function (i) {
-                    var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
-                    if (check3.length) {
-                        $(check3).addClass("option_active")
-                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner3")
-                    }
-                });
-            }
+//     $(document).on('click', '.response div p', function () {
+//         var checktext = $(this).parent().children('span').text();
+//         var classfind = $(this).parent().attr('class');
 
-            if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
-                var check = `.size_option ul li:contains(${result.responsedata.size})`;
-                // console.log("getcheck",check)
-                if (check.length > 0) {
-                    $(check).addClass("option_active")
-                    $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
-                }
-            }
-        }
-    });
-}
+//         if (classfind == 'response_opinion') {
+//             $('.opinion_option ul li').removeClass('option_active')
+//             $('.opinion').removeClass('option_active')
+//         }
+//         if (classfind == 'response_writing') {
+//             var check = `.writing_option ul li:contains(${checktext})`;
+//             $(check).removeClass('option_active')
+//             var checkparent = $('.response_writing span')
+//             if (checkparent.length <= 1) {
+//                 $('.writing_style').removeClass('option_active');
+//             }
+//         }
+//         if (classfind == 'response_tone') {
+//             var check = `.tone_option ul li:contains(${checktext})`;
+//             $(check).removeClass('option_active')
+//             var checkparent = $('.response_tone span')
+//             if (checkparent.length <= 1) {
+//                 $('.tone').removeClass('option_active')
+//             }
+//         }
+//         if (classfind == 'response_size') {
+//             $('.size_option ul li').removeClass('option_active')
+//             $('.size').removeClass('option_active')
+//         }
+//         $(this).parent().remove();
+//     });
+//     storageupdate($(this));
+// });
 
+// $(document).on("click", ".play", function (e) {
+//     clickedBtn = $(this);
+//     $('.loader').show();
+//     $('.agree_div').show();
+//     $('.opinion_option').hide();
+//     $('.writing_option').hide();
+//     $('.size_option').hide();
+//     $('.tone_option').hide();
+//     $('.language_option').hide();
+//     $('.response').hide();
+//     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
+//     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
+//     var writing = $(this).parents('#quentintou').find('.response .response_writing span').text();
+//     var language = $(this).parents('#quentintou').find('.response .response_language span');
+//     var writing_array = [];
+//     if ($(writing).length > 0) {
+//         $(writing).each(function (i) {
+//             if ($.inArray($(this).text(), writing_array) != -1) {
+//             } else {
+//                 writing_array.push($(this).text())
+//             }
+//         });
+//     }
+//     var tone = $(this).parents('#quentintou').find('.response .response_tone span');
+//     var tone_Array = [];
+//     if ($(tone).length > 0) {
+//         $(tone).each(function (i) {
+//             if ($.inArray($(this).text(), tone_Array) != -1) {
+//                 console.log("hello")
+//             }
+//             else {
+//                 tone_Array.push($(this).text())
+//             }
+//         });
+//     }
+//     var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
+//     $(this).addClass('current-class-ld');
 
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-    checkactive();
+//     let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
+//     $(post_conatainer_selector).removeClass("que-current-container");
+//     $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
 
-});
+//     selector_post_description = $(".que-current-container").find(
+//         'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
+//     );
 
-setInterval(function () {
-    checkactive();
-}, 5000);
+//     if (selector_post_description.length > 0) {
+//         facebook_post_description = selector_post_description.text();
+//     } else {
+//         facebook_post_description = "Thought of today";
+//     }
+//     chrome.storage.sync.get(["language", "job", "sector"], function (result) {
+//         var temp = {
+//             opinion: opinion,
+//             size: size,
+//             writing: writing_array,
+//             tone: tone_Array,
+//             language:language
+//         };
+
+//         if (result.language) {
+//             temp.language = result.language;
+//         }
+//         if (result.job) {
+//             temp.job = result.job;
+//         }
+//         if (result.sector) {
+//             temp.sector = result.sector;
+//         }
+//         chrome.storage.sync.set({ responsedata: temp });
+//         if (window.location.href.includes("facebook.com")) {
+//             FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
+//         }
+//     });
+// })
+
+// $(document).on("click", ".reload", function (e) {
+//     $('.loader').show();
+//     $('.agree_div').show();
+//     $('.opinion_option').hide();
+//     $('.writing_option').hide();
+//     $('.size_option').hide();
+//     $('.tone_option').hide();
+//     $('.response').hide();
+//     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
+//     console.log("hello", opinion)
+//     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
+//     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
+//     var language = $(this).parents('#quentintou').find('.response .response_language span');
+//     var writing_array = [];
+//     if ($(writing).length > 0) {
+//         $(writing).each(function (i) {
+//             if ($.inArray($(this).text(), writing_array) != -1) {
+//                 console.log("hello")
+//             }
+//             else {
+//                 writing_array.push($(this).text())
+//             }
+//         });
+//     }
+//     var tone = $(this).parents('#quentintou').find('.response .response_tone span');
+//     var tone_Array = [];
+//     if ($(tone).length > 0) {
+//         $(tone).each(function (i) {
+//             if ($.inArray($(this).text(), tone_Array) != -1) {
+//                 console.log("hello")
+//             }
+//             else {
+//                 tone_Array.push($(this).text())
+//             }
+//         });
+//     }
+//     var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
+//     $(this).addClass('current-class-ld');
 
 
 
+//     let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
+
+//     $(post_conatainer_selector).removeClass("que-current-container");
+
+//     $(this)
+//         .parent()
+//         .parent()
+//         .parent()
+//         .parent()
+//         .find(".que-processed-class")
+//         .closest(post_conatainer_selector)
+//         .addClass("que-current-container que-red-border");
+
+//     selector_post_description = $(".que-current-container").find(
+//         'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
+//     );
+//     console.log(selector_post_description);
+
+
+//     if (selector_post_description.length > 0) {
+//         var facebook_post_description = selector_post_description.text();
+//         //console.log(post_description);
+//     } else {
+//         var facebook_post_description = "Give me random text";
+//     }
+//     chrome.storage.sync.get(["language", "job", "sector", "temperature"], function (result) {
+//         var temp = {}
+//         if (typeof result.language != "undefined" && result.language != "") {
+//             temp.language = result.language;
+//             temp.opinion = opinion;
+//             temp.size = size;
+//             temp.writing = writing_array;
+//             temp.tone = tone_Array;
+
+//         }
+//         if (typeof result.job != "undefined" && result.job != "") {
+//             temp.job = result.job;
+//             temp.opinion = opinion;
+//             temp.size = size;
+//             temp.writing = writing_array;
+//             temp.tone = tone_Array;
+
+//         }
+//         if (typeof result.sector != "undefined" && result.sector != "") {
+//             temp.sector = result.sector;
+//             temp.opinion = opinion;
+//             temp.size = size;
+//             temp.writing = writing_array;
+//             temp.tone = tone_Array;
+
+//         }
+//         if (typeof result.temperature != "undefined" && result.temperature != "") {
+//             temp.temperature = result.temperature;
+//             temp.opinion = opinion;
+//             temp.size = size;
+//             temp.writing = writing_array;
+//             temp.tone = tone_Array;
+
+//         }
+//         else {
+//             temp.size = size;
+//             temp.opinion = opinion;
+//             temp.writing = writing_array;
+//             temp.tone = tone_Array;
+//         }
+//         console.log("new temp", temp)
+//         chrome.storage.sync.set({ "responsedata": temp });
+//         //  $("body").scrollTop(0);
+//         // $(this).parents('#quentintou').closest('.que-processed-class').scrollTop(100);
+
+//         //$("#quentintou").animate({"scrollTop": $("#quentintou").scrollTop() + 100});
+//         if (window.location.href.indexOf('facebook.com') > -1) {
+//             FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description);
+//         }
+//     })
+
+// });
+
+
+// function checkactive() {
+//     chrome.storage.sync.get(["responsedata"], function (result) {
+//         if (typeof result.responsedata != "undefined" && result.responsedata != "") {
+//             var opinioncheck = $('.response_opinion').remove();
+//             $(".response_opinion").remove();
+//             $(".response_writing").remove();
+//             $(".response_tone").remove();
+//             $(".response_size").remove();
+//             $(".response_language").remove();
+
+//             if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
+//                 var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
+//                 if (check.length > 0) {
+//                     $(check).addClass("option_active")
+//                     $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
+//                 }
+//             }
+
+//             if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
+//                 $(result.responsedata.writing).each(function (i) {
+//                     var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
+//                     if (check2.length) {
+//                         $(check2).addClass("option_active")
+//                         $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner2")
+//                     }
+//                 });
+//             }
+
+//             if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
+//                 $(result.responsedata.tone).each(function (i) {
+//                     var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
+//                     if (check3.length) {
+//                         $(check3).addClass("option_active")
+//                         $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner3")
+//                     }
+//                 });
+//             }
+
+//             if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
+//                 var check = `.size_option ul li:contains(${result.responsedata.size})`;
+//                 // console.log("getcheck",check)
+//                 if (check.length > 0) {
+//                     $(check).addClass("option_active")
+//                     $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
+//                 }
+//             }
+//         }
+//     });
+// }
+
+
+// chrome.storage.onChanged.addListener(function (changes, namespace) {
+//     checkactive();
+
+// });
+
+// setInterval(function () {
+//     checkactive();
+// }, 5000);
 
 
 
-// ---------------------------------COMMENTAI CODE STOPS--------------------------------
+
+
+
+// // ---------------------------------COMMENTAI CODE STOPS--------------------------------
 
 document.addEventListener("click", function (event) {
     var modal = document.getElementById("overlay-assign-labels");
@@ -580,7 +632,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     result.nvFriendReqInputs != ""
                 ) {
                     add_friend_settings = result.nvFriendReqInputs;
-                   var no_of_send_message = result.no_of_send_message;
+                    no_of_send_message = result.no_of_send_message;
                     if (
                         typeof result.nvAddFriendProcess != "undefined" &&
                         result.nvAddFriendProcess != "" &&

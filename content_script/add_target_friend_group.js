@@ -170,62 +170,123 @@ let AddTargetFriendNV;
           let groupHref2 = $(selector_for_validclass2)
             .find('a[href*="/groups/"]')
             .attr("href");
-          let memberurl2 = groupHref2.split("user/");
-          let memberid2 = memberurl2[1].replace("/", "");
-          let member_name2 = $(selector_for_validclass2)
-            .find('a[href*="/groups/"]')
-            .text()
-            .toLowerCase();
-
-          console.log(memberid2);
-
-          if (prospect == "yes") {
-
-            chrome.runtime.sendMessage({
-              action: "checkProspectUser",
-              memberid: memberid2,
-            }, (res) => {
-              console.log(res.result);
-              if (res.result.message == "no record found") {
-
-                $this.addFriendButtonCheck( randomDelay,
-                  limit_req,
-                  keywordTypeValue,
-                  negative_keyword,
-                  countryvalue,
-                  totalGroupMembers,
-                  gender,
-                  messageArray,
-                  prospect,
-                  selectedInterval,
-                  dateValue , btnText , loop2 , no_of_send_message);
-              } else if (res.result.message == "Record already found") {
-                console.log("record allready found");
-
-                if (selectedInterval == "custom") {
-                  // var currentDate = new Date().getTime();
-
-                  var currentDate = new Date(dateValue).getTime();
-                  var userAddDate = new Date(res.result.data.date_add);
-                  var dateInMilliseconds = userAddDate.getTime();
-                  console.log(currentDate, dateInMilliseconds);
-
-                } else {
-                  console.log(selectedInterval);
-                  var currentDate = new Date().valueOf();
-                  var userAddDate = new Date(res.result.data.date_add);
-                  console.log(userAddDate);
-                  userAddDate.setDate(userAddDate.getDate() + parseInt(selectedInterval, 10));
-                  // Get the date in milliseconds since the Unix epoch
-                  console.log(userAddDate);
-                  var dateInMilliseconds = userAddDate.getTime();
-                  console.log(currentDate, dateInMilliseconds);
-                }
-          
-                if(selectedInterval !== "alltime"){
-                  console.log("in the selectedInterval not empty");
-                  if (currentDate >= dateInMilliseconds) {
-                    console.log("in the sending condition");
+            if(groupHref2.includes("user/")){
+              console.log(groupHref2);
+              let memberurl2 = groupHref2.split("user/");
+              let memberid2 = memberurl2[1].replace("/", "");
+              console.log(memberid2);
+    
+              if (prospect == "yes") {
+    
+                chrome.runtime.sendMessage({
+                  action: "checkProspectUser",
+                  memberid: memberid2,
+                }, (res) => {
+                  console.log(res.result);
+                  if (res.result.message == "no record found") {
+    
+                    $this.addFriendButtonCheck( randomDelay,
+                      limit_req,
+                      keywordTypeValue,
+                      negative_keyword,
+                      countryvalue,
+                      totalGroupMembers,
+                      gender,
+                      messageArray,
+                      prospect,
+                      selectedInterval,
+                      dateValue ,
+                      btnText , loop2 , no_of_send_message);
+                  } else if (res.result.message == "Record already found") {
+                    console.log("record allready found");
+    
+                    if (selectedInterval == "custom") {
+                      // var currentDate = new Date().getTime();
+    
+                      var currentDate = new Date(dateValue).getTime();
+                      var userAddDate = new Date(res.result.data.date_add);
+                      var dateInMilliseconds = userAddDate.getTime();
+                      console.log(currentDate, dateInMilliseconds);
+    
+                    } else {
+                      console.log(selectedInterval);
+                      var currentDate = new Date().valueOf();
+                      var userAddDate = new Date(res.result.data.date_add);
+                      console.log(userAddDate);
+                      userAddDate.setDate(userAddDate.getDate() + parseInt(selectedInterval, 10));
+                      // Get the date in milliseconds since the Unix epoch
+                      console.log(userAddDate);
+                      var dateInMilliseconds = userAddDate.getTime();
+                      console.log(currentDate, dateInMilliseconds);
+                    }
+              
+                    if(selectedInterval !== "alltime"){
+                      console.log("in the selectedInterval not empty");
+                      if (currentDate >= dateInMilliseconds) {
+                        console.log("in the sending condition");
+                        $this.addFriendButtonCheck( randomDelay,
+                          limit_req,
+                          keywordTypeValue,
+                          negative_keyword,
+                          countryvalue,
+                          totalGroupMembers,
+                          gender,
+                          messageArray,
+                          prospect,
+                          selectedInterval,
+                          dateValue , btnText , loop2 , no_of_send_message);
+                      } else {
+                        console.log("in the not sendong condition");
+                        $(selector_for_validclass).addClass("sca-member-proccessed");
+                        if ($(selector_for_validclass)[0] != undefined) {
+                          window.scrollTo(
+                            0,
+                            window.pageYOffset +
+                            $(selector_for_validclass)[0].getBoundingClientRect().top -
+                            350
+                          );
+                        }
+                        setTimeout(() => {
+                          $this.checkValidUsers(
+                            randomDelay,
+                            limit_req,
+                            keywordTypeValue,
+                            negative_keyword,
+                            countryvalue,
+                            totalGroupMembers,
+                            gender,
+                            messageArray,
+                            prospect,
+                            selectedInterval,
+                            dateValue,
+                            no_of_send_message
+                          );
+                        }, 4000);
+                      }
+                    }else{
+                      console.log("in the selectedInterval is empty");
+                      $this.addFriendButtonCheck( randomDelay,
+                        limit_req,
+                        keywordTypeValue,
+                        negative_keyword,
+                        countryvalue,
+                        totalGroupMembers,
+                        gender,
+                        messageArray,
+                        prospect,
+                        selectedInterval,
+                        dateValue , btnText , loop2, no_of_send_message);
+                    }
+                  }
+                });
+              } else if (prospect == "no") {
+                console.log("Don’t invite same users");
+                chrome.runtime.sendMessage({
+                  action: "checkProspectUser",
+                  memberid: memberid2,
+                }, (res) => {
+                  console.log(res.result);
+                  if (res.result.message == "no record found") {
                     $this.addFriendButtonCheck( randomDelay,
                       limit_req,
                       keywordTypeValue,
@@ -238,7 +299,6 @@ let AddTargetFriendNV;
                       selectedInterval,
                       dateValue , btnText , loop2 , no_of_send_message);
                   } else {
-                    console.log("in the not sendong condition");
                     $(selector_for_validclass).addClass("sca-member-proccessed");
                     if ($(selector_for_validclass)[0] != undefined) {
                       window.scrollTo(
@@ -259,59 +319,15 @@ let AddTargetFriendNV;
                         gender,
                         messageArray,
                         prospect,
-                        selectedInterval,
-                        dateValue,
                         no_of_send_message
                       );
                     }, 4000);
                   }
-                }else{
-                  console.log("in the selectedInterval is empty");
-                  $this.addFriendButtonCheck( randomDelay,
-                    limit_req,
-                    keywordTypeValue,
-                    negative_keyword,
-                    countryvalue,
-                    totalGroupMembers,
-                    gender,
-                    messageArray,
-                    prospect,
-                    selectedInterval,
-                    dateValue , btnText , loop2, no_of_send_message);
-                }
-             
-
+                });
               }
-            });
-          } else if (prospect == "no") {
-            console.log("Don’t invite same users");
-            chrome.runtime.sendMessage({
-              action: "checkProspectUser",
-              memberid: memberid2,
-            }, (res) => {
-              console.log(res.result);
-              if (res.result.message == "no record found") {
-                $this.addFriendButtonCheck( randomDelay,
-                  limit_req,
-                  keywordTypeValue,
-                  negative_keyword,
-                  countryvalue,
-                  totalGroupMembers,
-                  gender,
-                  messageArray,
-                  prospect,
-                  selectedInterval,
-                  dateValue , btnText , loop2 , no_of_send_message);
-              } else {
-                $(selector_for_validclass).addClass("sca-member-proccessed");
-                if ($(selector_for_validclass)[0] != undefined) {
-                  window.scrollTo(
-                    0,
-                    window.pageYOffset +
-                    $(selector_for_validclass)[0].getBoundingClientRect().top -
-                    350
-                  );
-                }
+            }else{
+              if (loop1 < limit_req) {
+                $("html, body").animate({ scrollTop: $(document).height() }, 1000);
                 setTimeout(() => {
                   $this.checkValidUsers(
                     randomDelay,
@@ -323,12 +339,14 @@ let AddTargetFriendNV;
                     gender,
                     messageArray,
                     prospect,
+                    selectedInterval,
+                    dateValue,
                     no_of_send_message
                   );
                 }, 4000);
               }
-            });
-          }
+            }
+       
         } else {
           if (loop1 < limit_req) {
             $("html, body").animate({ scrollTop: $(document).height() }, 1000);
@@ -373,203 +391,240 @@ let AddTargetFriendNV;
       dateValue , btnText , loop2 , no_of_send_message){
        console.log("Total limit: " + parseInt(total_message_limit) ,"zend message no :" + parseInt(no_of_send_message) );
         if(parseInt(total_message_limit) > parseInt(no_of_send_message)){
-          console.log(no_of_send_message);
-          if (btnText.length == 1) {
-            no_of_send_message++;
-            console.log(no_of_send_message);
-            $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
-            var incrementedLoop = loop2 + 1;
-            // positive keywords
-            validKeyword = true; 
-                   
-            if (keywordTypeValue != "") {
-              var description = ""
-    
-              var arrayKeyword = keywordTypeValue;
-    
-              if (description != "") {
-                matched = arrayKeyword.filter(
-                  (item) => description.indexOf(item) > -1
-                );
-                if (matched.length == 0) {
-                  validKeyword = false;
-                }
-              } else {
-                validKeyword = true;
-              }
-            }
-    
-            // negtive keyword
-            invalidKeyword = false;
-            if (negative_keyword != "") {
-              var description = "";
-    
-              var arraynegative_keyword = negative_keyword;
-    
-              if (description != "") {
-                matched = arraynegative_keyword.filter(
-                  (item) => description.indexOf(item) > -1
-                );
-                if (matched.length == 0) {
-                  invalidKeyword = false;
+          selector_for_validclass2 =
+          'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
+          let groupHref3 = $(selector_for_validclass2)
+          .find('a[href*="/groups/"]')
+          .attr("href");
+          console.log(groupHref3);
+          if(groupHref3.includes("user/")){
+            console.log("user/ found");
+            if (btnText.length == 1) {
+              no_of_send_message++;
+              console.log(no_of_send_message);
+              $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
+              var incrementedLoop = loop2 + 1;
+              // positive keywords
+              validKeyword = true; 
+                     
+              if (keywordTypeValue != "") {
+                var description = ""
+      
+                var arrayKeyword = keywordTypeValue;
+      
+                if (description != "") {
+                  matched = arrayKeyword.filter(
+                    (item) => description.indexOf(item) > -1
+                  );
+                  if (matched.length == 0) {
+                    validKeyword = false;
+                  }
                 } else {
-                  invalidKeyword = true;
+                  validKeyword = true;
                 }
-              } else {
-                invalidKeyword = false;
               }
-            }
-    
-            selector_for_validclass2 =
-              'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
-    
-            //console.log('selector class 2 length', $(selector_for_validclass2).length);
-            let groupHref2 = $(selector_for_validclass2)
-              .find('a[href*="/groups/"]')
-              .attr("href");
-            let memberurl2 = groupHref2.split("user/");
-            let memberid2 = memberurl2[1].replace("/", "");
-            let member_name2 = $(selector_for_validclass2)
-              .find('a[href*="/groups/"]')
-              .text()
-              .toLowerCase();
-    
-            chrome.runtime.sendMessage(
-              {
-                action: "getGenderCountry",
-                profile_id: memberid2,
-                gender: gender,
-                name: member_name2,
-              },
-              (response) => {
-                if (
-                  response.gender != "both" &&
-                  typeof response.data.body != "undefined"
-                ) {
-                  validGender = false;
-                  console.log(response);
-                  if (response.data.body.gender.toLowerCase() == gender) {
+      
+              // negtive keyword
+              invalidKeyword = false;
+              if (negative_keyword != "") {
+                var description = "";
+      
+                var arraynegative_keyword = negative_keyword;
+      
+                if (description != "") {
+                  matched = arraynegative_keyword.filter(
+                    (item) => description.indexOf(item) > -1
+                  );
+                  if (matched.length == 0) {
+                    invalidKeyword = false;
+                  } else {
+                    invalidKeyword = true;
+                  }
+                } else {
+                  invalidKeyword = false;
+                }
+              }
+      
+            
+      
+              //console.log('selector class 2 length', $(selector_for_validclass2).length);
+              let groupHref2 = $(selector_for_validclass2)
+                .find('a[href*="/groups/"]')
+                .attr("href");
+              
+              let memberurl2 = groupHref2.split("user/");
+              let memberid2 = memberurl2[1].replace("/", "");
+              let member_name2 = $(selector_for_validclass2)
+                .find('a[href*="/groups/"]')
+                .text()
+                .toLowerCase();
+      
+              chrome.runtime.sendMessage(
+                {
+                  action: "getGenderCountry",
+                  profile_id: memberid2,
+                  gender: gender,
+                  name: member_name2,
+                },
+                (response) => {
+                  if (
+                    response.gender != "both" &&
+                    typeof response.data.body != "undefined"
+                  ) {
+                    validGender = false;
+                    console.log(response);
+                    if (response.data.body.gender.toLowerCase() == gender) {
+                      validGender = true;
+                    }
+                  } else {
                     validGender = true;
                   }
-                } else {
-                  validGender = true;
-                }
-    
-                countryList = true;
-                if (countryvalue != "") {
-                  countryvalue2 = countryvalue.split(",");
-                  if (countryvalue2.length > 0) {
-                    if (typeof response.data.body != "undefined") {
-                      matched = countryvalue2.filter(
-                        (item) => item == response.data.body.countryName
-                      );
-                      if (matched.length == 0) {
+      
+                  countryList = true;
+                  if (countryvalue != "" && countryvalue.indexOf(",") > -1) {
+                    countryvalue2 = countryvalue.split(",");
+                    if (countryvalue2.length > 0) {
+                      if (typeof response.data.body != "undefined") {
+                        matched = countryvalue2.filter(
+                          (item) => item == response.data.body.countryName
+                        );
+                        if (matched.length == 0) {
+                          countryList = true;
+                        }
+                      } else {
                         countryList = true;
                       }
-                    } else {
-                      countryList = true;
                     }
                   }
-                }
-    
-                // SEARCH INDEX VALUE
-                //validIndex = true;
-                currentIndex = $(selector_for_validclass2).attr("scl-index");
-    
-                //cint = Number(currentIndex);
-                var cint =
-                  typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
-                if (cint < search_index_value) {
-                  validIndex = false;
-                } else {
-                  validIndex = true;
-                }
-                if (
-                  validKeyword &&
-                  !invalidKeyword &&
-                  countryList &&
-                  validGender &&
-                  validIndex
-                ) {
-                  showCustomToastr('info', 'Sending Friend Request', randomDelay, true);
-                  $(selector_for_validclass).addClass("add-done-border");
-                  $(selector_for_validclass).addClass("loading_w_scl");
-                  $(selector_for_validclass).attr("member_id", memberid2);
-    
-                  let groupHref = $(selector_for_validclass2)
-                    .find('a[href*="/groups/"]')
-                    .attr("href");
-                  let member_name = $(selector_for_validclass2)
-                    .find('a[href*="/groups/"]')
-                    .text();
-                  let memberurl = groupHref.split("user/");
-                  //let memberid = memberurl[1].replace('/', '');
-                  var memberid = $(selector_for_validclass2).attr("member_id");
-    
-                  let member_names = member_name.split(" ");
-                  $(selector_for_validclass).addClass("sca-member-proccessed");
-                  var segementMessage = [];
-                  segementMessagetextArray = messageArray;
-                  console.log(segementMessagetextArray);
-                  segementMessagetextArray.forEach(function (item, i) {
-                    segementMessage_json = segementMessagetextArray[i];
-                    segementMessage_varient_json = segementMessage_json.varient;
-                    segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
-                    var randomIndex2 = Math.floor(
-                      Math.random() * segementMessage_varient_array.length
-                    );
-                    segementMessage.push(segementMessage_varient_array[randomIndex2]);
-    
-                  });
-                  //2, 11, 333
-                  segementMessage = segementMessage.join('');
-                  console.log(segementMessage);
-                  setTimeout(() => {
-                    //console.log(segementMessage);
-                    showCustomToastr('success', 'Friend Request Sent', 5000, false);
-                    btnText.click();
-                    raw = JSON.stringify({
-                      'no_of_connect':1,
-                  });
-                    chrome.runtime.sendMessage({action:"updateNoSendConnects", request: raw});
-                    showCustomToastr('success', 'Message Sending Start', 10000, true);
+      
+                  // SEARCH INDEX VALUE
+                  //validIndex = true;
+                  currentIndex = $(selector_for_validclass2).attr("scl-index");
+      
+                  //cint = Number(currentIndex);
+                  var cint =
+                    typeof currentIndex == "undefined" ? 0 : Number(currentIndex);
+                  if (cint < search_index_value) {
+                    validIndex = false;
+                  } else {
+                    validIndex = true;
+                  }
+                  if (
+                    validKeyword &&
+                    !invalidKeyword &&
+                    countryList &&
+                    validGender &&
+                    validIndex
+                  ) {
+                    showCustomToastr('info', 'Sending Friend Request', randomDelay, true);
+                    $(selector_for_validclass).addClass("add-done-border");
+                    $(selector_for_validclass).addClass("loading_w_scl");
+                    $(selector_for_validclass).attr("member_id", memberid2);
+      
+                    let groupHref = $(selector_for_validclass2)
+                      .find('a[href*="/groups/"]')
+                      .attr("href");
+                    let member_name = $(selector_for_validclass2)
+                      .find('a[href*="/groups/"]')
+                      .text();
+                    let memberurl = groupHref.split("user/");
+                    //let memberid = memberurl[1].replace('/', '');
+                    var memberid = $(selector_for_validclass2).attr("member_id");
+      
+                    let member_names = member_name.split(" ");
+                    $(selector_for_validclass).addClass("sca-member-proccessed");
+                    var segementMessage = [];
+                    segementMessagetextArray = messageArray;
+                    console.log(segementMessagetextArray);
+                    segementMessagetextArray.forEach(function (item, i) {
+                      segementMessage_json = segementMessagetextArray[i];
+                      segementMessage_varient_json = segementMessage_json.varient;
+                      segementMessage_varient_array = JSON.parse(segementMessage_varient_json);
+                      var randomIndex2 = Math.floor(
+                        Math.random() * segementMessage_varient_array.length
+                      );
+                      segementMessage.push(segementMessage_varient_array[randomIndex2]);
+      
+                    });
+                    //2, 11, 333
+                    segementMessage = segementMessage.join('');
+                    console.log(segementMessage);
                     setTimeout(() => {
-                      // --------------------------------------
-                      $this.closeWarningPopup();
+                      //console.log(segementMessage);
+                      showCustomToastr('success', 'Friend Request Sent', 5000, false);
+                      btnText.click();
+                      raw = JSON.stringify({
+                        'no_of_connect':1,
+                    });
+                      chrome.runtime.sendMessage({action:"updateNoSendConnects", request: raw});
+                      showCustomToastr('success', 'Message Sending Start', 10000, true);
                       setTimeout(() => {
-                        if (!warningStatus) {
-                          segementMessage = segementMessage.replaceAll(
-                            "[first name]",
-                            member_names[0]
-                          );
-                          segementMessage = segementMessage.replaceAll(
-                            "[last name]",
-                            member_names[1]
-                          );
-    
-                          chrome.runtime.sendMessage(
-                            {
-                              action: "sendMessageToMember",
-                              memberid: memberid,
-                              groupid: groupId,
-                              textMsg: segementMessage,
-                            },
-                            (response) => {
-                              $(".loading_w_scl").addClass("working-scl");
-                              setTimeout(() => {
-                                $(".working-scl").removeClass("loading_w_scl");
-                              }, 500);
-    
-                              if (loop2 + 1 == limit_req) {
-                                $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                        // --------------------------------------
+                        $this.closeWarningPopup();
+                        setTimeout(() => {
+                          if (!warningStatus) {
+                            segementMessage = segementMessage.replaceAll(
+                              "[first name]",
+                              member_names[0]
+                            );
+                            segementMessage = segementMessage.replaceAll(
+                              "[last name]",
+                              member_names[1]
+                            );
+      
+                            chrome.runtime.sendMessage(
+                              {
+                                action: "sendMessageToMember",
+                                memberid: memberid,
+                                groupid: groupId,
+                                textMsg: segementMessage,
+                              },
+                              (response) => {
+                                $(".loading_w_scl").addClass("working-scl");
+                                setTimeout(() => {
+                                  $(".working-scl").removeClass("loading_w_scl");
+                                }, 500);
+      
+                                if (loop2 + 1 == limit_req) {
+                                  $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                                }
+                                setTimeout(() => {
+                                  showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                }, 2000);
+                                chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                                  console.log(res);
+                                });
+                                loop1++;
+                                $this.checkValidUsers(
+                                  randomDelay,
+                                  limit_req,
+                                  keywordTypeValue,
+                                  negative_keyword,
+                                  countryvalue,
+                                  totalGroupMembers,
+                                  gender,
+                                  messageArray,
+                                  prospect,
+                                  selectedInterval,
+                                  dateValue,
+                                  no_of_send_message
+                                );
                               }
-                              setTimeout(() => {
-                                showCustomToastr('success', 'Message Sent Successfully', 5000, false);
-                              }, 2000);
-                              chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
-                                console.log(res);
-                              });
-                              loop1++;
+                            );
+                          } else {
+                            showCustomToastr('error', 'Message Sending Failled', 3000, false);
+                            console.log("reached iin else condition");
+                            loop1++;
+                            $(".loading_w_scl").addClass("failed-scl");
+                            setTimeout(() => {
+                              $(".failed-scl").removeClass("loading_w_scl");
+                            }, 500);
+                            chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
+                              console.log(res);
+                            });
+      
+      
+                            setTimeout(() => {
                               $this.checkValidUsers(
                                 randomDelay,
                                 limit_req,
@@ -584,80 +639,77 @@ let AddTargetFriendNV;
                                 dateValue,
                                 no_of_send_message
                               );
-                            }
-                          );
-                        } else {
-                          showCustomToastr('error', 'Message Sending Failled', 3000, false);
-                          console.log("reached iin else condition");
-                          loop1++;
-                          $(".loading_w_scl").addClass("failed-scl");
-                          setTimeout(() => {
-                            $(".failed-scl").removeClass("loading_w_scl");
-                          }, 500);
-                          chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
-                            console.log(res);
-                          });
-    
-    
-                          setTimeout(() => {
-                            $this.checkValidUsers(
-                              randomDelay,
-                              limit_req,
-                              keywordTypeValue,
-                              negative_keyword,
-                              countryvalue,
-                              totalGroupMembers,
-                              gender,
-                              messageArray,
-                              prospect,
-                              selectedInterval,
-                              dateValue,
-                              no_of_send_message
-                            );
-                          }, 4000);
-                          warningStatus = false;
-                        }
-                      }, 5000);
-    
-                      //   -----------------------------------
-                    }, 3000);
-                  }, randomDelay);
-                } else {
-                  console.log("reached here");
-                  // IF KEYWORD NOT MATCHED LIKE PATNA NOT MACTHED
-                  $(selector_for_validclass).addClass("sca-member-proccessed");
-                  if ($(selector_for_validclass)[0] != undefined) {
-                    window.scrollTo(
-                      0,
-                      window.pageYOffset +
-                      $(selector_for_validclass)[0].getBoundingClientRect()
-                        .top -
-                      350
-                    );
+                            }, 4000);
+                            warningStatus = false;
+                          }
+                        }, 5000);
+      
+                        //   -----------------------------------
+                      }, 3000);
+                    }, randomDelay);
+                  } else {
+                    console.log("reached here");
+                    // IF KEYWORD NOT MATCHED LIKE PATNA NOT MACTHED
+                    $(selector_for_validclass).addClass("sca-member-proccessed");
+                    if ($(selector_for_validclass)[0] != undefined) {
+                      window.scrollTo(
+                        0,
+                        window.pageYOffset +
+                        $(selector_for_validclass)[0].getBoundingClientRect()
+                          .top -
+                        350
+                      );
+                    }
+      
+      
+      
+                    setTimeout(() => {
+                      $this.checkValidUsers(
+                        randomDelay,
+                        limit_req,
+                        keywordTypeValue,
+                        negative_keyword,
+                        countryvalue,
+                        totalGroupMembers,
+                        gender,
+                        messageArray,
+                        prospect,
+                        selectedInterval,
+                        dateValue,
+                        no_of_send_message
+                      );
+                    }, 4000);
                   }
-    
-    
-    
-                  setTimeout(() => {
-                    $this.checkValidUsers(
-                      randomDelay,
-                      limit_req,
-                      keywordTypeValue,
-                      negative_keyword,
-                      countryvalue,
-                      totalGroupMembers,
-                      gender,
-                      messageArray,
-                      prospect,
-                      selectedInterval,
-                      dateValue,
-                      no_of_send_message
-                    );
-                  }, 4000);
                 }
+              );
+            } else {
+              $(selector_for_validclass).addClass("sca-member-proccessed");
+              if ($(selector_for_validclass)[0] != undefined) {
+                window.scrollTo(
+                  0,
+                  window.pageYOffset +
+                  $(selector_for_validclass)[0].getBoundingClientRect().top -
+                  350
+                );
               }
-            );
-          } else {
+              setTimeout(() => {
+                $this.checkValidUsers(
+                  randomDelay,
+                  limit_req,
+                  keywordTypeValue,
+                  negative_keyword,
+                  countryvalue,
+                  totalGroupMembers,
+                  gender,
+                  messageArray,
+                  prospect,
+                  selectedInterval,
+                  dateValue,
+                  no_of_send_message
+                );
+              }, 4000);
+            }
+          }else{
             $(selector_for_validclass).addClass("sca-member-proccessed");
             if ($(selector_for_validclass)[0] != undefined) {
               window.scrollTo(
@@ -684,6 +736,8 @@ let AddTargetFriendNV;
               );
             }, 4000);
           }
+
+         
         }else{
           $("#customToastr0").css("background-color", "red");
           $("#toastrMessage").text(`Your message limit is reached. Please consider upgrading your plan. `);

@@ -1325,7 +1325,7 @@ button.que-expression-btn.ExpBtn {
     margin-right: 5px;
     margin-left: 5px;
 }
-.response_opinion, .response_writing, .response_tone, .response_size {
+.response_opinion, .response_writing, .response_tone, .response_size , .response_language {
     display: flex;
     justify-content: space-evenly;
     line-height: 1px;
@@ -1333,12 +1333,12 @@ button.que-expression-btn.ExpBtn {
     padding: 0px 25px;
     border-radius: 25px;
 }
-.response_opinion span, .response_writing span, .response_tone span, .response_size span  {
+.response_opinion span, .response_writing span, .response_tone span, .response_size span , .response_language span{
     text-align: center;
     color: #ffffff;
     padding:8px;
 }
-.response_opinion p, .response_writing p, .response_tone p, .response_size p {
+.response_opinion p, .response_writing p, .response_tone p, .response_size p , .response_language p {
     margin-left: 11px;
     font-size: 24px;
     color: #ffffff;
@@ -1393,7 +1393,7 @@ button.que-expression-btn.ExpBtn {
     justify-content: center;
     cursor: pointer;
 }
-.response_opinion ,.response_tone ,.response_writing ,.response_size {
+.response_opinion ,.response_tone ,.response_writing ,.response_size ,.response_language{
     cursor: pointer;
 }
 .response p {
@@ -1412,3 +1412,64 @@ button.que-expression-btn.ExpBtn {
 .ai2-feed-page {
     flex-wrap: wrap !important;
 }
+
+
+
+/* .language_option {
+  display:none;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.language_option ul {
+  display: inline-flex;
+  justify-content: start;
+  text-decoration: none;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.language_option ul li {
+  border: 2px solid #0075b2;
+  border-radius: 20px;
+  padding: 6px;
+  margin: 10px;
+  width: auto;
+  text-align: center;
+  font-size: 12px;
+  line-height: 12px;
+  color: #4f92bc;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.response_language {
+  display: flex;
+  justify-content: space-evenly;
+  line-height: 1px;
+  background: #1950b5;
+  padding: 0px 25px;
+  border-radius: 25px;
+}
+
+.response_language span {
+  text-align: center;
+  color: #ffffff;
+  padding: 8px;
+}
+
+.response_language p {
+  margin-left: 11px;
+  font-size: 24px;
+  color: #ffffff;
+  line-height: 30px;
+} */
+
+/* Make the "Language" option active similar to other options */
+/* .language_option .option_active {
+  background: #0075b2;
+  color: #ffffff !important;
+} */

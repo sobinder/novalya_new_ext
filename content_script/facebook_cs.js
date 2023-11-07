@@ -49,6 +49,7 @@ let FacebookDOM;
     },
     appendresponse: function () {
       chrome.storage.sync.get(['responsedata'], function (result) {
+console.log(result.responsedata);
         const $responseOpinion = $('.response_opinion');
         if ($responseOpinion.length > 0) {
           $responseOpinion.remove();
@@ -73,6 +74,7 @@ let FacebookDOM;
         }
 
         // Check if there are elements with the class "response_writing"
+        
         const $responseWritingElements = $('.response_writing');
         if ($responseWritingElements.length > 0) {
           $responseWritingElements.remove();
@@ -91,6 +93,15 @@ let FacebookDOM;
           if (result.responsedata.size) {
             const $newResponseSizeElement = $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>');
             $newResponseSizeElement.insertBefore('.inner4');
+          }
+        }
+
+        const $responseLanguageElements = $('.response_language');
+        if ($responseLanguageElements.length > 0) {
+          $responseLanguageElements.remove();
+          if (result.responsedata.size) {
+            const $newResponseLanguageElement = $('<div class="response_language"><span>' + result.responsedata.language + '</span></div>');
+            $newResponseLanguageElement.insertBefore('.inner5');
           }
         }
       });
@@ -184,6 +195,7 @@ let FacebookDOM;
         temp: feelings,
         type: 'facebook',
       });
+
       chrome.runtime.sendMessage(
         { from: 'content', action: 'getResponseFromChatGPT', request: raw },
         function (response) {
@@ -308,6 +320,7 @@ let FacebookDOM;
         }
       });
     },
+
     creatershorter: function (elem) {
       var token = $(elem).val();
       chrome.storage.sync.set({ lengthshortner: '' });
@@ -340,6 +353,7 @@ let FacebookDOM;
         }
       );
     },
+
     changelanguage: function (elem) {
       var token = $(elem).val();
       chrome.storage.sync.set({ lengthshortner: '' });
@@ -371,6 +385,7 @@ let FacebookDOM;
         }
       );
     },
+
     changewriting: function (elem) {
       var token = $(elem).val();
       chrome.storage.sync.set({ lengthshortner: '' });
@@ -380,6 +395,7 @@ let FacebookDOM;
       chrome.storage.sync.get(
         ['feelings', 'post_description'],
         function (result) {
+
           if (
             typeof result.feelings != 'undefined' &&
             result.feelings != '' &&
