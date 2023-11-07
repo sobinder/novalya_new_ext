@@ -4,6 +4,8 @@ let friendListArray = [];
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.action === 'fetchedFriendData') {
+
+        console.log('fetchedFriendData');
         friendListTabId = sender.tab.id;
         let friendDetails = message.data;
         let profileUrl = friendDetails.profile;
@@ -26,23 +28,28 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         chrome.windows.create(windowSetting, function (tabs) {
             let fbTabId = tabs.tabs[0].id;
             chrome.tabs.onUpdated.addListener(function facebookTabListener(tabId, changeInfo, tab) {
-                if (tabId === fbTabId && changeInfo.status === "complete") {
-                    console.log(tabId);
-                    console.log(fbTabId);
-                    console.log(changeInfo.status);
-                    console.log('send message');
-                    chrome.tabs.sendMessage(fbTabId, {
-                        action: "getGenderAndPlace",
-                        from: "background",
-                        friend: friendDetails
-                    });
-                    chrome.tabs.onUpdated.removeListener(facebookTabListener);
-                }
+                setTimeout(()=>{
+                    if (tabId === fbTabId && changeInfo.status === "complete") {
+                        console.log(tabId);
+                        console.log(fbTabId);
+                        console.log(changeInfo.status);
+                        console.log('send message');
+                        chrome.tabs.sendMessage(tabId, {
+                            action: "getGenderAndPlace",
+                            from: "background",
+                            friend: friendDetails
+                        });
+                        chrome.tabs.onUpdated.removeListener(facebookTabListener);
+                    }
+                },1000);
+               
             });
         })
     }
     if(message.action === 'saveFriendData'){
+        console.log('saveFriendData');
         let friendDetails = message.friendDetails;
+        chrome.tabs.remove(sender.tab.id);
         chrome.tabs.remove(sender.tab.id);
         friendListArray.push(friendDetails);
         console.log(friendListArray);

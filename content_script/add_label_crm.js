@@ -1088,7 +1088,7 @@ let AddLabelCRM;
         },
         taggeduserapi: function () {
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
-                 console.log(response);
+                 //console.log(response);
                 let all_users_tag_get = response.data;
                 // console.log(all_users_tag_get)
                 userTagsArray = [];

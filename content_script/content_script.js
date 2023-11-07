@@ -9,7 +9,7 @@ let total_message_limit = 300000; // read by api or by storage of specific user 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
 let stoprequest = false;
-
+console.log('here contentscript js')
 jQuery.fn.extend({
     mclick: function () {
         var click_event = document.createEvent("MouseEvents");
@@ -567,12 +567,13 @@ document.addEventListener("click", function (event) {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    console.log(message);
     if (message.subject === "addTargetProcess") {
         //console.log('result', message);
         chrome.storage.local.get(
             ["nvFriendReqInputs", "nvAddFriendProcess" , "no_of_send_message"],
             function (result) {
-                console.log(result);
+                //console.log(result);
                 if (
                     typeof result.nvFriendReqInputs != "undefined" &&
                     result.nvFriendReqInputs != ""
@@ -584,7 +585,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         result.nvAddFriendProcess != "" &&
                         result.nvAddFriendProcess == "process"
                     ) {
-                        console.log(add_friend_settings);
+                       // console.log(add_friend_settings);
                         extTabId = message.extTabId;
                         AddTargetFriendNV.startAddingFriend(add_friend_settings,no_of_send_message, extTabId);
                         sendResponse({ status: "ok" });
@@ -691,7 +692,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             var birthdayMessage = [];
                             var birthdayMessagetextArray = birtday_response.data.message.Sections;
 
-                            console.log(birthdayMessagetextArray);
+                            //console.log(birthdayMessagetextArray);
 
                             birthdayMessagetextArray.forEach(function (item, i) {
                                 birthdayMessage_json = birthdayMessagetextArray[i];
@@ -705,7 +706,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             });
 
                             birthdayMessage = birthdayMessage.join('');
-                            console.log(birthdayMessage);
                             var member_fullname = $(this).find("h2 span").text();
                             var member_names = member_fullname.split(" ");
                             birthdayMessage = birthdayMessage.replaceAll(
@@ -1106,11 +1106,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     //unfollow module
     if (message.action === 'getGenderAndPlace') {
+        console.log('getGenderAndPlace');
         let friendDetails = message.friend;
         (async () => {
             const gender = await Unfollow.extractGender();
             const lived = await Unfollow.extractLived();
             const status = await Unfollow.extractStatus();
+            console.log(gender);
+            console.log(lived);
+            console.log(status);
+            console.log(friendDetails);
             if (friendDetails) {
                 friendDetails.gender = gender;
                 friendDetails.lived = lived;
@@ -1438,14 +1443,11 @@ $(document).ready(function () {
 
     // CLICK DELETE BUTTON ON FRIEND REQUEST PAGE
     chrome.storage.local.get(["requestSettings"], function (result) {
-        console.log(result);
         if (
             typeof result.requestSettings != "undefined" &&
             result.requestSettings != "" && result.requestSettings != null
         ) {
-            console.log(result);
             requestSettings1 = result.requestSettings;
-            console.log(result);
             if (requestSettings1.reject_status == 1) {
                 $(document).on(
                     "click",
@@ -1478,7 +1480,7 @@ $(document).ready(function () {
             }
 
             // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
-            console.log(requestSettings1.accept_status);
+           // console.log(requestSettings1.accept_status);
             if (requestSettings1.accept_status == 1) {
                 $(document).on(
                     "click",
