@@ -40,9 +40,10 @@ let totalFriends = 0;
         },
         // Get Friend List
         getFriendList: async function () {
-            console.log('getFriendList');
-                const friendListSelector = $('div.x1lq5wgf.xgqcy7u.x30kzoy.x9jhf4c.x1olyfxc img[referrerpolicy="origin-when-cross-origin"]:not(.friend-processed)').parent().parent().parent();
-                console.log('li - ',friendListSelector.length);
+                let friendListSelector = $('div.x1lq5wgf.xgqcy7u.x30kzoy.x9jhf4c.x1olyfxc img[referrerpolicy="origin-when-cross-origin"]:not(.friend-processed)').parent().parent().parent();
+
+                // console.log('all li - ',friendListSelector);
+                // console.log('li - ',friendListSelector.length);
                 if (friendListSelector.length > 0) {
                     if(totalFriends > counter){
                         let data = {};
@@ -153,14 +154,21 @@ let totalFriends = 0;
             return new Promise((resolve) => {
               var totalFriendsElement = $('h1:eq(1)').parent().parent().parent().parent().next().find('span a').text();
              let getCountInterval = setInterval(()=>{
-                if($('h1:eq(1)').length > 0){
+                if($('h1').length > 0){
+                    let hElement = $('h1');
+                    if($('h1').length > 1){
+                        hElement = $('h1:eq(1)');
+                    }else if($('h1').length > 2){
+                        hElement = $('h1:eq(2)');
+                    }
                     clearInterval(getCountInterval);
-                    totalFriendsElement = $('h1:eq(1)').parent().parent().parent().parent().next().find('span a').text();
+                    totalFriendsElement = hElement.parent().parent().parent().parent().next().find('span a').text();
                     var totalFriends = totalFriendsElement.match(/\d+/); // Extract numeric digits
+                    console.log('totalFriends - ',totalFriends);
                     if (totalFriends) {
                         if (totalFriends.input.indexOf('K') > 0) {
                             numericValue = parseFloat(totalFriends.input.match(/[\d.]+/)[0]);
-                            var result = numericValue * 1000;                        
+                            var result = numericValue * 1000;                       
                             resolve(parseInt(result));
                         } else {
                             resolve(parseInt(totalFriends[0], 10)); // Parse the numeric value
@@ -173,13 +181,6 @@ let totalFriends = 0;
             });
         },
           
-        convertIntoThousand:function(value) {
-            var numericValue = parseFloat(value);
-            console.log(numericValue);
-            var result = numericValue * 1000;
-            console.log(result);
-            return result;
-        },
         novaDataProgressModel: function (extTabId) {
             let html_processing_model = `<section class="main-app">
                                 <div class="overlay-ld">
