@@ -319,6 +319,8 @@ let AddTargetFriendNV;
                         gender,
                         messageArray,
                         prospect,
+                        selectedInterval,
+                        dateValue,
                         no_of_send_message
                       );
                     }, 4000);
@@ -389,8 +391,8 @@ let AddTargetFriendNV;
       prospect,
       selectedInterval,
       dateValue , btnText , loop2 , no_of_send_message){
-       console.log("Total limit: " + parseInt(total_message_limit) ,"zend message no :" + parseInt(no_of_send_message) );
-        if(parseInt(total_message_limit) > parseInt(no_of_send_message)){
+      //  console.log("Total limit: " + parseInt(total_message_limit) ,"send message no :" + parseInt(no_of_send_message) );
+        // if(parseInt(total_message_limit) > parseInt(no_of_send_message)){
           selector_for_validclass2 =
           'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
           let groupHref3 = $(selector_for_validclass2)
@@ -553,10 +555,10 @@ let AddTargetFriendNV;
                       //console.log(segementMessage);
                       showCustomToastr('success', 'Friend Request Sent', 5000, false);
                       btnText.click();
-                      raw = JSON.stringify({
-                        'no_of_connect':1,
-                    });
-                      chrome.runtime.sendMessage({action:"updateNoSendConnects", request: raw});
+                    //   raw = JSON.stringify({
+                    //     'no_of_connect':1,
+                    // });
+                    //   chrome.runtime.sendMessage({action:"updateNoSendConnects", request: raw});
                       showCustomToastr('success', 'Message Sending Start', 10000, true);
                       setTimeout(() => {
                         // --------------------------------------
@@ -738,14 +740,14 @@ let AddTargetFriendNV;
           }
 
          
-        }else{
-          $("#customToastr0").css("background-color", "red");
-          $("#toastrMessage").text(`Your message limit is reached. Please consider upgrading your plan. `);
-          setTimeout(() => {
-            chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
-          }, 2000);
+        // }else{
+        //   $("#customToastr0").css("background-color", "red");
+        //   $("#toastrMessage").text(`Your message limit is reached. Please consider upgrading your plan. `);
+        //   setTimeout(() => {
+        //     chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
+        //   }, 2000);
         
-        }
+        // }
     
     },
     setIndexingOnMembersRequest: function (value) {
