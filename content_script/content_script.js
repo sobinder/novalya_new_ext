@@ -1154,18 +1154,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log('getGenderAndPlace');
         let friendDetails = message.friend;
         (async () => {
-            const gender = await Unfollow.extractGender();
-            const lived = await Unfollow.extractLived();
-            const status = await Unfollow.extractStatus();
-            console.log(gender);
-            console.log(lived);
-            console.log(status);
-            console.log(friendDetails);
+            let gender = await Unfollow.extractGender();
+            let lived = await Unfollow.extractLived();
+            let status = await Unfollow.extractStatus();
+            let hasConversation = await Unfollow.hasConversation();
             if (friendDetails) {
                 friendDetails.gender = gender;
                 friendDetails.lived = lived;
                 friendDetails.status = status;
-                console.log(friendDetails);
+                friendDetails.hasConversation = hasConversation;
+                //console.log(friendDetails);
                 chrome.runtime.sendMessage({ 'action': 'saveFriendData', friendDetails: friendDetails });
             } else {
                 console.error("Invalid friendDetails object.");

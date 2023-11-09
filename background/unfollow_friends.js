@@ -67,8 +67,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             if(friendDetails.status === 'activate'){
                 status = 1;
             }
-            
-            var raw = JSON.stringify({
+
+            let raw = JSON.stringify({
                 "type":'',
                 "fbId":friendDetails.fbId,
                 "user_name": friendDetails.name,
@@ -76,7 +76,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
                 "profile":friendDetails.profile,
                 "status":status,
                 "image":friendDetails.image,
-                "lived":friendDetails.lived
+                "lived":friendDetails.lived,
+                "has_conversection":friendDetails.hasConversation,
             });
 
             var requestOptions = {

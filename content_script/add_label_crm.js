@@ -18,10 +18,10 @@ let AddLabelCRM;
     let listItems = [];
     let cheight = 600;
     let loader = `<div id="overlay" class="overlay">
-                                    <div class="loader">
-                                        <img src="${chrome.runtime.getURL('assets/images/loading-forever.gif')}" alt="Scroll Contacts" width="50" height="50">
-                                    </div>
-                                </div>`;
+                    <div class="loader">
+                        <img src="${chrome.runtime.getURL('assets/images/loading-forever.gif')}" alt="Scroll Contacts" width="50" height="50">
+                    </div>
+                </div>`;
     AddLabelCRM = {
         settings: {},
         initilaize: function () {
