@@ -704,8 +704,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(response => response.json())
             .then(async (result) => {
                 console.log(result);
-                let response = await getUserLimit();
-                let no_of_send_message = response.data.no_of_send_message;
+                //let response = await getUserLimit();
+               // let no_of_send_message = response.data.no_of_send_message;
+                let no_of_send_message = 1;
                 console.log(no_of_send_message);
                 sendResponse({ setting: result, no_of_send_message: no_of_send_message })
             })

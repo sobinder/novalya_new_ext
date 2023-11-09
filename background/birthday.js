@@ -141,9 +141,10 @@ class BirthdayNova {
         fetch("https://novalyabackend.novalya.com/birthday/setting/api/fetch", requestOptions)
         .then((response) => response.json())
         .then(async(api_response) => {
-            let result = await getUserLimit();
-            console.log('check user',result);
-            let no_of_birthday = result.data.no_of_birthday ;
+            //let result = await getUserLimit();
+            //console.log('check user',result);
+            //let no_of_birthday = result.data.no_of_birthday ;
+            let no_of_birthday = 1 ;
             console.log(no_of_birthday);
             console.log('call openBirthdayEventPageNew');
             BirthdayNovaClass.openBirthdayEventPageNew(sender, api_response,no_of_birthday);
