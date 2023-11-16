@@ -963,18 +963,20 @@ let AddLabelCRM;
                 console.log(window.location.href);
                 setInterval(() => {
                     if (window.location.href.includes('messenger')) {
-                        console.log("in this");
-                        const xw2csxcElements = $(".x1uvtmcs"); // Select all elements with class .xw2csxc
-                        xw2csxcElements.each(function() {
-                          const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
-                          const notesDivIconLength = notesDivIcons.length;
-                          console.log(notesDivIconLength);
-                          // Check the length of .notes_div_icon elements within this .xw2csxc
-                          
-                            if (notesDivIconLength === 0 ) {
-                                // Insert notes_icon2 before this .xw2csxc element
-                                $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
-                              }
+                        let noteContainers = $(".x1uvtmcs");
+                        const secondNoteContainer = $(".x1uvtmcs:eq(1)");
+                        if (noteContainers.length > 2) {
+                            noteContainers = secondNoteContainer;
+                        }
+                        noteContainers.each(function() {
+                            const currentContainer = $(this);
+                            const notesDivIcons = currentContainer.find(".notes_div_icon");
+                            const notesDivIconLength = notesDivIcons.length;
+
+                            if (notesDivIconLength === 0) {
+                                // Insert notes_icon2 before the first element with class .xw2csxc
+                                $(".x6prxxf .xw2csxc:first").before(notes_icon2);
+                            }
                         });
                     }else if(window.location.href.includes('facebook')){
                         console.log("in this");
