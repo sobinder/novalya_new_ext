@@ -721,7 +721,7 @@ button#stop_run {
 }
 
 /* The container <div> - needed to position the dropdown content */
-.dropdown {
+.dropdown.custom-filter{
   display: inline-block;
   margin-left: 93px !important;
   position: absolute;
