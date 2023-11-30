@@ -1151,7 +1151,6 @@ div#current_profile_tags span.add-icon {
   cursor: pointer;
 }
 
-/* Unfollow module css  */
 #data-unfollow {
   margin-left: 15px;
   color: white;
@@ -1163,9 +1162,7 @@ div#current_profile_tags span.add-icon {
   background: steelblue;
   padding: 6px 20px;
 }
-div[data-visualcompletion="ignore"] {
-  position: relative;
-}
+
 .add-button-container.contact-pop-up-chat-window {
     transform: unset;
     right: unset !important;
