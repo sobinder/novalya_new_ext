@@ -771,7 +771,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 clearInterval(cleartimeout1);
                 secondChild.children().each(function (index, item) {
                     if (typeof $(this).find("a").attr("href") != "undefined") {
-
+                        var currentDelay = delay * (index + 1);
+                        setTimeout(() => {
+                            showCustomToastr('info', 'Sending Birthday Wish', delay, true);
+                        }, delay * index);
                         setTimeout(() => {
                             var member_url = $(this)
                                 .find("a")
@@ -854,7 +857,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 $(".loading").remove();
                                 $("h3.title_lg").text("Completed");
                             }
-                        }, delay * index);
+                        }, currentDelay);
                     }
                 });
             }

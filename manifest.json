@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Novalya",
     "description": "Novalya est la plateforme simple et intuitive d’automatisation de la prospection. Démarrez maintenant sur www.novalya.com",
-    "version": "1.3.13",
+    "version": "1.3.12",
     "icons": {
         "48": "icons/48.png",
         "128": "icons/128.png"
