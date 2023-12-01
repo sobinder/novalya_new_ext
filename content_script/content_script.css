@@ -1186,6 +1186,27 @@ div#current_profile_tags {
   display: none;
 }
 
+.overlay_pleaseWait {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  font-size: 20px;
+}
+
 
 
 
@@ -1412,9 +1433,8 @@ button.que-expression-btn.ExpBtn {
 
 
 
-/* .language_option {
+.language_option {
   display:none;
-  display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
 }
@@ -1463,10 +1483,10 @@ button.que-expression-btn.ExpBtn {
   font-size: 24px;
   color: #ffffff;
   line-height: 30px;
-} */
+}
 
 /* Make the "Language" option active similar to other options */
-/* .language_option .option_active {
+.language_option .option_active {
   background: #0075b2;
   color: #ffffff !important;
-} */
+}

@@ -5,6 +5,8 @@ class BirthdayNova {
     init() { }
 
     openBirthdayEventPage(sender, api_response, message) {
+        console.log("openBirthdayEventPage is called");
+
         var new_birthday_url = "https://www.facebook.com/events/";
         // ---------------------------change----------------------------
         var birthday_url = "https://www.facebook.com/events/birthdays";
@@ -50,12 +52,15 @@ class BirthdayNova {
     }
 
     openBirthdayEventPageNew(sender, api_response, no_of_birthday) {
+        console.log("openBirthdayEventPageNew is called");
         var new_birthday_url = "https://www.facebook.com/events/";
         // ---------------------------change----------------------------
         var birthday_url = "https://www.facebook.com/events/birthdays";
         chrome.tabs.create({ url: "https://www.facebook.com/events", active: true },
             function (tabs) {
                 var birthday_page_tabId = tabs.id;
+                 chrome.tabs.sendMessage(birthday_page_tabId, { subject: "ShowOverlay"});
+                
                 var extension_birthday_page_tabid = sender.tab.id;
                 var birthdaydata = api_response;
                 chrome.tabs.onUpdated.addListener(function birthdayTabListener(tabId, changeInfo, tab) {

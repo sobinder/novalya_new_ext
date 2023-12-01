@@ -342,7 +342,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 if (res1.status == "error") {
                     console.log(res1.message);
                 } else {
-                let no_of_send_message = await getConnectMessageSent();
+                // let no_of_send_message = await getConnectMessageSent();
+                let no_of_send_message = 1;
                 console.log(no_of_send_message);
                     chrome.storage.local.set({ nvFriendReqInputs: res1.data , no_of_send_message : no_of_send_message}, function () {
                         chrome.tabs.create({ url: res1.data[0].groups.url, active: true },

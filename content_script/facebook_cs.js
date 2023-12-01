@@ -49,7 +49,7 @@ let FacebookDOM;
     },
     appendresponse: function () {
       chrome.storage.sync.get(['responsedata'], function (result) {
-console.log(result.responsedata);
+        console.log(result.responsedata);
         const $responseOpinion = $('.response_opinion');
         if ($responseOpinion.length > 0) {
           $responseOpinion.remove();
@@ -74,7 +74,7 @@ console.log(result.responsedata);
         }
 
         // Check if there are elements with the class "response_writing"
-        
+
         const $responseWritingElements = $('.response_writing');
         if ($responseWritingElements.length > 0) {
           $responseWritingElements.remove();
@@ -245,11 +245,13 @@ console.log(result.responsedata);
               if (lexicalSpans.length > 0 && index > 0) {
                 $element.css('display', 'none');
               }
+
               lexicalSpans.each(function (key) {
                 if (key > 0) {
                   $(this).css('display', 'none');
                 }
               });
+
               lineBreaks.each(function (key) {
                 if (key > 0) {
                   $(this).css('display', 'none');
@@ -291,7 +293,7 @@ console.log(result.responsedata);
             data: { response: response, status: status },
             headers: { Authorization: 'Bearer ' + authtoken },
             dataType: 'json',
-            })
+          })
             .done(function (response) {
               if (response.status == 200 && response.data == 'like') {
                 $('.loader').hide();

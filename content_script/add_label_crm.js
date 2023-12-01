@@ -18,10 +18,10 @@ let AddLabelCRM;
     let listItems = [];
     let cheight = 600;
     let loader = `<div id="overlay" class="overlay">
-                    <div class="loader">
-                        <img src="${chrome.runtime.getURL('assets/images/loading-forever.gif')}" alt="Scroll Contacts" width="50" height="50">
-                    </div>
-                </div>`;
+                            <div class="loader">
+                                <img src="${chrome.runtime.getURL('assets/images/loading-forever.gif')}" alt="Scroll Contacts" width="50" height="50">
+                            </div>
+                   </div>`;
     AddLabelCRM = {
         settings: {},
         initilaize: function () {
@@ -29,10 +29,23 @@ let AddLabelCRM;
             $(document).ready(function () {
                 $this.onInitMethods();
             });
-
-
         },
         onInitMethods: function () {
+            // $(document).ready(function () {
+            //     // Get all elements with the specified classes
+            //     setInterval(() => {
+            //         const elements = $('.x6s0dn4.x1jx94hy.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6.xh8yej3');
+            //         const elements2 = $('.x5yr21d.x10l6tqk.x13vifvy.xh8yej3');
+            //         const elements3 = $('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6');
+
+            //     // Iterate over the elements and set padding-top to 0
+            //     elements3.css('padding-top', '0px');
+                  
+                
+            //     }, 400);
+                
+            // });
+
             $("body").append(`
                     <div class="hide-by-escape" id="overlay-assign-labels">
                         <div id="container_assign_labels">
@@ -41,8 +54,8 @@ let AddLabelCRM;
                     </div>`);
             $this.taggeduserapi();
 
-            $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function() {      
-                $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);      
+            $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function () {
+                $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);
             });
 
             selector_members_list = $this.messengersMembersListSelector();
@@ -62,7 +75,7 @@ let AddLabelCRM;
             }, 1500);
 
             chrome.runtime.sendMessage({ action: "tagsApiCall" }, (res50) => {
-               // console.log(res50);
+                // console.log(res50);
                 tags_fetch_data = res50.data;
                 //console.log(res50);
                 //console.log(tags_fetch_data);
@@ -151,6 +164,7 @@ let AddLabelCRM;
                     var fbName = $(this).attr("fbname");
                     var profilePic = $(this).attr("profilepic");
                     var fb_user_id = $(this).attr("fb_user_id");
+                    console.log(fbName ,fb_user_id,profilePic);
 
                     $('.multi-label-checkbox:checked').each(function () {
                         // Get the value of the checked checkbox and add it to the array
@@ -168,26 +182,26 @@ let AddLabelCRM;
                         is_primary: selectedOption2
                     };
 
-                    chrome.runtime.sendMessage(message, (response) => { 
-                        setTimeout(()=>{ 
+                    chrome.runtime.sendMessage(message, (response) => {
+                        setTimeout(() => {
                             const selectedTag = $('.selected-tag').attr('tag-id');
-                            if(selectedTag!= '' && selectedTag != undefined){
+                            if (selectedTag != '' && selectedTag != undefined) {
                                 const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                                if(rowToScroll){
+                                if (rowToScroll) {
                                     $('#overlay').show();
-                                  
-                                   $('.x1n2onr6').animate(
+
+                                    $('.x1n2onr6').animate(
                                         { scrollTop: $('.x1n2onr6').scrollTop() + cheight },
                                         1000
                                     );
-                                    setTimeout(()=>{
+                                    setTimeout(() => {
                                         $('.x1n2onr6').animate({ scrollTop: 0 }, 1000);
                                         $('#overlay').hide();
-                                    },1500);  
+                                    }, 1500);
                                 }
                             }
-                        },1000);
-                        
+                        }, 1000);
+
                         // var parsedData = JSON.parse(response.data);
                         // var message = parsedData.msg;
                         // toastr["success"]('User Update Succesfully');
@@ -204,13 +218,13 @@ let AddLabelCRM;
 
             });
 
-            $(document).on('click','.message_div_icon', async function(){
+            $(document).on('click', '.message_div_icon', async function () {
                 alert('here');
                 event.preventDefault();
                 event.stopPropagation();
                 let templateArray = [];
-                templateArray = ["hi","hello","Good Morning","Namaste"];
-               
+                templateArray = ["hi", "hello", "Good Morning", "Namaste"];
+
                 let tagId = '';
             })
 
@@ -297,12 +311,12 @@ let AddLabelCRM;
 
                         chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
                             var all_data_array = res.api_data;
-                            filteredArray = all_data_array.filter(item =>item.id == note_id);
+                            filteredArray = all_data_array.filter(item => item.id == note_id);
                             console.log(filteredArray[0].updatedAt);
-                            var date_time =  new Date(filteredArray[0].updatedAt);
-                            var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                            var date_time = new Date(filteredArray[0].updatedAt);
+                            var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
                             var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-                            var newdate = $(this).closest('.row').find('.date_time').text(`${date} ${time}` )
+                            var newdate = $(this).closest('.row').find('.date_time').text(`${date} ${time}`)
                             editableNotes.text(editableInput.val());
 
                         });
@@ -338,26 +352,26 @@ let AddLabelCRM;
                         cliked_Fb_Id = window.location.pathname.split('/')[2];
                     }
 
-                    if(cliked_Fb_Id === undefined){
+                    if (cliked_Fb_Id === undefined) {
                         var alphaFbId = window.location.pathname.split('/')[1].toString();
                         console.log(alphaFbId);
                         getNumericID(alphaFbId)
-                        .then(function(response) {
-                           console.log(response.userID);
-                           cliked_Fb_Id = response.userID;
-                           if (notes == "") {
-                            toastr["error"]('Please Enter Some Text');
-                            return false;
-                        }
-                        chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
-                            console.log(res.result.updatedAt);
-                            var date_time =  new Date(res.result.updatedAt);
-                            var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
-                            var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
-        
-                            if (res.status == 'note added') {
-                                toastr["success"]('Note added successfully ');
-                                var new_notes_container = `<div class="notes_container row">
+                            .then(function (response) {
+                                console.log(response.userID);
+                                cliked_Fb_Id = response.userID;
+                                if (notes == "") {
+                                    toastr["error"]('Please Enter Some Text');
+                                    return false;
+                                }
+                                chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
+                                    console.log(res.result.updatedAt);
+                                    var date_time = new Date(res.result.updatedAt);
+                                    var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                                    var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
+
+                                    if (res.status == 'note added') {
+                                        toastr["success"]('Note added successfully ');
+                                        var new_notes_container = `<div class="notes_container row">
                                 <div class="note-item note_id=${res.result.id} row" >
                                     <span class="editable_notes">${notes}</span>
                                     <input class="editable_input" note_id=${res.result.id} type="text" style="display:none;">
@@ -374,17 +388,17 @@ let AddLabelCRM;
                                                         
                                 <!-- Repeat this structure for other notes -->
                             </div>`;
-                                // Append the new note-item and icons_div to the notes_container_div
-                                $('.notes_container_div').prepend(new_notes_container);
-                            } else {
-                                toastr["error"]('Some Error in adding notes');
-                            }
-                        });
+                                        // Append the new note-item and icons_div to the notes_container_div
+                                        $('.notes_container_div').prepend(new_notes_container);
+                                    } else {
+                                        toastr["error"]('Some Error in adding notes');
+                                    }
+                                });
 
-                        })
-                        .catch(function(response) {
-                            console.log("error to find fb id");
-                        });
+                            })
+                            .catch(function (response) {
+                                console.log("error to find fb id");
+                            });
                         return false;
                     }
 
@@ -395,8 +409,8 @@ let AddLabelCRM;
                 }
                 chrome.runtime.sendMessage({ action: "add_Notes", description: notes, fb_user_id: cliked_Fb_Id }, (res) => {
                     console.log(res.result.updatedAt);
-                    var date_time =  new Date(res.result.updatedAt);
-                    var date =  `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
+                    var date_time = new Date(res.result.updatedAt);
+                    var date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()} `;
                     var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
 
                     if (res.status == 'note added') {
@@ -455,8 +469,15 @@ let AddLabelCRM;
                         }
                     }
                 }
-                if(fb_user_id == undefined){
-                    fb_user_id =  await $this.getClikedFbId();
+                if (fb_user_id == undefined) {
+                    fb_user_id = await $this.getClikedFbId();
+                }
+
+                if (fb_user_id == "" || fb_user_id == undefined) {
+                    if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
+                        fb_user_id = $(".x1u998qt").find('a').attr('href').split('/')[1];
+                        console.log(fb_user_id);
+                    }
                 }
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
@@ -594,7 +615,7 @@ let AddLabelCRM;
                 if (listItems.length > 0) {
                     await $this.revertFilter();
                 }
-            
+
                 const spanElement = `
                     <div id="filter-message">
                         <p>Message</p>
@@ -605,9 +626,9 @@ let AddLabelCRM;
                             <span class="close-by-group">X</span>
                         </div>
                     </div>`;
-            
+
                 const $filterMessage = $('#filter-message');
-                
+
                 if ($filterMessage.length === 0) {
                     // Append the filter message if it doesn't exist
                     $('.custom-filter').parent().append(spanElement);
@@ -617,10 +638,10 @@ let AddLabelCRM;
                     $selectedTag.attr('tag-id', id);
                     $selectedTag.text(name);
                 }
-        
-                const scrollIntervalId = setInterval(()=>{
+
+                const scrollIntervalId = setInterval(() => {
                     const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-                    if(rowToScroll){
+                    if (rowToScroll) {
                         $('#overlay').show();
                         const parentContainer = rowToScroll.parentNode.parentNode;
                         const parentContainerClass = parentContainer.classList.value;
@@ -628,10 +649,10 @@ let AddLabelCRM;
                         // let cheight = 600;
                         const maxIterations = 3;
                         let currentIteration = 0;
-                        intervalId = setInterval(async() => {
+                        intervalId = setInterval(async () => {
                             $('#overlay').show();
                             currentIteration++;
-                           // console.log(currentIteration);
+                            // console.log(currentIteration);
                             $('.' + parentContainerClass).animate(
                                 { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
                                 1000
@@ -639,18 +660,18 @@ let AddLabelCRM;
                             cheight = cheight + 600;
                             await $this.sortMessengerComMembers(id);
                             if (currentIteration >= maxIterations) {
-                              clearInterval(intervalId);
-                              $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
-                              setTimeout(()=>{
-                                $('#overlay').hide();
-                              },1000);
+                                clearInterval(intervalId);
+                                $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                                setTimeout(() => {
+                                    $('#overlay').hide();
+                                }, 1000);
                             }
                         }, 2000);
                     }
-                },2000);
+                }, 2000);
                 $this.closefilterAfterSelect();
             });
-            
+
             $(document).on('click', '.close-by-group', function () {
                 $this.revertFilter();
             });
@@ -675,10 +696,10 @@ let AddLabelCRM;
                             if (selectedTag) {
                                 $this.sortMessengerComMembers(selectedTag);
                             }
-                            if($('.selected-tag').text().trim() == 'Unread'){
+                            if ($('.selected-tag').text().trim() == 'Unread') {
                                 $this.sortMemberUnread();
                             }
-                            if($('.selected-tag').text().trim() == 'Last Reply'){
+                            if ($('.selected-tag').text().trim() == 'Last Reply') {
                                 $this.sortMemberLastReply();
                             }
                         }
@@ -688,19 +709,19 @@ let AddLabelCRM;
                     // Add the new scroll event listener
                     targetParentDiv.addEventListener('scroll', scrollListener);
                     // Store the new event listener function as the previous one
-                    previousScrollListener = scrollListener;  
+                    previousScrollListener = scrollListener;
                 }
             }, 2000);
 
             // filter for unread
-            $(document).on('click', '#unread',async function () {
+            $(document).on('click', '#unread', async function () {
                 $this.handleFilterClick('Unread', $this.sortMemberUnread);
             });
 
-            $(document).on('click','#last_reply',async function(){
+            $(document).on('click', '#last_reply', async function () {
                 $this.handleFilterClick('Last Reply', $this.sortMemberLastReply);
             });
-            
+
             //end messenger filter
         },
         sendMessageforSingleUsers: function (fb_user_id) {
@@ -717,7 +738,7 @@ let AddLabelCRM;
                     var authToken = res16.authToken;
                     if (authToken != 0 && authToken != "") {
                         var selector_search_list = 'div[role="navigation"] div[role="grid"] div[role="row"]';
-                       
+
                         if ($(selector_search_list).length > 0) {
                             selector_members_list = selector_search_list
                         }
@@ -725,15 +746,15 @@ let AddLabelCRM;
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon" >+</span>';
 
-                              
+
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
                                 if ($('#overlay').length == 0) {
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
                                     $('div[aria-label="Chats"]').prepend(loader);
-                                } 
-                                
+                                }
+
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
@@ -771,7 +792,7 @@ let AddLabelCRM;
                                 })
                             });
                         }
-                        if (window.location.origin.indexOf('facebook') > -1) {  
+                        if (window.location.origin.indexOf('facebook') > -1) {
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container contact-pop-up-chat-window"><span class="add-icon">+</span>';
                             //$(this).parents(".x164qtfw").prepend(add_label_button);
@@ -802,7 +823,7 @@ let AddLabelCRM;
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
                                         //console.log(filteredTags);
-                                        if (filteredTags.length > 0) { 
+                                        if (filteredTags.length > 0) {
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                             let add_tag_button = `<div class="add-button-container contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
                                             $(this).append(add_tag_button);
@@ -828,7 +849,7 @@ let AddLabelCRM;
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon">+</span>';
 
-                            
+
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_members_list).each(async function (index) {
@@ -849,8 +870,8 @@ let AddLabelCRM;
                                 } else {
                                     // console.log('fb id not found');
                                 }
-                                
-                                
+
+
                                 // console.log(fb_user);
                                 if (fb_user != '') {
                                     if ($(this).find('div.add-button-container').length > 0) {
@@ -863,7 +884,7 @@ let AddLabelCRM;
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
-                                         
+
 
                                         if (filteredTags.length > 0) {
                                             $(this).attr('tag-id', filteredTags[0].id);
@@ -887,24 +908,31 @@ let AddLabelCRM;
         },
         messageComHeader: function () {
             var notes_icon1 = `<div class = "notes_div_icon" id ="header_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
- 
+
             var notes_icon2 = `<div class = "notes_div_icon" id ="bottom_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
 
             var message_icon = `<div class = "message_div_icon" id ="bottom_message_icon"><img src="${chrome.runtime.getURL('assets/images/message.png')}" class="post" title="Message" height="25"></div>`;
-            
+
             var clearMessageInt = setInterval(() => {
-                chrome.runtime.sendMessage({ action: "reloadExtensionId" },  (res16) => {
+                chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
                     var user_id = res16.user_id;
                     if (user_id != 0 && user_id != "") {
                         var add_label_button = '<div class="add-button-container header_button"><span class="add-icon">+</span>';
-                        setTimeout(async() => {
+                        setTimeout(async () => {
                             var fb_user = '';
                             currentWindowUrl = window.location.origin;
                             if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
                                 fb_user = $(".x1u998qt").find('a').attr('href').split('/')[3];
-                            } 
-                            if(fb_user == undefined){
+                                console.log(fb_user);
+                            }
+                            if (fb_user == undefined) {
                                 fb_user = await $this.getClikedFbId();
+                            }
+                            if (fb_user == "" || fb_user == undefined) {
+                                if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
+                                    fb_user = $(".x1u998qt").find('a').attr('href').split('/')[1];
+                                    console.log(fb_user);
+                                }
                             }
 
                             if (fb_user != '') {
@@ -913,15 +941,17 @@ let AddLabelCRM;
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
                             }
-                          
+console.log(fb_user);
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user == item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
-                                
-                            
+console.log(filteredTags);
 
-                            if(window.location.href.indexOf('facebook.com/messages/t/') > 0){
+
+                            if (window.location.href.indexOf('facebook.com/messages/t/') > 0) {
+                                console.log("in the facbook found" , filteredTags.length);
                                 if (filteredTags.length > 0) {
+                                    console.log("in this reacjed");
                                     const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                     const addTagButton = `
                                                     <div id="msg-header" class="add-button-container header_button" style="${style}">
@@ -929,13 +959,16 @@ let AddLabelCRM;
                                                     </div>`;
                                     $(".x1u998qt a").parent().append(addTagButton);
                                 } else {
+                                    console.log("here");
+
                                     $(".x1u998qt a").parent().append(add_label_button);
                                 }
-                                
-                                if($(".x1u998qt .post").length === 0){
+
+                                if ($(".x1u998qt .post").length === 0) {
                                     $(".x1u998qt a").parent().append(notes_icon1);
                                 }
-                            }else{
+                            } else {
+                                
                                 if (filteredTags.length > 0) {
                                     const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                     const addTagButton = `
@@ -950,7 +983,7 @@ let AddLabelCRM;
                                     $(".x1u998qt a").append(notes_icon1);
                                 }
                             }
-                            
+
                         }, 2000);
                     }
                     else {
@@ -968,7 +1001,7 @@ let AddLabelCRM;
                         if (noteContainers.length > 2) {
                             noteContainers = secondNoteContainer;
                         }
-                        noteContainers.each(function() {
+                        noteContainers.each(function () {
                             const currentContainer = $(this);
                             const notesDivIcons = currentContainer.find(".notes_div_icon");
                             const notesDivIconLength = notesDivIcons.length;
@@ -978,27 +1011,27 @@ let AddLabelCRM;
                                 $(".x6prxxf .xw2csxc:first").before(notes_icon2);
                             }
                         });
-                    }else if(window.location.href.includes('facebook')){
+                    } else if (window.location.href.includes('facebook')) {
                         console.log("in this");
                         const xw2csxcElements = $('.x164qtfw'); // Select all elements with class .xw2csxc
                         //console.log(xw2csxcElements);
-                        xw2csxcElements.each(function() {
-                          const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
-                          const notesDivIconLength = notesDivIcons.length;
-                          //console.log(notesDivIconLength);
-                          // Check the length of .notes_div_icon elements within this .xw2csxc
-                          
-                            if (notesDivIconLength === 0 ) {
+                        xw2csxcElements.each(function () {
+                            const notesDivIcons = $(this).find(".notes_div_icon"); // Find .notes_div_icon elements within each .xw2csxc
+                            const notesDivIconLength = notesDivIcons.length;
+                            //console.log(notesDivIconLength);
+                            // Check the length of .notes_div_icon elements within this .xw2csxc
+
+                            if (notesDivIconLength === 0) {
                                 // Insert notes_icon2 before this .xw2csxc element
                                 $(".x6prxxf .xw2csxc:eq(0)").before(notes_icon2);
                             }
                         });
                     }
-                    
+
                 }, 1000);
-                  
-                
-              }, 4000);
+
+
+            }, 4000);
         },
         currentProfile: function () {
             console.log("current  profile is called");
@@ -1019,7 +1052,7 @@ let AddLabelCRM;
                                 var currentWindowUrl2 = window.location.pathname;
                                 fb_user = await $this.getClikedFbId();
                             }
-                            
+
                             if (fb_user != '' && fb_user != null) {
                                 fb_user = fb_user.replace(/\//g, '');
                             }
@@ -1059,13 +1092,13 @@ let AddLabelCRM;
                     }
                 });
             }, 1000);
-           
-            setInterval(()=>{
-                if($(".notes_div_icon").length == 0){
-                    $(".x5oxk1f.xym1h4x").append(notes_icon); 
+
+            setInterval(() => {
+                if ($(".notes_div_icon").length == 0) {
+                    $(".x5oxk1f.xym1h4x").append(notes_icon);
                 }
-               
-            },1000)
+
+            }, 1000)
         },
         messengersMembersListSelector: function () {
 
@@ -1085,12 +1118,12 @@ let AddLabelCRM;
             if ($(selector_clist3).length > 0) {
                 selector_latest = selector_clist3
             }
-           // console.log(selector_latest);
+            // console.log(selector_latest);
             return selector_latest;
         },
         taggeduserapi: function () {
             chrome.runtime.sendMessage({ action: "all_users_tag_get" }, (response) => {
-                 //console.log(response);
+                //console.log(response);
                 let all_users_tag_get = response.data;
                 // console.log(all_users_tag_get)
                 userTagsArray = [];
@@ -1129,7 +1162,7 @@ let AddLabelCRM;
                 item.parentNode.classList.add('sort-proceed');
             });
 
-            if(newlistItem.length > 0){
+            if (newlistItem.length > 0) {
                 // $('#overlay').show();
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     const childElement = item.querySelector('[tag-id]');
@@ -1143,7 +1176,7 @@ let AddLabelCRM;
 
                 const parentContainer = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add').parentNode.parentNode;
                 parentContainer.classList.add('sort-filter-class')
-    
+
                 if (parentContainer) {
                     const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"]');
                     const firstChildParent = firstChild.parentNode;
@@ -1176,13 +1209,13 @@ let AddLabelCRM;
                 const bValue = b.textContent.trim().toLowerCase();
                 return aValue.localeCompare(bValue);
             });
-        
+
             for (const li of filteredlists) {
                 if (li.parentElement.classList.contains('sort-proceed')) {
                     li.parentElement.remove();
                 }
             }
-        
+
             const firstChild = document.querySelector('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             if (firstChild != null) {
                 const parentContainer = firstChild.parentNode.parentNode;
@@ -1238,7 +1271,7 @@ let AddLabelCRM;
                 }
             }
         },
-        sortMemberUnread(){
+        sortMemberUnread() {
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             Array.from(lists).forEach((item) => {
                 if (!item.parentNode.classList.contains('sort-proceed')) {
@@ -1252,18 +1285,18 @@ let AddLabelCRM;
                 item.parentNode.classList.add('sort-proceed');
             });
 
-            if(newlistItem.length > 0){
+            if (newlistItem.length > 0) {
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     let rowElement = item.querySelector('div[role="gridcell"]')
                     const classelement = 'xzsf02u';
                     if (rowElement != null) {
-                        let parentHtmlElement =  rowElement.querySelector('div.html-div');
-                        if(parentHtmlElement != null){
+                        let parentHtmlElement = rowElement.querySelector('div.html-div');
+                        if (parentHtmlElement != null) {
                             childElement = parentHtmlElement.querySelector('.html-span span');
                             if (childElement != null && childElement.classList.contains(classelement)) {
                                 // The class 'xzsf02u' is present in childElement's class list
                                 return childElement;
-                            } 
+                            }
                         }
                     }
                     return false;
@@ -1290,7 +1323,7 @@ let AddLabelCRM;
                 }
             }
         },
-        sortMemberLastReply(){
+        sortMemberLastReply() {
             lists = document.querySelectorAll('div[aria-label][role="grid"] div[role="row"].processed-member-to-add');
             Array.from(lists).forEach((item) => {
                 if (!item.parentNode.classList.contains('sort-proceed')) {
@@ -1304,18 +1337,18 @@ let AddLabelCRM;
                 item.parentNode.classList.add('sort-proceed');
             });
 
-            if(newlistItem.length > 0){
+            if (newlistItem.length > 0) {
                 const filteredItems = Array.from(newlistItem).filter(item => {
                     let rowElement = item.querySelector('div[role="gridcell"]')
                     const textelement = 'You:';
                     const classelement = 'xzsf02u';
                     if (rowElement != null) {
-                        let parentHtmlElement =  rowElement.querySelector('div.html-div');
-                        if(parentHtmlElement != null){
+                        let parentHtmlElement = rowElement.querySelector('div.html-div');
+                        if (parentHtmlElement != null) {
                             childElement = parentHtmlElement.querySelector('.html-span span');
-                            if (childElement != null &&  !childElement.innerText.includes(textelement) && !childElement.classList.contains(classelement)) {
+                            if (childElement != null && !childElement.innerText.includes(textelement) && !childElement.classList.contains(classelement)) {
                                 return childElement;
-                            } 
+                            }
                         }
                     }
                     return false;
@@ -1351,46 +1384,46 @@ let AddLabelCRM;
                   <span class="close-by-group">X</span>
                 </div>
               </div>`;
-          
+
             const $filterMessage = $('#filter-message');
             if ($filterMessage.length === 0) {
-              $('.custom-filter').parent().append(spanElement);
+                $('.custom-filter').parent().append(spanElement);
             } else {
-              const $selectedTag = $('.selected-tag');
-              $selectedTag.removeAttr('tag-id');
-              $selectedTag.text(tagText);
+                const $selectedTag = $('.selected-tag');
+                $selectedTag.removeAttr('tag-id');
+                $selectedTag.text(tagText);
             }
-          
+
             const scrollIntervalId = setInterval(() => {
-              $('#overlay').show();
-              const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
-              if (rowToScroll) {
                 $('#overlay').show();
-                const parentContainer = rowToScroll.parentNode.parentNode;
-                const parentContainerClass = parentContainer.classList.value;
-                clearInterval(scrollIntervalId);
-                // let cheight = 600;
-                const maxIterations = 3;
-                let currentIteration = 0;
-                intervalId = setInterval(async () => {
-                  currentIteration++;
-                  $('.' + parentContainerClass).animate(
-                    { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
-                    1000
-                  );
-                  cheight = cheight + 600;
-                  await sortFunction();
-                  if (currentIteration >= maxIterations) {
-                    clearInterval(intervalId);
-                    $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
-                    setTimeout(() => {
-                      $('#overlay').hide();
+                const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+                if (rowToScroll) {
+                    $('#overlay').show();
+                    const parentContainer = rowToScroll.parentNode.parentNode;
+                    const parentContainerClass = parentContainer.classList.value;
+                    clearInterval(scrollIntervalId);
+                    // let cheight = 600;
+                    const maxIterations = 3;
+                    let currentIteration = 0;
+                    intervalId = setInterval(async () => {
+                        currentIteration++;
+                        $('.' + parentContainerClass).animate(
+                            { scrollTop: $('.' + parentContainerClass).scrollTop() + cheight },
+                            1000
+                        );
+                        cheight = cheight + 600;
+                        await sortFunction();
+                        if (currentIteration >= maxIterations) {
+                            clearInterval(intervalId);
+                            $('.' + parentContainerClass).animate({ scrollTop: 0 }, 1000);
+                            setTimeout(() => {
+                                $('#overlay').hide();
+                            }, 2000);
+                        }
                     }, 2000);
-                  }
-                }, 2000);
-              } else {
-                $('#overlay').hide();
-              }
+                } else {
+                    $('#overlay').hide();
+                }
             }, 2000);
             $this.closefilterAfterSelect();
         },
@@ -1399,7 +1432,7 @@ let AddLabelCRM;
         async getClikedFbId() {
             const pathname = window.location.href.toString();
             let cliked_Fb_Id = '';
-            
+
             if (pathname.indexOf('profile.php') > -1) {
                 cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
             } else if (window.location.pathname.indexOf('/friends') > -1) {
@@ -1430,7 +1463,7 @@ let AddLabelCRM;
                         <div class="notes_container_div"></div>
                     </div>
                 </div>`;
-        },          
+        },
         async getNotesData(cliked_Fb_Id) {
             const res = await chrome.runtime.sendMessage({ action: "get_all_notes" });
             console.log(res);
@@ -1439,7 +1472,7 @@ let AddLabelCRM;
         updateNotesContainer(filteredArray) {
             const notesContainerDiv = $(".notes_container_div");
             notesContainerDiv.html('');
-        
+
             filteredArray.forEach(item => {
                 const date_time = new Date(item.updatedAt);
                 const date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()}`;
@@ -1459,7 +1492,7 @@ let AddLabelCRM;
                             <span class="delete-icon">🗑️</span>
                         </div>
                     </div>`;
-        
+
                 if ($(".editable_input").attr("note_id") !== item.id) {
                     notesContainerDiv.append(append_notes);
                 }
@@ -1483,9 +1516,9 @@ let AddLabelCRM;
             }
             return fbName;
         },
-        findNameFromHeading(){
+        findNameFromHeading() {
             fbName = $(this).parent().find('h1 span:last').text().trim();
-            if(fbName === 'Verified account'){
+            if (fbName === 'Verified account') {
                 fbName = $(this).parent().find('h1 span:eq(-3)').text().trim();
                 fbName = fbName.split('Verified')[0];
             }

@@ -9,7 +9,11 @@ let total_message_limit = 300000; // read by api or by storage of specific user 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
 let stoprequest = false;
-
+let please_Wait_overlay = `<div id="overlay_pleaseWait" class="overlay_pleaseWait">
+                                    <div class="overlay-content">
+                                            <p>Please wait In Progress...</p>
+                                    </div>
+                            </div>`;
 console.log('here contentscript js');
 
 jQuery.fn.extend({
@@ -54,6 +58,16 @@ jQuery(document).on('keyup', function (evt) {
         $('.hide-by-escape').hide();
     }
 });
+$(document).ready(function () {
+    // Get all elements with the specified classes
+
+    const elements = $('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6');
+
+    // Iterate over the elements and set padding-top to 0
+    elements.css('padding-top', '0');
+});
+
+$("body").append(please_Wait_overlay);
 // -------------------------------------COMMENT AI CODE STARTS------------------------
 // appendHTML = ` <div id="quentintou">
 //        <div class="loader" style="display:none"></div>
@@ -66,7 +80,7 @@ jQuery(document).on('keyup', function (evt) {
 // <li class="language">Language</li>
 // </ul>
 // <div  class="like_option" style="display:flex">
-   
+
 //     <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
 //     <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
 // </div>
@@ -117,6 +131,7 @@ jQuery(document).on('keyup', function (evt) {
 
 // <div class="language_option">
 //     <ul>
+//         <li>Auto detect</li>
 //         <li>English</li>
 //         <li>French</li>
 //     </ul>
@@ -265,11 +280,11 @@ jQuery(document).on('keyup', function (evt) {
 //         })
 //     });
 
-   
-    
+
+
 //     $(document).on("click", ".language_option ul li", function (e) {
 //         let value = "";
-//         // $(".response_language").remove();
+//         $(".response_language").remove();
 //         if ($(this).hasClass("option_active")) {
 //             $('.language_option ul li').removeClass('option_active');
 //         } else {
@@ -315,6 +330,12 @@ jQuery(document).on('keyup', function (evt) {
 //             var response3 = `.size_tone span:contains(${checktext})`;
 //             $(response3).parent().remove();
 //         }
+//         if (classfind == 'language_option') {
+//             var check4 = `.language_option ul li:contains(${checktext})`;
+//             $(check4).removeClass('option_active')
+//             var response4 = `.response_language span:contains(${checktext})`;
+//             $(response4).parent().remove();
+//         }
 //         storageupdate($(this));
 //     });
 
@@ -346,6 +367,10 @@ jQuery(document).on('keyup', function (evt) {
 //             $('.size_option ul li').removeClass('option_active')
 //             $('.size').removeClass('option_active')
 //         }
+//         if (classfind == 'response_language') {
+//             $('.language_option ul li').removeClass('option_active')
+//             $('.language').removeClass('option_active')
+//         }
 //         $(this).parent().remove();
 //     });
 //     storageupdate($(this));
@@ -363,8 +388,8 @@ jQuery(document).on('keyup', function (evt) {
 //     $('.response').hide();
 //     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
 //     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
-//     var writing = $(this).parents('#quentintou').find('.response .response_writing span').text();
-//     var language = $(this).parents('#quentintou').find('.response .response_language span');
+//     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
+//     var language = $(this).parents('#quentintou').find('.response .response_language span').text();
 //     var writing_array = [];
 //     if ($(writing).length > 0) {
 //         $(writing).each(function (i) {
@@ -439,7 +464,7 @@ jQuery(document).on('keyup', function (evt) {
 //     console.log("hello", opinion)
 //     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
 //     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
-//     var language = $(this).parents('#quentintou').find('.response .response_language span');
+//     var language = $(this).parents('#quentintou').find('.response .response_language span').text();
 //     var writing_array = [];
 //     if ($(writing).length > 0) {
 //         $(writing).each(function (i) {
@@ -456,7 +481,7 @@ jQuery(document).on('keyup', function (evt) {
 //     if ($(tone).length > 0) {
 //         $(tone).each(function (i) {
 //             if ($.inArray($(this).text(), tone_Array) != -1) {
-//                 console.log("hello")
+//                 console.log("hello");
 //             }
 //             else {
 //                 tone_Array.push($(this).text())
@@ -494,21 +519,23 @@ jQuery(document).on('keyup', function (evt) {
 //         var facebook_post_description = "Give me random text";
 //     }
 //     chrome.storage.sync.get(["language", "job", "sector", "temperature"], function (result) {
+//         console.log(result);
 //         var temp = {}
-//         if (typeof result.language != "undefined" && result.language != "") {
-//             temp.language = result.language;
-//             temp.opinion = opinion;
-//             temp.size = size;
-//             temp.writing = writing_array;
-//             temp.tone = tone_Array;
+//         // if (typeof result.language != "undefined" && result.language != "") {
+//         //     temp.language = result.language;
+//         //     temp.opinion = opinion;
+//         //     temp.size = size;
+//         //     temp.writing = writing_array;
+//         //     temp.tone = tone_Array;
 
-//         }
+//         // }
 //         if (typeof result.job != "undefined" && result.job != "") {
 //             temp.job = result.job;
 //             temp.opinion = opinion;
 //             temp.size = size;
 //             temp.writing = writing_array;
 //             temp.tone = tone_Array;
+//             temp.laguage = language;
 
 //         }
 //         if (typeof result.sector != "undefined" && result.sector != "") {
@@ -517,6 +544,7 @@ jQuery(document).on('keyup', function (evt) {
 //             temp.size = size;
 //             temp.writing = writing_array;
 //             temp.tone = tone_Array;
+//             temp.language = language;
 
 //         }
 //         if (typeof result.temperature != "undefined" && result.temperature != "") {
@@ -525,6 +553,7 @@ jQuery(document).on('keyup', function (evt) {
 //             temp.size = size;
 //             temp.writing = writing_array;
 //             temp.tone = tone_Array;
+//             temp.language = language;
 
 //         }
 //         else {
@@ -532,6 +561,7 @@ jQuery(document).on('keyup', function (evt) {
 //             temp.opinion = opinion;
 //             temp.writing = writing_array;
 //             temp.tone = tone_Array;
+//             temp.language = language;
 //         }
 //         console.log("new temp", temp)
 //         chrome.storage.sync.set({ "responsedata": temp });
@@ -543,14 +573,14 @@ jQuery(document).on('keyup', function (evt) {
 //             FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description);
 //         }
 //     })
-
 // });
 
 
 // function checkactive() {
 //     chrome.storage.sync.get(["responsedata"], function (result) {
+//         console.log(result);
 //         if (typeof result.responsedata != "undefined" && result.responsedata != "") {
-//             var opinioncheck = $('.response_opinion').remove();
+//             // var opinioncheck = $('.response_opinion').remove();
 //             $(".response_opinion").remove();
 //             $(".response_writing").remove();
 //             $(".response_tone").remove();
@@ -593,6 +623,15 @@ jQuery(document).on('keyup', function (evt) {
 //                     $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
 //                 }
 //             }
+
+//             if (typeof result.responsedata.language != "undefined" && result.responsedata.language != "") {
+//                 var check = `.language_option ul li:contains(${result.responsedata.language})`;
+//                 // console.log("getcheck",check)
+//                 if (check.length > 0) {
+//                     $(check).addClass("option_active")
+//                     $('<div class="response_language"><span>' + result.responsedata.language + '</span></div>').insertBefore(".inner5")
+//                 }
+//             }
 //         }
 //     });
 // }
@@ -612,7 +651,8 @@ jQuery(document).on('keyup', function (evt) {
 
 
 
-// // ---------------------------------COMMENTAI CODE STOPS--------------------------------
+
+// ----------------------------------COMMENTAI CODE STOPS--------------------------------
 
 document.addEventListener("click", function (event) {
     var modal = document.getElementById("overlay-assign-labels");
@@ -626,7 +666,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.subject === "addTargetProcess") {
         //console.log('result', message);
         chrome.storage.local.get(
-            ["nvFriendReqInputs", "nvAddFriendProcess" , "no_of_send_message"],
+            ["nvFriendReqInputs", "nvAddFriendProcess", "no_of_send_message"],
             function (result) {
                 //console.log(result);
                 if (
@@ -640,9 +680,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                         result.nvAddFriendProcess != "" &&
                         result.nvAddFriendProcess == "process"
                     ) {
-                       // console.log(add_friend_settings);
+                        // console.log(add_friend_settings);
                         extTabId = message.extTabId;
-                        AddTargetFriendNV.startAddingFriend(add_friend_settings,no_of_send_message, extTabId);
+                        AddTargetFriendNV.startAddingFriend(add_friend_settings, no_of_send_message, extTabId);
                         sendResponse({ status: "ok" });
                     }
                 }
@@ -694,9 +734,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             );
             input.innerHTML = birthdayMessage;
             input.dispatchEvent(evt);
-            $(selector).after(
-                '<span data-text="true">' + birthdayMessage + "</span>"
-            );
+            $(selector).after('<span data-text="true">' + birthdayMessage + "</span>");
         }, 5000);
         setTimeout(() => {
             if ($('div[aria-label="Post"][role="button"]').length > 0) {
@@ -715,7 +753,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         let extBirthdayTabID = message.birthday_tabId;
         let class_today_heading = 'today_birthday_heading';
         let class_today_div = 'today_birthday_div';
-        appendHTMLOnBirthday(extBirthdayTabID);
+        //  appendHTMLOnBirthday(extBirthdayTabID);
+        showOverlay();
+        showCustomToastr('info', 'Novalya’s Magic is in progress 0 of 0', 1000, true, true, true);
         let cleartimeout1 = setInterval(() => {
             $(".xyamay9").find('h2:contains("Today")').addClass(class_today_heading);
             selector_birthday_fb = $("." + class_today_heading).parents(".xyamay9").addClass(class_today_div);
@@ -731,13 +771,15 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 clearInterval(cleartimeout1);
                 secondChild.children().each(function (index, item) {
                     if (typeof $(this).find("a").attr("href") != "undefined") {
+
                         setTimeout(() => {
                             var member_url = $(this)
                                 .find("a")
                                 .attr("href")
                                 .split("facebook.com/");
                             $("#loop1").text(index + 1);
-                            loopValue = parseInt($("#loop1").text(), 10);
+                            $("#toastrMessage").text(`Novalya’s Magic is in progress ${index + 1} of ${secondChild.children().length} `);
+                            loopValue = index + 1;
                             member_url_splitid = member_url[1];
                             if (member_url_splitid.indexOf("profile.php") > -1) {
                                 facebook_member_id = member_url_splitid.split("?id=")[1];
@@ -780,6 +822,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 },
                                     function (res15) {
                                         console.log(res15);
+                                        setTimeout(() => {
+                                            showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                        }, 2000);
                                     }
                                 );
                             } else {
@@ -790,11 +835,20 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 },
                                     function (res15) {
                                         // body
+                                        setTimeout(() => {
+                                            showCustomToastr('success', 'Feed Posted Successfully', 5000, false);
+                                        }, 2000);
                                     }
                                 );
                             }
                             if (loopValue + 1 > secondChild.children().length) {
                                 console.log("stooped");
+                                $("#toastrMessage").text(`'Congratulations' Goal Achieved`);
+                                setTimeout(() => {
+                                    chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                                        // body
+                                    });
+                                }, 5000);
                                 $("#loop1").text(loopValue);
                                 $("#stop_run").text("STOPPED");
                                 $(".loading").remove();
@@ -817,7 +871,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     else if (message.subject === "scrapYesterdayBirthday") {
         console.log("in the yesterday");
         let extBirthdayTabID = message.birthday_tabId;
-        appendHTMLOnBirthday(extBirthdayTabID);
+        showOverlay();
+        showCustomToastr('info', 'Novalya’s Magic is in progress 0 of 0', 1000, true, true, true);
         let cleartimeout2 = setInterval(() => {
             $(".xyamay9").find('h2:contains("Recent")').addClass("yesterday_birthday_heading");
             selector_birthday_fb = $(".yesterday_birthday_heading")
@@ -825,6 +880,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 .addClass("yesterday_birthday_div");
             var birtday_response = message.responsedata;
             var delay = birtday_response.data.time_interval * 60000;
+            console.log(delay);
             var birthday_wish_type = birtday_response.data.type;
             let proccessed_id = [];
             var secondChild = $(".yesterday_birthday_div")
@@ -837,6 +893,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
             if (secondChild.length > 0) {
                 clearInterval(cleartimeout2);
+
                 secondChild.children().each(function (index, item) {
                     var scrapedDate = $(this).find(".x78zum5 .x1qughib span")
                         .eq(1)
@@ -846,11 +903,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     var yesterdayMonth = yesterday.toLocaleString("default", { month: "long" });
                     var yesterdayDate = yesterday.getDate();
 
-                    // Get the month and date of the scraped date
                     var scrapedDateMonth = new Date(scrapedDate).toLocaleString("default", { month: "long" });
                     var scrapedDateDate = new Date(scrapedDate).getDate();
                     if (typeof $(this).find("a").attr("href") != "undefined" && yesterdayMonth === scrapedDateMonth && yesterdayDate === scrapedDateDate) {
-                        //setTimeout(() => {
                         var member_url = $(this)
                             .find("a")
                             .attr("href")
@@ -871,8 +926,25 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 });
                 $(".total1").text(facebook_member_ids.length);
                 let errorShown = false;
+                // showCustomToastr('info', 'Sending Birthday Wish', currentDelay, true);
                 facebook_member_ids.forEach((item, index) => {
+                    console.log(index);
+
+                    // var currentDelay = (index === 0) ? 30000 : delay * index;
+                    // console.log(currentDelay);
+
                     setTimeout(() => {
+
+                        var text = $("#toastrMessage").text();
+
+                        var match = text.match(/\d+/);
+                        var number = parseInt(match[0], 10);
+                        console.log("Extracted number: " + number);
+
+                        // Adjust the delay based on the index
+
+
+                        $("#toastrMessage").text(`Novalya’s Magic is in progress ${number + 1} of ${facebook_member_ids.length}`);
                         loopValue = parseInt($("#loop1").text(), 10);
                         $("#loop1").text(loopValue + 1);
                         loopValue = parseInt($("#loop1").text(), 10);
@@ -889,7 +961,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 Math.random() * birthdayMessage_varient_array.length
                             );
                             birthdayMessage.push(birthdayMessage_varient_array[randomIndex2]);
-
                         });
 
                         birthdayMessage = birthdayMessage.join('');
@@ -911,6 +982,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             },
                                 function (res15) {
                                     console.log(res15);
+                                    setTimeout(() => {
+                                        showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                    }, 5000);
                                 }
                             );
                         } else {
@@ -920,13 +994,21 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                                 messagtext: birthdayMessage,
                             },
                                 function (res15) {
-                                    // body
+                                    setTimeout(() => {
+                                        showCustomToastr('success', 'Feed posted Successfully', 5000, false);
+                                    }, 5000);
                                 }
                             );
                         }
 
                         if (index === facebook_member_ids.length - 1) {
                             $("#loop1").text(loopValue);
+                            $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                            setTimeout(() => {
+                                chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                                    // body
+                                });
+                            }, 5000);
                             $("#stop_run").text("STOPPED");
                             $(".loading").remove();
                             $("h3.title_lg").text("Completed");
@@ -943,12 +1025,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 }, 500);
             }
         }, 8000);
+
         return true;
+
     }
     else if (message.subject === "scrap2dayagoBirthday") {
         console.log("in the 2 days ago");
         let extBirthdayTabID = message.birthday_tabId;
-        appendHTMLOnBirthday(extBirthdayTabID);
+        //appendHTMLOnBirthday(extBirthdayTabID);
+        showOverlay();
+        showCustomToastr('info', 'Novalya’s Magic is in progress 0 of 0', 1000, true, true, true);
         let cleartimeout3 = setInterval(() => {
             $(".xyamay9")
                 .find('h2:contains("Recent")')
@@ -1009,6 +1095,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 let errorShown = false;
                 facebook_member_ids.forEach((item, index) => {
                     setTimeout(() => {
+                        var text = $("#toastrMessage").text();
+
+                        // Use a regular expression to extract the number
+                        var match = text.match(/\d+/);
+                        var number = parseInt(match[0], 10);
+                        console.log("Extracted number: " + number);
+
+                        $("#toastrMessage").text(`Novalya’s Magic is in progress ${number + 1} of ${facebook_member_ids.length}`);
                         loopValue = parseInt($("#loop1").text(), 10);
                         $("#loop1").text(loopValue + 1);
                         loopValue = parseInt($("#loop1").text(), 10);
@@ -1048,8 +1142,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             },
                                 function (res15) {
                                     // body
+                                    setTimeout(() => {
+                                        showCustomToastr('success', 'Message Sent Successfully', 5000, false);
+                                    }, 5000);
                                 }
-                            );   
+                            );
                         } else {
                             chrome.runtime.sendMessage({
                                 action: "postFeedBirthday",
@@ -1058,14 +1155,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             },
                                 function (res15) {
                                     // body
+                                    setTimeout(() => {
+                                        showCustomToastr('success', 'Feed posted Successfully', 5000, false);
+                                    }, 5000);
                                 }
                             );
                         }
                         if (index === facebook_member_ids.length - 1) {
                             $("#loop1").text(loopValue);
+                            $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+                            setTimeout(() => {
+                                chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
+                                    // body
+                                });
+                            }, 5000);
                             $("#stop_run").text("STOPPED");
                             $(".loading").remove();
-                            $("h3.title_lg").text("Completed");   
+                            $("h3.title_lg").text("Completed");
                         }
                     }, delay * index);
                 })
@@ -1082,7 +1188,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
     else if (message.subject === "openTheBirthdays") {
         console.log("open the event message recieved");
-
+        showOverlay();
         setTimeout(() => {
             if ($('span:contains(Birthdays)').length > 0) {
                 $('span:contains(Birthdays)').mclick();
@@ -1193,6 +1299,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             location.reload();
         }, 1000);
 
+    }
+    if (message.subject === "ShowOverlay") {
+        console.log("overlay showed");
+        showOverlay();
     }
 });
 
@@ -1331,7 +1441,7 @@ $(document).ready(function () {
                             randomDelay = 60000;
                         }
 
-                        selected_group_members.map((item, i)=>{
+                        selected_group_members.map((item, i) => {
                             setTimeout(() => {
                                 if (i < total_memberss && parseInt(total_message_limit) > parseInt(no_of_send_message)) {
                                     no_of_send_message++;
@@ -1351,11 +1461,11 @@ $(document).ready(function () {
                                     crmMessageText = crmMessage.replaceAll("[first name]", member_names[0]);
                                     crmMessageText = crmMessageText.replaceAll("[last name]", member_names[1]);
                                     chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
-                                        if(res18.status === "ok"){
+                                        if (res18.status === "ok") {
                                             raw = JSON.stringify({
-                                                'no_of_send_message':1,
+                                                'no_of_send_message': 1,
                                             });
-                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw});
+                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw });
                                         }
                                         $('#processed_member').text(i + 1);
                                         if (i === selected_group_members.length - 1) {
@@ -1371,10 +1481,10 @@ $(document).ready(function () {
                                         $("#stop_crm").text("Close popup");
                                         $(".loading").remove();
                                         $("h3.title_lg").text("Message limit over");
-                                        errorShown = true; 
+                                        errorShown = true;
                                     }
                                 }
-                            }, i * randomDelay);    
+                            }, i * randomDelay);
                         })
                     });
                 }
@@ -1523,7 +1633,7 @@ $(document).ready(function () {
             }
 
             // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
-           // console.log(requestSettings1.accept_status);
+            // console.log(requestSettings1.accept_status);
             if (requestSettings1.accept_status == 1) {
                 $(document).on(
                     "click",
@@ -1771,5 +1881,14 @@ function appendHTMLOnBirthday(extTabIdOnBirthday) {
     </section>`;
     $("body:not('.process-model-added')").prepend(html_processing_model);
     $("body").addClass("process-model-added");
+}
+// Function to show the overlay
+function showOverlay() {
+    document.getElementById('overlay_pleaseWait').style.display = 'block';
+}
+
+// Function to hide the overlay
+function hideOverlay() {
+    document.getElementById('overlay_pleaseWait').style.display = 'none';
 }
 

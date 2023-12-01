@@ -63,17 +63,18 @@ let AddTargetFriendNV;
 
       const intervalValue = settings[0].interval;
       if (intervalValue == "30-60") {
-        randomDelay = Math.floor(Math.random() * 31) * 1000 + 30000;;
+        randomDelay = Math.floor(Math.random() * 31) * 1000 + 30000;
       } else if (intervalValue == "1-3") {
-        randomDelay = Math.floor(Math.random() * 121) * 1000 + 60000;;
+        randomDelay = Math.floor(Math.random() * 121) * 1000 + 60000;
       } else if (intervalValue == "3-5") {
-        randomDelay = Math.floor(Math.random() * 121) * 1000 + 180000;;
+        randomDelay = Math.floor(Math.random() * 121) * 1000 + 180000;
       } else if (intervalValue == "5-10") {
-        randomDelay = Math.floor(Math.random() * 301) * 1000 + 300000;;
+        randomDelay = Math.floor(Math.random() * 301) * 1000 + 300000;
       } else {
         randomDelay = 60000;
       }
 
+      
       console.log(randomDelay);
 
       const numberOfReqValue = settings[0].norequest;
