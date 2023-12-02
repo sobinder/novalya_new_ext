@@ -935,7 +935,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
                     // var currentDelay = (index === 0) ? 30000 : delay * index;
                     // console.log(currentDelay);
-
+                    var currentDelay = delay * (index + 1);
+                    setTimeout(() => {
+                        showCustomToastr('info', 'Sending Birthday Wish', delay, true);
+                    }, delay * index);
                     setTimeout(() => {
 
                         var text = $("#toastrMessage").text();
@@ -1016,7 +1019,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             $(".loading").remove();
                             $("h3.title_lg").text("Completed");
                         }
-                    }, delay * index);
+                    }, currentDelay);
                 })
 
             }
@@ -1097,6 +1100,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 $(".total1").text(facebook_member_ids.length);
                 let errorShown = false;
                 facebook_member_ids.forEach((item, index) => {
+                    var currentDelay = delay * (index + 1);
+                    setTimeout(() => {
+                        showCustomToastr('info', 'Sending Birthday Wish', delay, true);
+                    }, delay * index);
                     setTimeout(() => {
                         var text = $("#toastrMessage").text();
 
@@ -1176,7 +1183,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             $(".loading").remove();
                             $("h3.title_lg").text("Completed");
                         }
-                    }, delay * index);
+                    }, currentDelay);
                 })
             }
             else {
