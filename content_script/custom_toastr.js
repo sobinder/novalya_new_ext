@@ -5,7 +5,7 @@ function showCustomToastr(type, message, timeout, showCountdown, fixToastr, show
   const customToastr = document.createElement('div');
   customToastr.id = 'customToastr' + customToastrCount; // Append a unique ID
   customToastr.className = 'custom-toastr';
-
+  customToastr.style.zIndex = 99999;
   // Increment the custom toastr count
   customToastrCount++;
 
