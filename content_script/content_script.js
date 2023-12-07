@@ -662,7 +662,7 @@ document.addEventListener("click", function (event) {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    console.log(message);
+   // console.log(message);
     if (message.subject === "addTargetProcess") {
         //console.log('result', message);
         chrome.storage.local.get(
@@ -1249,7 +1249,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     if (message.type == "tag_update_done" && message.from == "background") {
         let response = message.result;
-        console.log(message);
+        $('.bulk-tag-checkbox').prop('checked', false);
         if (response != undefined && response != '') {
             var parsedData = response;
             // var message = response.message;
@@ -1592,7 +1592,6 @@ $(document).ready(function () {
                                 }
                             })
                         }, i * randomDelay)
-
                     }
                 })
             });

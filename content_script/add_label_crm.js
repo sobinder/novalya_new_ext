@@ -40,10 +40,10 @@ let AddLabelCRM;
 
             //     // Iterate over the elements and set padding-top to 0
             //     elements3.css('padding-top', '0px');
-                  
-                
+
+
             //     }, 400);
-                
+
             // });
 
             $("body").append(`
@@ -56,6 +56,57 @@ let AddLabelCRM;
 
             $(document).on('click', 'ul.model-labels-list input[type="checkbox"]', function () {
                 $('ul.model-labels-list input[type="checkbox"]').not(this).prop('checked', false);
+            });
+
+            $(document).on('click', '#show-filter', function () {
+                $('.filter_text').toggle();
+            });
+
+            $(document).on('click', '#show-tag', async function (event) {
+                $('.filter_text').hide();
+                document.getElementById("myDropdown").classList.remove("show");
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (!$('.bulk-tag-checkbox').is(':checked')) {
+                    toastr["error"]("Please select member");
+                    return false;
+                }
+
+                bulkMembers = [];
+
+                $('.bulk-tag-checkbox:checked').each(async function () {
+                    const $processedMember = $(this).parent('.processed-member-to-add');
+                    let data = {
+                        fb_user_id: $processedMember.attr('fb_user_id'),
+                        fbName: $(this).parent().parent().find('img').attr('alt'),
+                        profilePic: $(this).parent().find('img').attr('src') || ''
+                    };
+                    bulkMembers.push(data);
+                });
+                var options = `
+                    <div class="row novalya-row modal-heading">
+                        <div class="label-heading">Bulk Tagging</div>
+                        <div class="close-model">X</div>
+                    </div>
+                    <div class="row novalya-row"> 
+                        <div class="labels-list-container">
+                            <ul class="model-labels-list novalya-scroll">`;
+
+                for (i = 0; i < tags_fetch_data.length; i++) {
+                    var style = '';
+                    style = `style = "background:` + tags_fetch_data[i].custom_color + ` !important"`;
+                    options += `
+                                <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color assign-bulk-tag' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
+                    options += `><div class='label-text-name'>` + tags_fetch_data[i].name + `</div>  
+                                </li>`;
+                }
+                options += `
+                        </ul>
+                        <button type="button" class="novalya-btn novalya-btn-primary  remove-bulk-tag" >Remove</button>
+                    </div>`;
+                $('#content-assign-labels').html(options);
+                $('#overlay-assign-labels').show();
             });
 
             selector_members_list = $this.messengersMembersListSelector();
@@ -129,16 +180,81 @@ let AddLabelCRM;
                 });
             });
 
-            $(document).on('click', '.tags-assigning-update', function () {
+            $(document).on('click', '.remove-assigned-tag', function () {
                 // console.log("click selectbox");
                 selected_tags_ids = [];
                 selected_tags_ids2 = [];
+                var fbName = $(this).attr("fbname");
+                var profilePic = $(this).attr("profilepic");
+                var fb_user_id = $(this).attr("fb_user_id");
                 $('.multi-label-checkbox:checked').each(function () {
-                    // Get the value of the checked checkbox and add it to the array
-                    selectedTagId = $(this).parents('li').attr('tag-id');
-                    selected_tags_ids.push(selectedTagId);
-                    // console.log(selected_tags_ids, selectedTagId);
+                    $(this).prop('checked', false);
                 });
+                var selectedOption2 = $('#mySelect').val();
+                const message = {
+                    action: "tagsAssiging",
+                    fbName: fbName,
+                    profilePic: profilePic,
+                    fb_user_id: fb_user_id,
+                    selected_tags_ids: selected_tags_ids2,
+                    is_primary: selectedOption2
+                };
+
+                chrome.runtime.sendMessage(message, (response) => {
+                    setTimeout(() => {
+                        const selectedTag = $('.selected-tag').attr('tag-id');
+                        if (selectedTag != '' && selectedTag != undefined) {
+                            const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
+                            if (rowToScroll) {
+                                $('#overlay').show();
+
+                                $('.x1n2onr6').animate(
+                                    { scrollTop: $('.x1n2onr6').scrollTop() + cheight },
+                                    1000
+                                );
+                                setTimeout(() => {
+                                    $('.x1n2onr6').animate({ scrollTop: 0 }, 1000);
+                                    $('#overlay').hide();
+                                }, 1500);
+                            }
+                        }
+                    }, 1000);
+                });
+            });
+
+            $(document).on('click', '.assign-bulk-tag', function () {
+                let selected_tags_id = $(this).attr('tag-id');
+                const message = {
+                    action: "bulkTagging",
+                    bulk_members: bulkMembers,
+                    selected_tags_ids: selected_tags_id,
+                    type:'bulkTagging',
+                };
+                chrome.runtime.sendMessage(message, (response) => {
+                    console.log('sent message');
+                });
+            });
+
+            $(document).on('click', '.remove-bulk-tag', function () {
+                const message = {
+                    action: "bulkTagging",
+                    bulk_members: bulkMembers,
+                    selected_tags_ids: null,
+                    type:'bulkTaggingnull',
+
+                };
+                chrome.runtime.sendMessage(message, (response) => {
+                    console.log('sent message');
+                })
+            });
+
+            $(document).on('click', '.tags-assigning-update', function () {
+                console.log("click selectbox");
+                selected_tags_ids = [];
+                selected_tags_ids2 = [];
+                selectedTagId = $(this).attr('tag-id');
+                selected_tags_ids.push(selectedTagId);
+                // console.log(selected_tags_ids, selectedTagId);
 
                 var selectedOption = $('#mySelect').val();
                 // console.log(selected_tags_ids);
@@ -161,10 +277,9 @@ let AddLabelCRM;
                         return false;
                     }
 
-                    var fbName = $(this).attr("fbname");
-                    var profilePic = $(this).attr("profilepic");
-                    var fb_user_id = $(this).attr("fb_user_id");
-                    console.log(fbName ,fb_user_id,profilePic);
+                    var fbName = $('.remove-assigned-tag').attr("fbname");
+                    var profilePic = $('.remove-assigned-tag').attr("profilepic");
+                    var fb_user_id = $('.remove-assigned-tag').attr("fb_user_id");
 
                     $('.multi-label-checkbox:checked').each(function () {
                         // Get the value of the checked checkbox and add it to the array
@@ -212,10 +327,7 @@ let AddLabelCRM;
                         // var currentLocationUrl = window.location.origin;
                         // chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
                     });
-
-
                 }
-
             });
 
             $(document).on('click', '.message_div_icon', async function () {
@@ -472,13 +584,6 @@ let AddLabelCRM;
                 if (fb_user_id == undefined) {
                     fb_user_id = await $this.getClikedFbId();
                 }
-
-                if (fb_user_id == "" || fb_user_id == undefined) {
-                    if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
-                        fb_user_id = $(".x1u998qt").find('a').attr('href').split('/')[1];
-                        console.log(fb_user_id);
-                    }
-                }
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
                         var tag_data_individual = JSON.parse(response);
@@ -503,6 +608,8 @@ let AddLabelCRM;
                                     // console.log(checkboxValue);
                                     // Check if the checkbox value exists in the valuesArray
                                     if (arrayOfIds != undefined && arrayOfIds.includes(checkboxValue)) {
+                                        //console.log('checkbox');
+                                        // $(this).hide();
                                         $(this).prop('checked', true); // Check the checkbox
                                     }
                                 });
@@ -538,14 +645,14 @@ let AddLabelCRM;
                     var style = '';
                     style = `style = "background:` + tags_fetch_data[i].custom_color + ` !important"`;
                     options += `
-                                <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
+                                <li ` + style + `color-code= '` + tags_fetch_data[i].custom_color + `' class='label-text-color tags-assigning-update' for="myCheckbox${i}"  tag-id='` + tags_fetch_data[i].id + `'`;
                     options += `><input class = 'multi-label-checkbox' value = ` + tags_fetch_data[i].id + ` type='checkbox' id ="myCheckbox${i}">
                                     <div class='label-text-name'>` + tags_fetch_data[i].name + `</div>  
                                 </li>`;
                 }
                 options += `
                         </ul>
-                        <button fbName = "${fbName}" profilePic = "${profilePic}" fb_user_id = "${fb_user_id}"  type="button" class="novalya-btn novalya-btn-primary tags-assigning-update" >Update Tag</button>
+                        <button fbName = "${fbName}" profilePic = "${profilePic}" fb_user_id = "${fb_user_id}"  type="button" class="novalya-btn novalya-btn-primary  remove-assigned-tag" >Remove</button>
                     </div>`;
                 $('#content-assign-labels').html(options);
                 $('#overlay-assign-labels').show();
@@ -565,10 +672,14 @@ let AddLabelCRM;
                     if (h1Element.length > 0 && tags_fetch_data.length > 0) {
                         clearInterval(appendSortBtn);
                         let url = chrome.runtime.getURL("assets/image/filter.png");
-                        let ddownhtml = `<div class="dropdown custom-filter">
-                                            <button class="dropbtn custom-drop"><svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6C4 5.44772 4.44772 5 5 5H19C19.5523 5 20 5.44772 20 6C20 6.55228 19.5523 7 19 7H5C4.44772 7 4 6.55228 4 6Z" fill="currentColor"/><path d="M4 18C4 17.4477 4.44772 17 5 17H19C19.5523 17 20 17.4477 20 18C20 18.5523 19.5523 19 19 19H5C4.44772 19 4 18.5523 4 18Z" fill="currentColor"/><path d="M5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H5Z" fill="currentColor"/></svg> Menu</button>
-                                            <ul id="myDropdown" class="dropdown-content">
-                                                <li class="filter_heading"><svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M29.815,6.168C29.484,5.448,28.783,5,27.986,5H4.014c-0.797,0-1.498,0.448-1.83,1.168  c-0.329,0.714-0.215,1.53,0.297,2.128c0,0,0.001,0.001,0.001,0.001L12,19.371V28c0,0.369,0.203,0.708,0.528,0.882  C12.676,28.961,12.838,29,13,29c0.194,0,0.387-0.057,0.555-0.168l6-4C19.833,24.646,20,24.334,20,24v-4.629l9.519-11.074  C30.031,7.698,30.145,6.882,29.815,6.168z" id="XMLID_276_"/></svg>  Filter </li>
+                        let ddownhtml = `<div class="dropdown custom-filter" id="filter-msg-menu">
+                                            <button class="dropbtn custom-drop filter-msg"><svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6C4 5.44772 4.44772 5 5 5H19C19.5523 5 20 5.44772 20 6C20 6.55228 19.5523 7 19 7H5C4.44772 7 4 6.55228 4 6Z" fill="currentColor"/><path d="M4 18C4 17.4477 4.44772 17 5 17H19C19.5523 17 20 17.4477 20 18C20 18.5523 19.5523 19 19 19H5C4.44772 19 4 18.5523 4 18Z" fill="currentColor"/><path d="M5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H5Z" fill="currentColor"/></svg> Menu</button>
+
+                                            <ul id="myDropdown" class="dropdown-content filter-msg">
+                                                <li class="filter_heading filter-msg" id="show-tag"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                                                <path d="M15.045.007 9.31 0a1.965 1.965 0 0 0-1.4.585L.58 7.979a2 2 0 0 0 0 2.805l6.573 6.631a1.956 1.956 0 0 0 1.4.585 1.965 1.965 0 0 0 1.4-.585l7.409-7.477A2 2 0 0 0 18 8.479v-5.5A2.972 2.972 0 0 0 15.045.007Zm-2.452 6.438a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
+                                                </svg>  Tag </li>
+                                                <li class="filter_heading filter-msg" id="show-filter"><svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M29.815,6.168C29.484,5.448,28.783,5,27.986,5H4.014c-0.797,0-1.498,0.448-1.83,1.168  c-0.329,0.714-0.215,1.53,0.297,2.128c0,0,0.001,0.001,0.001,0.001L12,19.371V28c0,0.369,0.203,0.708,0.528,0.882  C12.676,28.961,12.838,29,13,29c0.194,0,0.387-0.057,0.555-0.168l6-4C19.833,24.646,20,24.334,20,24v-4.629l9.519-11.074  C30.031,7.698,30.145,6.882,29.815,6.168z" id="XMLID_276_"/></svg>  Filter </li>
                                                 <li class="filter_text">
                                                 <a id="sort-by-group">By group</a>
                                                     <ul id="submenu" class="custom-scroll">`
@@ -595,6 +706,13 @@ let AddLabelCRM;
                     }
                 }, 2000);
             };
+
+            // filter  functions
+            $(document).click(function (event) {
+                if (!$(event.target).is('.dropbtn') && !$(event.target).is('.filter_heading ') && !$(event.target).is('#sort-by-group')) {
+                    document.getElementById("myDropdown").classList.remove("show");
+                }
+            });
 
             $(document).on("click", '.dropbtn', function () {
                 document.getElementById("myDropdown").classList.toggle("show");
@@ -745,11 +863,17 @@ let AddLabelCRM;
                         if ($(selector_members_list).length > 0 && window.location.origin.indexOf('messenger') > -1) {
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon" >+</span>';
+                            let checkBox = `<input type="checkbox" class="bulk-tag-checkbox" >`;
 
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
+                                if ($(this).find('.bulk-tag-checkbox').length == 0) {
+                                    $(this).find('div a').addClass('checkbox-alignment')
+                                    $(this).prepend(checkBox);
+                                }
+
                                 if ($('#overlay').length == 0) {
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
                                     $('div[aria-label="Chats"]').prepend(loader);
@@ -776,6 +900,8 @@ let AddLabelCRM;
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
+
+
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
@@ -923,7 +1049,7 @@ let AddLabelCRM;
                             currentWindowUrl = window.location.origin;
                             if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
                                 fb_user = $(".x1u998qt").find('a').attr('href').split('/')[3];
-                                console.log(fb_user);
+                                // console.log(fb_user);
                             }
                             if (fb_user == undefined) {
                                 fb_user = await $this.getClikedFbId();
@@ -931,7 +1057,7 @@ let AddLabelCRM;
                             if (fb_user == "" || fb_user == undefined) {
                                 if (typeof $(".x1u998qt").find('a').attr('href') != 'undefined') {
                                     fb_user = $(".x1u998qt").find('a').attr('href').split('/')[1];
-                                    console.log(fb_user);
+                                    // console.log(fb_user);
                                 }
                             }
 
@@ -941,15 +1067,15 @@ let AddLabelCRM;
                                 }
                                 $('x1u998qt').attr('fb_user_id', fb_user);
                             }
-console.log(fb_user);
+                            //console.log(fb_user);
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user == item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
-console.log(filteredTags);
+                            //console.log(filteredTags);
 
 
                             if (window.location.href.indexOf('facebook.com/messages/t/') > 0) {
-                                console.log("in the facbook found" , filteredTags.length);
+                                console.log("in the facbook found", filteredTags.length);
                                 if (filteredTags.length > 0) {
                                     console.log("in this reacjed");
                                     const style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -968,7 +1094,7 @@ console.log(filteredTags);
                                     $(".x1u998qt a").parent().append(notes_icon1);
                                 }
                             } else {
-                                
+
                                 if (filteredTags.length > 0) {
                                     const style = `background-color: ${filteredTags[0].custom_color} !important;`;
                                     const addTagButton = `

@@ -209,6 +209,59 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if (message.action === "bulkTagging") {
+        console.log(message);
+        const selectedTagId = message.selected_tags_ids;
+        const bulkMembers = message.bulk_members;
+        const type = message.type;
+
+        console.log(selectedTagId);
+        
+        const bulkMembersInfo = Promise.all(bulkMembers.map(item =>
+            getBothAlphaAndNumericId(item.fb_user_id).then(bothIds => ({
+                fbName: item.fbName,
+                profilePic: item.profilePic,
+                fb_user_alphanumeric_id: bothIds.fb_user_id,
+                fb_user_id: bothIds.numeric_fb_id,
+                fb_image_id: null
+            }))
+        ));
+
+        bulkMembersInfo.then(info => {
+            let token = authToken;
+            if (token != undefined && token != '') {
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer " + token);
+                myHeaders.append("Content-Type", "application/json");
+                console.log(selectedTagId);
+                var raw = JSON.stringify({
+                    "type": type,
+                    "members": JSON.stringify({ info }),
+                    "tag_id": selectedTagId
+                });
+
+                console.log(raw);
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+                fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    chrome.tabs.sendMessage(sender.tab.id, {
+                        type: 'tag_update_done',
+                        from: 'background',
+                        result: result,
+                    });
+                    sendResponse({ data: result.msg, status: "ok" });
+                }).catch(error => console.log('error', error));
+            }
+        });
+    }
+
     if (message.action === "single_users_tag_get") {
         console.log(authToken);
         let token = authToken;
@@ -342,10 +395,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 if (res1.status == "error") {
                     console.log(res1.message);
                 } else {
-                // let no_of_send_message = await getConnectMessageSent();
-                let no_of_send_message = 1;
-                console.log(no_of_send_message);
-                    chrome.storage.local.set({ nvFriendReqInputs: res1.data , no_of_send_message : no_of_send_message}, function () {
+                    // let no_of_send_message = await getConnectMessageSent();
+                    let no_of_send_message = 1;
+                    console.log(no_of_send_message);
+                    chrome.storage.local.set({ nvFriendReqInputs: res1.data, no_of_send_message: no_of_send_message }, function () {
                         chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
                             function (tabs) {
                                 groupPageTabId = tabs.id;
@@ -706,7 +759,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(async (result) => {
                 console.log(result);
                 //let response = await getUserLimit();
-               // let no_of_send_message = response.data.no_of_send_message;
+                // let no_of_send_message = response.data.no_of_send_message;
                 let no_of_send_message = 1;
                 console.log(no_of_send_message);
                 sendResponse({ setting: result, no_of_send_message: no_of_send_message })
@@ -928,12 +981,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     }
 
-    if(message.action === "updateNoOfsendMessage"){
-        updateUserLimit(message,sendResponse);
+    if (message.action === "updateNoOfsendMessage") {
+        updateUserLimit(message, sendResponse);
     }
 
-    if(message.action === "updateNoSendConnects"){
-        updateNoOfConnects(message,sendResponse);
+    if (message.action === "updateNoSendConnects") {
+        updateNoOfConnects(message, sendResponse);
     }
 });
 
@@ -1272,7 +1325,7 @@ async function getUserLimit() {
     }
 }
 
-async function updateUserLimit(message,sendResponse){
+async function updateUserLimit(message, sendResponse) {
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/update-message";
         const myHeaders = new Headers();
@@ -1281,7 +1334,7 @@ async function updateUserLimit(message,sendResponse){
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body :message.request
+            body: message.request
         };
         const response = await fetch(url, requestOptions);
         if (response.ok) {
@@ -1300,7 +1353,7 @@ async function updateUserLimit(message,sendResponse){
     }
 }
 
-async function updateNoOfConnects(message,sendResponse){
+async function updateNoOfConnects(message, sendResponse) {
     try {
         const url = "https://novalyabackend.novalya.com/userlimit/api/update-connect";
         const myHeaders = new Headers();
@@ -1309,7 +1362,7 @@ async function updateNoOfConnects(message,sendResponse){
         const requestOptions = {
             method: 'POST',
             headers: myHeaders,
-            body :message.request
+            body: message.request
         };
         const response = await fetch(url, requestOptions);
         if (response.ok) {
