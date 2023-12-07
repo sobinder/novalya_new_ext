@@ -673,7 +673,7 @@ let AddLabelCRM;
                         clearInterval(appendSortBtn);
                         let url = chrome.runtime.getURL("assets/image/filter.png");
                         let ddownhtml = `<div class="dropdown custom-filter" id="filter-msg-menu">
-                                            <button class="dropbtn custom-drop filter-msg"><svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6C4 5.44772 4.44772 5 5 5H19C19.5523 5 20 5.44772 20 6C20 6.55228 19.5523 7 19 7H5C4.44772 7 4 6.55228 4 6Z" fill="currentColor"/><path d="M4 18C4 17.4477 4.44772 17 5 17H19C19.5523 17 20 17.4477 20 18C20 18.5523 19.5523 19 19 19H5C4.44772 19 4 18.5523 4 18Z" fill="currentColor"/><path d="M5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H5Z" fill="currentColor"/></svg> Menu</button>
+                                            <button class="dropbtn custom-drop filter-msg"><svg class="menu-filter-icon" fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6C4 5.44772 4.44772 5 5 5H19C19.5523 5 20 5.44772 20 6C20 6.55228 19.5523 7 19 7H5C4.44772 7 4 6.55228 4 6Z" fill="currentColor"/><path d="M4 18C4 17.4477 4.44772 17 5 17H19C19.5523 17 20 17.4477 20 18C20 18.5523 19.5523 19 19 19H5C4.44772 19 4 18.5523 4 18Z" fill="currentColor"/><path d="M5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13H13C13.5523 13 14 12.5523 14 12C14 11.4477 13.5523 11 13 11H5Z" fill="currentColor"/></svg> Menu</button>
 
                                             <ul id="myDropdown" class="dropdown-content filter-msg">
                                                 <li class="filter_heading filter-msg" id="show-tag"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
@@ -709,12 +709,12 @@ let AddLabelCRM;
 
             // filter  functions
             $(document).click(function (event) {
-                if (!$(event.target).is('.dropbtn') && !$(event.target).is('.filter_heading ') && !$(event.target).is('#sort-by-group')) {
+                if (!$(event.target).is('.dropbtn') && !$(event.target).is('.filter_heading ') && !$(event.target).is('#sort-by-group') && !$(event.target).is('svg.menu-filter-icon')&& !$(event.target).is('path')) {
                     document.getElementById("myDropdown").classList.remove("show");
                 }
             });
 
-            $(document).on("click", '.dropbtn', function () {
+            $(document).on("click", '.custom-filter', function () {
                 document.getElementById("myDropdown").classList.toggle("show");
                 let submenu = document.getElementById("submenu");
                 if (submenu) {
@@ -870,7 +870,6 @@ let AddLabelCRM;
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
                                 if ($(this).find('.bulk-tag-checkbox').length == 0) {
-                                    $(this).find('div a').addClass('checkbox-alignment')
                                     $(this).prepend(checkBox);
                                 }
 
@@ -878,6 +877,9 @@ let AddLabelCRM;
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
                                     $('div[aria-label="Chats"]').prepend(loader);
                                 }
+
+                                //set css on added class for margin to checkbox
+                                $(this).find('div a').addClass('checkbox-alignment');
 
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
