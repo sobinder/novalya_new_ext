@@ -719,7 +719,7 @@ let AddLabelCRM;
 
             });
 
-            $(document).on("click", '.custom-filter', function () {
+            $(document).on("click", '.dropbtn', function () {
                 document.getElementById("myDropdown").classList.toggle("show");
                 let submenu = document.getElementById("submenu");
                 if (submenu) {
