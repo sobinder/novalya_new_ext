@@ -1279,7 +1279,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 friendDetails.lived = lived;
                 friendDetails.status = status;
                 friendDetails.hasConversation = hasConversation;
-                //console.log(friendDetails);
+                console.log(friendDetails);
                 chrome.runtime.sendMessage({ 'action': 'saveFriendData', friendDetails: friendDetails });
             } else {
                 console.error("Invalid friendDetails object.");

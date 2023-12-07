@@ -709,9 +709,14 @@ let AddLabelCRM;
 
             // filter  functions
             $(document).click(function (event) {
-                if (!$(event.target).is('.dropbtn') && !$(event.target).is('.filter_heading ') && !$(event.target).is('#sort-by-group') && !$(event.target).is('svg.menu-filter-icon')&& !$(event.target).is('path')) {
-                    document.getElementById("myDropdown").classList.remove("show");
+                const isDropdownElement = $(event.target).is('.dropbtn, .filter_heading, #sort-by-group, svg.menu-filter-icon, path');
+
+                if (!isDropdownElement) {
+                    if($("#myDropdown").length > 0){
+                        $("#myDropdown").removeClass("show");
+                    }
                 }
+
             });
 
             $(document).on("click", '.custom-filter', function () {
