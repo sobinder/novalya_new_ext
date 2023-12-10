@@ -86,8 +86,9 @@ let AddTargetFriendNV;
       showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit_req, 1000, true, true, true);
 
       console.log(settings[0].keyword);
-      const keywordTypeValue = settings[0].keyword;
-      const negative_keyword = settings[0].negative_keyword;
+      const keywordTypeValue = settings[0].keywords.positive_keyword.toLowerCase();
+      const negative_keyword = settings[0].keywords.negative_keyword.toLowerCase();
+      // const keywordTypeValue = "glocal,glocify";
       //const message_id = settings[0].message;
       const messageArray = settings[0].messages.Sections;
       const gender = settings[0].gender;
@@ -292,7 +293,7 @@ let AddTargetFriendNV;
                       limit_req,
                       keywordTypeValue,
                       negative_keyword,
-                      countryvalue,
+                      countryvalue, 
                       totalGroupMembers,
                       gender,
                       messageArray,
@@ -407,14 +408,18 @@ let AddTargetFriendNV;
               console.log(no_of_send_message);
               $("#toastrMessage").text(`Novalya’s Magic is in progress ${(loop2 + 1)} of ${limit_req} `);
               var incrementedLoop = loop2 + 1;
-              // positive keywords
-              validKeyword = true; 
-                     
+           
+              validKeyword = true;
               if (keywordTypeValue != "") {
-                var description = ""
-      
-                var arrayKeyword = keywordTypeValue;
-      
+                var description = $(selector_for_validclass2)
+                  .find(".x1pg5gke.xvq8zen")
+                  .text()
+                  .toLowerCase();
+                console.log(description);
+                console.log(keywordTypeValue);
+                var arrayKeyword1 =keywordTypeValue.slice(1, -1).replace(/"/g, '');
+               var arrayKeyword = arrayKeyword1.split(",");
+                  console.log(arrayKeyword);
                 if (description != "") {
                   matched = arrayKeyword.filter(
                     (item) => description.indexOf(item) > -1
@@ -423,17 +428,20 @@ let AddTargetFriendNV;
                     validKeyword = false;
                   }
                 } else {
-                  validKeyword = true;
+                  validKeyword = false;
                 }
               }
-      
+  
               // negtive keyword
               invalidKeyword = false;
               if (negative_keyword != "") {
-                var description = "";
-      
-                var arraynegative_keyword = negative_keyword;
-      
+                var description = $(selector_for_validclass2)
+                  .find(".x1pg5gke.xvq8zen")
+                  .text()
+                  .toLowerCase();
+                  var arrayNegativeKeyword1 = negative_keyword.slice(1, -1).replace(/"/g, '');
+                var arraynegative_keyword = arrayNegativeKeyword1.split(",");
+  
                 if (description != "") {
                   matched = arraynegative_keyword.filter(
                     (item) => description.indexOf(item) > -1

@@ -145,6 +145,7 @@ $("body").append(please_Wait_overlay);
 // </div>`;
 
 // customBtnFound = setInterval(function () {
+//     console.log("in this interval");
 //     if (window.location.href.indexOf('facebook.com') > -1) {
 //         FacebookDOM.addReactionPannelFB();
 //     } else {
@@ -424,32 +425,41 @@ $("body").append(please_Wait_overlay);
 
 //     if (selector_post_description.length > 0) {
 //         facebook_post_description = selector_post_description.text();
+//         console.log(facebook_post_description.length);
+//         if(facebook_post_description.length > 25){
+//             chrome.storage.sync.get(["language", "job", "sector"], function (result) {
+//                 var temp = {
+//                     opinion: opinion,
+//                     size: size,
+//                     writing: writing_array,
+//                     tone: tone_Array,
+//                     language:language
+//                 };
+        
+//                 if (result.language) {
+//                     temp.language = result.language;
+//                 }
+//                 if (result.job) {
+//                     temp.job = result.job;
+//                 }
+//                 if (result.sector) {
+//                     temp.sector = result.sector;
+//                 }
+//                 chrome.storage.sync.set({ responsedata: temp });
+//                 if (window.location.href.includes("facebook.com")) {
+//                     FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
+//                 }
+//             });
+//         }else{
+//             $('.loader').hide();
+//             showCustomToastr('info', 'The input Text is too less', 4000, false, false, false );
+//         }
+      
 //     } else {
-//         facebook_post_description = "Thought of today";
+//         $('.loader').hide();
+//         showCustomToastr('info', 'There is no text for input in this post', 4000, false, false, false );
 //     }
-//     chrome.storage.sync.get(["language", "job", "sector"], function (result) {
-//         var temp = {
-//             opinion: opinion,
-//             size: size,
-//             writing: writing_array,
-//             tone: tone_Array,
-//             language:language
-//         };
-
-//         if (result.language) {
-//             temp.language = result.language;
-//         }
-//         if (result.job) {
-//             temp.job = result.job;
-//         }
-//         if (result.sector) {
-//             temp.sector = result.sector;
-//         }
-//         chrome.storage.sync.set({ responsedata: temp });
-//         if (window.location.href.includes("facebook.com")) {
-//             FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description);
-//         }
-//     });
+   
 // })
 
 // $(document).on("click", ".reload", function (e) {
@@ -527,7 +537,6 @@ $("body").append(please_Wait_overlay);
 //         //     temp.size = size;
 //         //     temp.writing = writing_array;
 //         //     temp.tone = tone_Array;
-
 //         // }
 //         if (typeof result.job != "undefined" && result.job != "") {
 //             temp.job = result.job;

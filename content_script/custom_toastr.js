@@ -54,6 +54,13 @@ function showCustomToastr(type, message, timeout, showCountdown, fixToastr, show
     toastrContent.appendChild(stopButton);
     toastrContent.appendChild(document.createElement('span'));
   }
+  // if (centered) {
+  //   customToastr.style.left = '50%';
+  //   customToastr.style.transform = 'translateX(-50%)';
+  // } else {
+  //   // Default position
+  //   customToastr.style.left = '0';
+  // }
 
   // Append the icon, message, and button (if applicable) to the content container
   toastrContent.appendChild(toastrIcon);

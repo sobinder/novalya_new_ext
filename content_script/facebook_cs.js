@@ -190,6 +190,8 @@ let FacebookDOM;
         selector_comment_btn = '.que-current-container div[aria-label="Write a comment…"]';
       }
       $(selector_comment_btn).click();
+     
+      selector_comment_btn.textContent = '';
       raw = JSON.stringify({
         text: post_description,
         temp: feelings,
@@ -223,6 +225,7 @@ let FacebookDOM;
       const result = JSON.parse(apiResp).data.replace(/\n\n/g, ' ').replace(/"/g, '');
       // Find and select the appropriate element
       const pElement = document.querySelector(selector + ' p') || document.querySelector('p.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.xdpxx8g');
+
       if (pElement) {
         const range = document.createRange();
         const selection = window.getSelection();
@@ -230,7 +233,7 @@ let FacebookDOM;
         selection.removeAllRanges();
         selection.addRange(range);
       }
-
+        
       if ($(selector + ' p br').length) {
         // Copy the result to the clipboard
         navigator.clipboard.writeText(result).then(async () => {
@@ -241,6 +244,7 @@ let FacebookDOM;
             $(elementsWithClass).each(function (index) {
               const $element = $(this);
               const lexicalSpans = $element.find("span[data-lexical-text='true']");
+
               const lineBreaks = $element.find('br');
               if (lexicalSpans.length > 0 && index > 0) {
                 $element.css('display', 'none');
