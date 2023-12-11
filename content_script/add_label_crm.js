@@ -1187,7 +1187,10 @@ let AddLabelCRM;
                                 fb_user = match ? match[1] : null;
                             } else {
                                 var currentWindowUrl2 = window.location.pathname;
-                                fb_user = await $this.getClikedFbId();
+                                fb_user = currentWindowUrl2.replace(/^\/|\/$/g, '');
+                                if(fb_user == undefined || fb_user == null){
+                                    fb_user = await $this.getClikedFbId();
+                                }
                             }
 
                             if (fb_user != '' && fb_user != null) {
@@ -1204,6 +1207,7 @@ let AddLabelCRM;
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user == item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
+                                console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 $(this).attr('tag-id', filteredTags[0].id);
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
