@@ -677,7 +677,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         chrome.storage.local.get(
             ["nvFriendReqInputs", "nvAddFriendProcess", "no_of_send_message"],
             function (result) {
-                //console.log(result);
+                console.log("addTargetProcess");
+                console.log(result);
                 if (
                     typeof result.nvFriendReqInputs != "undefined" &&
                     result.nvFriendReqInputs != ""

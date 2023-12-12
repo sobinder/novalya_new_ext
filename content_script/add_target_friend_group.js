@@ -84,10 +84,18 @@ let AddTargetFriendNV;
         limit_req = settings[0].custom; // unlimited
       }
       showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit_req, 1000, true, true, true);
-
-      console.log(settings[0].keyword);
-      const keywordTypeValue = settings[0].keywords.positive_keyword.toLowerCase();
-      const negative_keyword = settings[0].keywords.negative_keyword.toLowerCase();
+      let keywordTypeValue = '';
+      let negative_keyword = '';
+      console.log(settings[0].keyword)
+      if(settings[0].keywords != null && settings[0].keywords != ""){
+        if(settings[0].keywords.positive_keyword != null && settings[0].keywords.positive_keyword != '' ){
+          keywordTypeValue = settings[0].keywords.positive_keyword.toLowerCase();
+        }
+        if(settings[0].keywords.negative_keyword != null && settings[0].keywords.negative_keyword != '' ){
+          negative_keyword = settings[0].keywords.negative_keyword.toLowerCase();
+        }
+      }
+       
       // const keywordTypeValue = "glocal,glocify";
       //const message_id = settings[0].message;
       const messageArray = settings[0].messages.Sections;
