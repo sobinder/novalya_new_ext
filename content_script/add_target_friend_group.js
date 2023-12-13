@@ -35,21 +35,15 @@ let AddTargetFriendNV;
           group_url_value.indexOf("/groups/") > -1 &&
           group_url_value.indexOf("/members") != -1
         ) {
-
-
           // $('.x1yztbdb span:first').append(button);
           $('.x1yztbdb span:contains("Members with things in common"):first').append(button2);
-
         };
 
         if (
           group_url_value.indexOf("/groups/") > -1 &&
           group_url_value.indexOf("/members") != -1
         ) {
-
           $('.x78zum5 .xdt5ytf .x1iyjqo2 .x1sy10c2 .x1yztbdb span:first').append(button);
-
-
         };
       }, [1000])
     },
@@ -73,8 +67,6 @@ let AddTargetFriendNV;
       } else {
         randomDelay = 60000;
       }
-
-      
       console.log(randomDelay);
 
       const numberOfReqValue = settings[0].norequest;
@@ -464,8 +456,6 @@ let AddTargetFriendNV;
                 }
               }
       
-            
-      
               //console.log('selector class 2 length', $(selector_for_validclass2).length);
               let groupHref2 = $(selector_for_validclass2)
                 .find('a[href*="/groups/"]')
@@ -680,8 +670,6 @@ let AddTargetFriendNV;
                       );
                     }
       
-      
-      
                     setTimeout(() => {
                       $this.checkValidUsers(
                         randomDelay,
@@ -756,16 +744,13 @@ let AddTargetFriendNV;
             }, 4000);
           }
 
-         
         // }else{
         //   $("#customToastr0").css("background-color", "red");
         //   $("#toastrMessage").text(`Your message limit is reached. Please consider upgrading your plan. `);
         //   setTimeout(() => {
         //     chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
         //   }, 2000);
-        
         // }
-    
     },
     setIndexingOnMembersRequest: function (value) {
       var member_list_label =

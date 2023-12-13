@@ -61,10 +61,9 @@ jQuery(document).on('keyup', function (evt) {
 $(document).ready(function () {
     // Get all elements with the specified classes
 
-    const elements = $('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6');
-
+    // const elements = $('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6');
     // Iterate over the elements and set padding-top to 0
-    elements.css('padding-top', '0');
+    // elements.css('padding-top', '0');
 });
 
 $("body").append(please_Wait_overlay);

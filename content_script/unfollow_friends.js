@@ -1,7 +1,6 @@
 let Unfollow;
 let totalFriends = 0;
 (function ($) {
-    console.log('here');
     let $this;
     let btn = `<button id="data-unfollow">Nova Data</button>`;
     let friendsList = [];
@@ -18,15 +17,12 @@ let totalFriends = 0;
         },
         onInitMethods: function () {
             // Run & check appebd btn every 2 seconds
-
             $(document).on('click','#async_novadata',async function(){
                 chrome.runtime.sendMessage({'action':'openUserProfile','from':'unfollow'})
             });
             $(document).on('click','#stop_unfollow',async function(){
                 chrome.runtime.sendMessage({'action':'closeUnfollow','from':'unfollow'})
             });
-            
-
         },
 
         async groupListIntial(message){
@@ -204,8 +200,7 @@ let totalFriends = 0;
                     }
                 },1000);
             });
-        },
-          
+        },  
         novaDataProgressModel: function (extTabId) {
             let html_processing_model = `<section class="main-app">
                                 <div class="overlay-ld">
@@ -224,7 +219,6 @@ let totalFriends = 0;
             $("body:not('.process-model-added')").prepend(html_processing_model);
             $("body").addClass("process-model-added");
         },
-
     }
     Unfollow.initilaize();
 })(jQuery);

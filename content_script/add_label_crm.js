@@ -31,21 +31,6 @@ let AddLabelCRM;
             });
         },
         onInitMethods: function () {
-            // $(document).ready(function () {
-            //     // Get all elements with the specified classes
-            //     setInterval(() => {
-            //         const elements = $('.x6s0dn4.x1jx94hy.x78zum5.xdt5ytf.x6ikm8r.x10wlt62.x1n2onr6.xh8yej3');
-            //         const elements2 = $('.x5yr21d.x10l6tqk.x13vifvy.xh8yej3');
-            //         const elements3 = $('.xqtp20y.x6ikm8r.x10wlt62.x1n2onr6');
-
-            //     // Iterate over the elements and set padding-top to 0
-            //     elements3.css('padding-top', '0px');
-
-
-            //     }, 400);
-
-            // });
-
             $("body").append(`
                     <div class="hide-by-escape" id="overlay-assign-labels">
                         <div id="container_assign_labels">
@@ -113,10 +98,8 @@ let AddLabelCRM;
             setTimeout(function () {
                 processing = false;
                 chrome.runtime.sendMessage({ action: "userCRMPermission" }, (res18) => {
-
                     if (res18.data.crm_status == 'On') {
                         // ADD LABEL IN MESSENGERS.COM
-                        //console.log(res18.data);
                         $this.messengersCom();
                         $this.messageComHeader();
                         $this.facebookChats();
@@ -126,10 +109,7 @@ let AddLabelCRM;
             }, 1500);
 
             chrome.runtime.sendMessage({ action: "tagsApiCall" }, (res50) => {
-                // console.log(res50);
                 tags_fetch_data = res50.data;
-                //console.log(res50);
-                //console.log(tags_fetch_data);
                 options2 = '<option value="">Select Primary</option>';
                 if (tags_fetch_data.length > 0) {
                     tags_fetch_data.forEach((tag) => {
@@ -144,44 +124,32 @@ let AddLabelCRM;
                 $('#overlay-assign-labels').hide();
                 selected_tags_ids = [];
                 selected_primary_ids = [];
-                // $('#chatsilo_model_two').removeClass('notes-modal')
             });
 
             $(document).on('click', 'li', function () {
-                //console.log("li clicked");
                 // Check if the click occurred on the actual <li> element and not on its children
-
                 // Toggle the checkbox inside the <li>
                 const checkbox = $(this).find(".multi-label-checkbox");
                 checkbox.prop('checked', !checkbox.prop('checked'));
-
             });
 
-
             $(document).on('click', '.multi-label-checkbox', function (event) {
-                //console.log("checkbox clicked");
                 const checkbox = $(this);
                 checkbox.prop('checked', !checkbox.prop('checked'));
             });
 
             $(document).on('change', '#mySelect', function () {
                 var selectedValue = $(this).val();
-                // console.log(selectedValue);
-
                 $('.multi-label-checkbox').each(function () {
                     var checkboxValue = $(this).val();
-                    //console.log(checkboxValue);
-
                     // Check the checkbox if its value matches the selected value, otherwise uncheck it
                     if (checkboxValue === selectedValue) {
                         $(this).prop('checked', true);
-
                     }
                 });
             });
 
             $(document).on('click', '.remove-assigned-tag', function () {
-                // console.log("click selectbox");
                 selected_tags_ids = [];
                 selected_tags_ids2 = [];
                 var fbName = $(this).attr("fbname");
@@ -207,7 +175,6 @@ let AddLabelCRM;
                             const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
                             if (rowToScroll) {
                                 $('#overlay').show();
-
                                 $('.x1n2onr6').animate(
                                     { scrollTop: $('.x1n2onr6').scrollTop() + cheight },
                                     1000
@@ -241,7 +208,6 @@ let AddLabelCRM;
                     bulk_members: bulkMembers,
                     selected_tags_ids: null,
                     type:'bulkTaggingnull',
-
                 };
                 chrome.runtime.sendMessage(message, (response) => {
                     console.log('sent message');
@@ -254,12 +220,8 @@ let AddLabelCRM;
                 selected_tags_ids2 = [];
                 selectedTagId = $(this).attr('tag-id');
                 selected_tags_ids.push(selectedTagId);
-                // console.log(selected_tags_ids, selectedTagId);
 
                 var selectedOption = $('#mySelect').val();
-                // console.log(selected_tags_ids);
-                // console.log(selectedOption.toString());
-
                 if (selected_tags_ids.length > 1 && selectedOption == '') {
                     toastr["error"]("Please select the primary Label");
                 } else {
@@ -267,8 +229,6 @@ let AddLabelCRM;
                         selectedOption = 0;
                     }
                     else if (selected_tags_ids.length === 1) {
-                        //console.log("inside the condition ");
-                        // console.log(selected_tags_ids[0]);
                         $('#mySelect').val(selected_tags_ids[0]);
                     }
                     else if (!selected_tags_ids.includes(selectedOption)) {
@@ -285,7 +245,6 @@ let AddLabelCRM;
                         // Get the value of the checked checkbox and add it to the array
                         selectedTagId2 = $(this).parents('li').attr('tag-id');
                         selected_tags_ids2.push(selectedTagId2);
-                        //console.log(selected_tags_ids2, selectedTagId2);
                     });
                     var selectedOption2 = $('#mySelect').val();
                     const message = {
@@ -304,7 +263,6 @@ let AddLabelCRM;
                                 const rowToScroll = document.querySelector('div[aria-label="Chats"][role="grid"] div[role="row"].processed-member-to-add');
                                 if (rowToScroll) {
                                     $('#overlay').show();
-
                                     $('.x1n2onr6').animate(
                                         { scrollTop: $('.x1n2onr6').scrollTop() + cheight },
                                         1000
@@ -344,7 +302,6 @@ let AddLabelCRM;
             $(document).on('click', '.notes_div_icon', async function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                console.log("notes clicked");
                 try {
                     const cliked_Fb_Id = await $this.getClikedFbId();
                     const notesModal = $this.createNotesModal(cliked_Fb_Id);
@@ -420,7 +377,6 @@ let AddLabelCRM;
                     console.log(res);
                     if (res.status == "note updated") {
                         toastr["success"]('Note Updated successfully');
-
                         chrome.runtime.sendMessage({ action: "get_all_notes" }, (res) => {
                             var all_data_array = res.api_data;
                             filteredArray = all_data_array.filter(item => item.id == note_id);
@@ -430,14 +386,11 @@ let AddLabelCRM;
                             var time = `${date_time.getHours()}:${date_time.getMinutes()}:${date_time.getSeconds()}`;
                             var newdate = $(this).closest('.row').find('.date_time').text(`${date} ${time}`)
                             editableNotes.text(editableInput.val());
-
                         });
                     } else {
                         toastr["error"]('Some Error in Updating notes');
                     }
-                })
-
-
+                });
                 editableInput.hide();
                 editableNotes.show();
                 $(".edit-icon").show();
@@ -463,7 +416,6 @@ let AddLabelCRM;
                     } else {
                         cliked_Fb_Id = window.location.pathname.split('/')[2];
                     }
-
                     if (cliked_Fb_Id === undefined) {
                         var alphaFbId = window.location.pathname.split('/')[1].toString();
                         console.log(alphaFbId);
@@ -506,14 +458,12 @@ let AddLabelCRM;
                                         toastr["error"]('Some Error in adding notes');
                                     }
                                 });
-
                             })
                             .catch(function (response) {
                                 console.log("error to find fb id");
                             });
                         return false;
                     }
-
                 }
                 if (notes == "") {
                     toastr["error"]('Please Enter Some Text');
@@ -552,21 +502,25 @@ let AddLabelCRM;
                 });
                 // Clear the textarea and close the modal
                 $('#notes-textarea').val('');
-
             });
 
-            $(document).on('click', '.add-button-container', async function (event) {
+            $(document).on('click', '.add-button-container,.add-button-container-chat', async function (event) {
                 event.preventDefault();
                 event.stopPropagation();
                 var fbName = '';
                 var profilePic = '';
                 var fb_user_id = '';
                 fbName = await $this.findName.call(this);
+
                 profilePic = $(this).parent().parent().find('img').attr('src');
                 if (profilePic === "" || profilePic == undefined) {
                     profilePic = '';
                 }
+
                 fb_user_id = $(this).parent().attr("fb_user_id");
+                if(fb_user_id == "" || fb_user_id == undefined){
+                    fb_user_id =  $(this).parent().parent().parent().attr("fb_user_id");
+                }
                 if (fb_user_id == "" || fb_user_id == undefined) {
                     if ($(".x1u998qt").find('a').attr('href') !== undefined) {
                         fb_user_id = $(".x1u998qt").find('a').attr('href').split('/')[3];
@@ -584,6 +538,7 @@ let AddLabelCRM;
                 if (fb_user_id == undefined) {
                     fb_user_id = await $this.getClikedFbId();
                 }
+
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
                         var tag_data_individual = JSON.parse(response);
@@ -656,7 +611,6 @@ let AddLabelCRM;
                     </div>`;
                 $('#content-assign-labels').html(options);
                 $('#overlay-assign-labels').show();
-
             });
 
             // $(document).on('click','span:contains("Search messages for")',function(){
@@ -712,13 +666,11 @@ let AddLabelCRM;
             // filter  functions
             $(document).click(function (event) {
                 const isDropdownElement = $(event.target).is('.dropbtn, .filter_heading, #sort-by-group, svg.menu-filter-icon, path');
-
                 if (!isDropdownElement) {
                     if($("#myDropdown").length > 0){
                         $("#myDropdown").removeClass("show");
                     }
                 }
-
             });
 
             $(document).on("click", '.dropbtn', function () {
@@ -846,7 +798,6 @@ let AddLabelCRM;
             $(document).on('click', '#last_reply', async function () {
                 $this.handleFilterClick('Last Reply', $this.sortMemberLastReply);
             });
-
             //end messenger filter
         },
         sendMessageforSingleUsers: function (fb_user_id) {
@@ -872,7 +823,6 @@ let AddLabelCRM;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon" >+</span>';
                             //let checkBox = `<input type="checkbox" class="bulk-tag-checkbox" >`;
 
-
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_members_list).each(function (index) {
                                 $(this).addClass('processed-member-to-add');
@@ -887,8 +837,6 @@ let AddLabelCRM;
                                     $('div[aria-label][role="grid"] div[role="row"].processed-member-to-add:eq(0)').parent().parent().parent().addClass('sort-by-selected-tag');
                                     $('div[aria-label="Chats"]').prepend(loader);
                                 }
-
-                                
 
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
@@ -912,7 +860,6 @@ let AddLabelCRM;
                                     $(this).append(add_label_button);
                                 }
 
-
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
@@ -931,10 +878,11 @@ let AddLabelCRM;
                         }
                         if (window.location.origin.indexOf('facebook') > -1) {
                             processing = true;
-                            var add_label_button = '<div id="add-icon" class="add-button-container contact-pop-up-chat-window"><span class="add-icon">+</span>';
+                            var add_label_button = '<div id="add-icon" class="add-button-container-chat contact-pop-up-chat-window"><span class="add-icon">+</span>';
                             //$(this).parents(".x164qtfw").prepend(add_label_button);
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_parent_of_contacts_list).parents(".x164qtfw>div").each(function (index) {
+                                //console.log($(this));
                                 $(this).parents(".x164qtfw").addClass('cts-message-thread-id-1');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
@@ -948,22 +896,23 @@ let AddLabelCRM;
                                 } else {
                                     //console.log('fb id not found');
                                 }
+                                //console.log(fb_user);
                                 if (fb_user != '') {
-                                    if ($(this).find('div.add-button-container').length > 0) {
-                                        $(this).find('div.add-button-container').remove();
+                                    if ($(this).find('div.add-button-container-chat').length > 0) {
+                                        $(this).find('div.add-button-container-chat').remove();
                                     }
                                     $(this).attr('fb_user_id', fb_user);
-                                    $(this).append(add_label_button);
+                                    $(this).children().children().prepend(add_label_button);
                                 }
 
                                 userTagsArray.forEach((item) => {
                                     if (fb_user == item.fb_user_id) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
-                                        //console.log(filteredTags);
                                         if (filteredTags.length > 0) {
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
-                                            let add_tag_button = `<div class="add-button-container contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
-                                            $(this).append(add_tag_button);
+                                            let add_tag_button = `<div class="add-button-container-chat contact-pop-up-chat-window" style="${style}"><span class="add-icon" style="${style}">${filteredTags[0].name}</span>`;
+                                            $(this).find('div#add-icon.add-button-container-chat').remove();
+                                           $(this).children().children().prepend(add_tag_button);
                                         }
                                     }
                                 })
@@ -985,8 +934,6 @@ let AddLabelCRM;
                             //  console.log("hello running")
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container"><span class="add-icon">+</span>';
-
-
 
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_members_list).each(async function (index) {
@@ -1207,7 +1154,7 @@ let AddLabelCRM;
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user == item.fb_user_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
-                                console.log(filteredTags);
+                               // console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 $(this).attr('tag-id', filteredTags[0].id);
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -1655,7 +1602,13 @@ let AddLabelCRM;
             if (fbName === '' || fbName === undefined) {
                 fbName = $this.findNameFromHeading.call(this);
             }
+            if(fbName === '' || fbName === undefined){
+                fbName = $this.findFromChatBox.call(this);
+            }
             return fbName;
+        },
+        findFromChatBox(){
+            return $(this).parent().find('h2 span:eq(0)').text().trim();
         },
         findNameFromHeading() {
             fbName = $(this).parent().find('h1 span:last').text().trim();
@@ -1673,7 +1626,6 @@ let AddLabelCRM;
             if (fbName === '') {
                 fbName = $(this).parent().find('span h1').text();
             }
-            console.log(fbName);
             return fbName;
         },
         findNameFromChatSettings() {
@@ -1687,7 +1639,6 @@ let AddLabelCRM;
         findNameFromImageAlt() {
             return $(this).parent().parent().find('img').attr('alt');
         }
-
     };
     AddLabelCRM.initilaize();
 })(jQuery);

@@ -694,16 +694,7 @@ select#mySelect:focus {
   width: auto !important;
 }
 
-.add-button-container.contact-pop-up-chat-window {
-  transform: translate(32px, 22px);
-  width: 100px;
-  border-radius: 3px !important;
-  height: 21px !important;
-  overflow: hidden;
-  top: 0px !important;
-  margin-top: 0px !important;
-  right: -50px !important;
-}
+
 
 
 
@@ -762,7 +753,7 @@ button#stop_run {
   margin-right: 15px;
 }
 
-* filter css start */
+/* filter css start */
 
 /* Dropdown Button */
 .dropbtn {
@@ -912,12 +903,8 @@ ul li:hover>ul {
 
 /* Styles for the loader */
 .loader {
-  /* border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db; */
-  /* border-radius: 50%; */
   width: 200px;
   height: 50px;
-  /* animation: spin 2s linear infinite; */
   margin-left: 35%;
   margin-top: 70%;
 }
@@ -936,8 +923,6 @@ ul li:hover>ul {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 } */
-
-
 
 .dropdown-content ul#submenu {
   overflow: hidden;
@@ -1257,22 +1242,47 @@ div#current_profile_tags span.add-icon {
   padding: 6px 20px;
 }
 
-.add-button-container.contact-pop-up-chat-window {
-  transform: unset;
-  right: unset !important;
-  left: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: calc(100% - 12px) !important;
+.add-button-container-chat.contact-pop-up-chat-window {
   background: #fff !important;
-  padding: 3px 0 5px;
-  transform: translateY(-30px) !important;
+  border: 1px solid #f5f5f5;
+  position: absolute;
+  margin-top: -30px;
+  margin-left:10px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  float: left; 
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(245, 245, 245);
+  border-image: initial;
 }
 
-#add-icon.add-button-container.contact-pop-up-chat-window {
-  width: calc(100% - 12px) !important;
+.add-button-container-chat.contact-pop-up-chat-window span {
+  float: left;
+  display: block;
+  z-index: 9;
+  cursor: pointer;
+  width: 320px ;
+  margin-right: unset !important;
+  padding-bottom: 8px !important;
+  white-space-collapse: collapse;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 3px;
+  font-weight: bold;
+  text-align: center;
+  color: white !important;
+  font-size: 14px !important;
+  background: rgb(70, 130, 180);
 }
+
+#add-icon.add-button-container-chat {
+  width: 325px !important;
+  float: right !important;
+  cursor: pointer !important;
+}
+
 
 div#current_profile_tags {
   width: auto;
