@@ -165,6 +165,7 @@ let AddLabelCRM;
                     profilePic: profilePic,
                     fb_user_id: fb_user_id,
                     selected_tags_ids: selected_tags_ids2,
+                    stage_id: 1,
                     is_primary: selectedOption2
                 };
 
@@ -195,6 +196,7 @@ let AddLabelCRM;
                     action: "bulkTagging",
                     bulk_members: bulkMembers,
                     selected_tags_ids: selected_tags_id,
+                    stage_id:1,
                     type:'bulkTagging',
                 };
                 chrome.runtime.sendMessage(message, (response) => {
@@ -253,6 +255,7 @@ let AddLabelCRM;
                         profilePic: profilePic,
                         fb_user_id: fb_user_id,
                         selected_tags_ids: selected_tags_ids2,
+                        stage_id: 1,
                         is_primary: selectedOption2
                     };
 

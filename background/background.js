@@ -181,7 +181,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         "fb_name": message.fbName,
                         "profile_pic": message.profilePic,
                         "is_primary": message.is_primary,
-                        "tag_id": message.selected_tags_ids
+                        "tag_id": message.selected_tags_ids,
+                        "stage_id":1
                     });
                     var requestOptions = {
                         method: 'POST',
@@ -237,7 +238,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 var raw = JSON.stringify({
                     "type": type,
                     "members": JSON.stringify({ info }),
-                    "tag_id": selectedTagId
+                    "tag_id": selectedTagId,
+                    "stage_id":1
                 });
 
                 console.log(raw);
