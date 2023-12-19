@@ -229,6 +229,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         ));
 
         bulkMembersInfo.then(info => {
+            console.log(info);
+            //console.log(JSON.parse(info));
             let token = authToken;
             if (token != undefined && token != '') {
                 var myHeaders = new Headers();
@@ -745,7 +747,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
-            "group_id": message.settins.group_id,
+            // "group_id": message.settins.group_id,
+            "userIds":message.settins.userIds,
             "message_id": message.settins.message_id,
             "time_interval": message.settins.time_interval
         });
@@ -783,6 +786,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action == "getMessagesANDSettings") {
+        let userIds = message.userIds;
         let token = authToken;
         var myHeaders = new Headers();
         myHeaders.append("Authorization", "Bearer " + token);
@@ -795,8 +799,33 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         fetch(new_base_url + "/user/api/compaigns", requestOptions)
             .then(response => response.json())
             .then((result) => {
-                console.log(result)
-                sendResponse({ api_data: result });
+                let responseData = result;
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer " + token);
+                myHeaders.append("Content-Type", "application/json");
+
+                var raw = JSON.stringify({
+                    "type": "get"
+                });
+    
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+                // Get all tagged users and filter by selected userIds for campaign 
+                fetch("https://novalyabackend.novalya.com/extension/api/taggeduser-api", requestOptions)
+                .then(response => response.json())
+                .then(result => { 
+                    const filteredArray = result.data.filter(item => userIds.includes(item.id));
+                    if(responseData.data.length > 0){
+                        responseData.data[0].taggedUsers = filteredArray;
+                    }
+                    console.log(responseData);
+                    sendResponse({ api_data: responseData });
+                })
+                .catch(error => console.log('error', error));
             })
             .catch(error => console.log('error', error));
         return true;

@@ -1407,7 +1407,9 @@ $(document).ready(function () {
         $("#submit-campaign").prop("disabled", true);
         $("#submit-campaign").addClass("disabled_cls");
         let data = JSON.parse($(this).attr('attr-data'));
+        console.log(data);
         let userIds = data.userIds;
+        let total_memberss = data.peopleCount;
         setTimeout(() => {
             chrome.runtime.sendMessage({ action: "getCRMSettings", settins: data }, (res7) => {
                 let no_of_send_message = res7.no_of_send_message;
@@ -1415,10 +1417,12 @@ $(document).ready(function () {
                 let status_api = res7.setting.status;
                 if (status_api == "success") {
                     toastr["success"]('setting saved successfully! fetching members');
-                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings" }, async (res17) => {
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings",'userIds':userIds}, async (res17) => {
                         let reponse17 = res17.api_data.data;
+                        console.log(reponse17);
                         let crm_settings = reponse17[0];
-                        let total_memberss = crm_settings.taggedUsers.length;
+                       
+                        // console.log(total_memberss);
                         if (userIds.length > 0) {
                             total_memberss = userIds.length;
                         }
@@ -1444,9 +1448,10 @@ $(document).ready(function () {
                             $("#submit-campaign").removeClass("disabled_cls");
                         }, 5000);
                         var selected_group_members = crm_settings.taggedUsers;
-                        if (userIds.length > 0) {
-                            selected_group_members = selected_group_members.filter(item => userIds.includes(item.id));
-                        }
+                        // console.log(selected_group_members);
+                        // if (userIds.length > 0) {
+                        //     selected_group_members = selected_group_members.filter(item => userIds.includes(item.id));
+                        // }
                         const intervalValue = crm_settings.time_interval;
                         if (intervalValue == "30-60 sec" || intervalValue == "30-60 Sec") {
                             randomDelay = Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
@@ -1465,6 +1470,7 @@ $(document).ready(function () {
                                 if (i < total_memberss && parseInt(total_message_limit) > parseInt(no_of_send_message)) {
                                     no_of_send_message++;
                                     let thread_id = item.fb_user_id;
+                                    console.log(thread_id);
                                     let crmMessage = [];
                                     let crmMessagetextArray = crm_settings.MessageDatum.Sections;
                                     crmMessagetextArray.forEach(function (item, i) {
