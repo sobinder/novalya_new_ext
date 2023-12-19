@@ -1257,22 +1257,24 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 
     if (message.type == "tag_update_done" && message.from == "background") {
-        let response = message.result;
-        $('.bulk-tag-checkbox').prop('checked', false);
-        if (response != undefined && response != '') {
-            var parsedData = response;
-            // var message = response.message;
-            toastr["success"]('Tag update successfully');
-        } else {
-            toastr["success"]('not found tag update done');
-        }
+        setTimeout(()=>{
+            let response = message.result;
+            $('.bulk-tag-checkbox').prop('checked', false);
+            if (response != undefined && response != '') {
+                var parsedData = response;
+                // var message = response.message;
+                toastr["success"]('Tag update successfully');
+            } else {
+                toastr["success"]('not found tag update done');
+            }
 
-        AddLabelCRM.taggeduserapi();
-        selector_members_list = AddLabelCRM.messengersMembersListSelector();
-        AddLabelCRM.messengersCom();
-        $('.hide-by-escape').hide();
-        var currentLocationUrl = window.location.origin;
-        chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
+            AddLabelCRM.taggeduserapi();
+            selector_members_list = AddLabelCRM.messengersMembersListSelector();
+            AddLabelCRM.messengersCom();
+            $('.hide-by-escape').hide();
+            var currentLocationUrl = window.location.origin;
+            chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
+        },2000);    
     }
     //unfollow module
     if (message.action === 'getGenderAndPlace') {

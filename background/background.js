@@ -138,6 +138,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         //checkMessage(message.memberid,message.textMsg)
     }
     if (message.action === "Reload_all_novalya_tabs") {
+        console.log('Reload_all_novalya_tabs');
         if (message.currentLocationUrl.indexOf('messenger') > -1) {
             reloadAllNovalyaTabs();
         }
