@@ -14,7 +14,7 @@ let please_Wait_overlay = `<div id="overlay_pleaseWait" class="overlay_pleaseWai
                                             <p>Please wait In Progress...</p>
                                     </div>
                             </div>`;
-console.log('here contentscript js');
+// console.log('here contentscript js');
 
 jQuery.fn.extend({
     mclick: function () {
@@ -1308,12 +1308,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         $(".loading").remove();
         $("h2.title_lg").text("There is an error.").css('color', 'red');
     }
-    if (message.action === 'friendUnfollowProcess' && message.from === "background") {
-        console.log(message);
-        setTimeout(() => {
-            Unfollow.groupListIntial(message);
-        }, 1000);
-    }
+    // if (message.action === 'friendUnfollowProcess' && message.from === "background") {
+    //     console.log(message);
+    //     setTimeout(() => {
+    //         Unfollow.groupListIntial(message);
+    //     }, 1000);
+    // }
     if (message.action === 'syncingComplete') {
         toastr["success"]('Sync complete');
         setTimeout(() => {

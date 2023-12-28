@@ -1,10 +1,10 @@
 importScripts(
     "../helper.js",
+    "nova_data.js",
     "bg_send_message.js",
     "bg_friend_requests.js",
     "send_without_popup.js",
-    "birthday.js",
-    "unfollow_friends.js"
+    "birthday.js"
 );
 //****************************** DEFINE VARIABLES *****************************************//
 // GET HEIGHT WIDTH OF CHROME WINDOWS
@@ -684,6 +684,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     if (message.action === "addgroupapi") {
         let token = authToken;
+        console.log(token);
         if (token != undefined && token != '') {
             console.log(message);
             var myHeaders = new Headers();

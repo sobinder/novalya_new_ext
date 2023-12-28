@@ -1099,7 +1099,7 @@ let AddLabelCRM;
                             }
                         });
                     } else if (window.location.href.includes('facebook')) {
-                        console.log("in this");
+                       // console.log("in this");
                         const xw2csxcElements = $('.x164qtfw'); // Select all elements with class .xw2csxc
                         //console.log(xw2csxcElements);
                         xw2csxcElements.each(function () {
@@ -1121,7 +1121,7 @@ let AddLabelCRM;
             }, 4000);
         },
         currentProfile: function () {
-            console.log("current  profile is called");
+            // console.log("current  profile is called");
             var notes_icon = `<div class = "notes_div_icon" id="current_profile_note_icon"><img src="${chrome.runtime.getURL('assets/images/post.png')}" class="post" title="Notes" height="25"></div>`;
 
             var clearMessageInt = setInterval(() => {

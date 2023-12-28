@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Novalya",
     "description": "Novalya est la plateforme simple et intuitive d’automatisation de la prospection. Démarrez maintenant sur www.novalya.com",
-    "version": "1.3.16",
+    "version": "1.3.17",
     "icons": {
         "48": "icons/48.png",
         "128": "icons/128.png"
@@ -21,11 +21,20 @@
         "cookies",        
         "clipboardRead",
         "clipboardWrite",
-        "management"
+        "management",
+        "declarativeNetRequest"
     ],
     "host_permissions": [
-        "*://*.novalya.com/*"
+        "*://*.novalya.com/*",
+        "*://*.facebook.com/*"
     ],
+    "declarative_net_request": {
+        "rule_resources": [ {
+           "enabled": true,
+           "id": "ruleset_1",
+           "path": "rules.json"
+        } ]
+    },
     "content_scripts": [
         {
             "matches": [
@@ -38,13 +47,14 @@
                 "assets/js/jquery-3.4.1.min.js",
                 "assets/js/toastr.min.js",
                 "helper.js",
+                "content_script/nova_data.js",
                 "content_script/content_script.js",
                 "content_script/add_target_friend_group.js",
                 "content_script/send_message_members.js",
                 "content_script/add_new_friend.js",
                 "content_script/add_label_crm.js",
-                "content_script/custom_toastr.js",
-                "content_script/unfollow_friends.js"
+                "content_script/custom_toastr.js"
+                
             ],
             "css": [                
                 "content_script/toastr.min.css",
