@@ -307,10 +307,14 @@ let AddLabelCRM;
                 event.stopPropagation();
                 try {
                     const cliked_Fb_Id = await $this.getClikedFbId();
+                    console.log(cliked_Fb_Id);
                     const notesModal = $this.createNotesModal(cliked_Fb_Id);
                     $('body').append($(notesModal));
                     const res = await $this.getNotesData(cliked_Fb_Id);
+                    console.log( res.api_data);
+
                     const filteredArray = res.api_data.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
+                    console.log(filteredArray);
                     $this.updateNotesContainer(filteredArray);
                     $('#notes-modal').css('display', 'block');
                 } catch (error) {
@@ -1527,7 +1531,7 @@ let AddLabelCRM;
             if (pathname.indexOf('profile.php') > -1) {
                 cliked_Fb_Id = (new URL(document.location)).searchParams.get('id');
             } else if (window.location.pathname.indexOf('/friends') > -1) {
-                if (window.location.pathname.indexOf('/t/') > 0) {
+                if (window.location.pathname.indexOf('/t/') > -1) {
                     cliked_Fb_Id = window.location.pathname.split('/t/')[1];
                 } else {
                     cliked_Fb_Id = window.location.pathname.split('/')[2];
@@ -1539,6 +1543,8 @@ let AddLabelCRM;
                     const response = await getNumericID(alphaFbId);
                     cliked_Fb_Id = response.userID;
                 }
+            }else if (window.location.pathname.indexOf('/t/') > -1) {
+                cliked_Fb_Id = window.location.pathname.split('/t/')[1];
             }
             return cliked_Fb_Id;
         },
@@ -1563,7 +1569,7 @@ let AddLabelCRM;
         updateNotesContainer(filteredArray) {
             const notesContainerDiv = $(".notes_container_div");
             notesContainerDiv.html('');
-
+            console.log(filteredArray);
             filteredArray.forEach(item => {
                 const date_time = new Date(item.updatedAt);
                 const date = `${date_time.getDate()}-${date_time.getMonth() + 1}-${date_time.getFullYear()}`;
