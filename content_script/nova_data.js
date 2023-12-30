@@ -43,8 +43,9 @@ $(() => {
         unfriendCounter = 0;
         unfriendIds = $(this).attr('attr-data');
         dataUnfriend = JSON.parse(unfriendIds);
-
+        console.log(dataUnfriend);
         totalUnFriends = dataUnfriend.userIds.length;
+        console.log(totalUnFriends);
         if (totalUnFriends > 0) {
             unFriendProgressModel();
             $('#count-show').show();
