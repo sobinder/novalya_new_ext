@@ -326,11 +326,11 @@ async function getFriendDetails(friendsList) {
             $('h4.friend_name').text(item.name);
             if (item.status == 0) {
                 const userInfo = await parseUserInfo(friendId, friendUrl);
-                console.log(userInfo);
+               // console.log(userInfo);
                 if (userInfo != undefined && userInfo != '') {
                     if (userInfo.bio != '' && userInfo.bio.bio_basic != '') {
                         let bioBasic = JSON.parse(userInfo.bio.bio_basic);
-                        console.log(bioBasic);
+                        //console.log(bioBasic);
                         if (bioBasic[0].text == 'No basic info to show') {
                             gender = '';
                         } else if (bioBasic[0].text == 'Male') {
@@ -360,7 +360,8 @@ async function getFriendDetails(friendsList) {
                     }
 
                     comments = userInfo.total_comments;
-                    reactions = userInfo.posts_other_like;
+                    //reactions = userInfo.posts_other_like;
+                    reactions = userInfo.posts_my_like;
                 }
             }
 
@@ -487,7 +488,7 @@ async function parseUserInfo(id, url) {
     var friendsUrl = '';
 
     return parseInfo().then(function (userInfo) {
-        console.log('userInfo', userInfo);
+        //console.log('userInfo', userInfo);
         return userInfo;
     });
 
@@ -657,7 +658,7 @@ async function parseUserInfo(id, url) {
                 });
                 var last = JSON.parse(jsons.pop());
                 var nextCursor = null;
-                console.log(last.data);
+                //console.log(last.data);
 
                 if (last.data.page_info.end_cursor != undefined) {
                     nextCursor = last.data.page_info.end_cursor;
