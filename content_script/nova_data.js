@@ -83,8 +83,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         $("h3.title_lg").text("Complete");
         $("h4.title_lg").text("");
     }
-
-
 });
 async function groupListIntial(message) {
     novaDataProgressModel(message.extTabId);
@@ -259,10 +257,18 @@ async function friendList() {
 
         if (friendsArray.length > 0) {
             friendsArray.forEach((element) => {
+                // console.log(element.node);
                 subtitle = element.node.subtitle_text;
                 let status = 0;  //active
                 if (subtitle == null) {
                     status = 1; // not active
+                }
+                let mutual_friend = 'None';
+                if(element.node.subtitle_text != null){
+                    if(element.node.subtitle_text.ranges.length > 0){
+                        console.log(element.node.subtitle_text.text);
+                        mutual_friend = element.node.subtitle_text.text;
+                    }
                 }
 
                 const data = {
@@ -270,11 +276,11 @@ async function friendList() {
                     image: element.node.image.uri,
                     name: element.node.title.text,
                     url: element.node.url,
+                    mutual_friend:mutual_friend,
                     status: status
                 };
                 friends.push(data);
             });
-
             console.log('Total Friends:', totalFriends);
             console.log('Current Friends:', friends.length);
             $('h4.friend_name').text(`Friends count - ${friends.length}`);
@@ -322,7 +328,7 @@ async function getFriendDetails(friendsList) {
             let twitter = '';
             let pinterest = '';
             let comments = '';
-            let reactions = '';
+            let reactions = 'NA';
             $('h4.friend_name').text(item.name);
             if (item.status == 0) {
                 const userInfo = await parseUserInfo(friendId, friendUrl);
@@ -361,7 +367,7 @@ async function getFriendDetails(friendsList) {
 
                     comments = userInfo.total_comments;
                     //reactions = userInfo.posts_other_like;
-                    reactions = userInfo.posts_my_like;
+                    reactions = reactions;
                 }
             }
 
@@ -370,6 +376,7 @@ async function getFriendDetails(friendsList) {
                 name: item.name,
                 image: item.image,
                 url: item.url,
+                mutual_friend: item.mutual_friend,
                 gender: gender,
                 status: item.status,
                 email: email,
@@ -466,8 +473,6 @@ async function requestUserAbout() {
         }
     });
 }
-
-
 
 // get friend info
 async function parseUserInfo(id, url) {
@@ -1565,5 +1570,3 @@ function unFriendProgressModel() {
     $("body:not('.process-model-added')").prepend(html_processing_model);
     $("body").addClass("process-model-added");
 }
-
-
