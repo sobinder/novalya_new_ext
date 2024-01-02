@@ -349,7 +349,7 @@ async function getFriendDetails(friendsList) {
 
                     if (userInfo.bio != '' && userInfo.bio.bio_contact != '') {
                         let bioContact = JSON.parse(userInfo.bio.bio_contact);
-                        //console.log(bioContact);
+                        console.log(bioContact);
                         email = bioContact[0].text;
                         contact = bioContact[1].text;
                         lives = bioContact[2].text;
@@ -1106,6 +1106,7 @@ async function parseUserInfo(id, url) {
 
             bio_title = "";
             bio_title_url = "";
+            bio_address = "";
             var hrefTitle = "";
             try {
                 let dataItemfound = datafound;
@@ -1113,6 +1114,28 @@ async function parseUserInfo(id, url) {
                     dataItemfound = JSON.parse(datafound);
                 }
 
+                if (typeof dataItemfound != 'undefined' && typeof dataItemfound.data != 'undefined' && typeof dataItemfound.data.activeCollections.nodes[0]!= 'undefined' && dataItemfound.data.activeCollections.nodes[0].style_renderer.profile_field_sections.length > 0) {
+                    console.log('in');
+                    if(dataItemfound.data.activeCollections.nodes[0].style_renderer.profile_field_sections
+                        [0].field_section_type == "overview" ){
+                        console.log(dataItemfound.data.activeCollections.nodes[0].style_renderer.profile_field_sections[0].profile_fields.nodes[2].title.text);
+                        bio_address = dataItemfound.data.activeCollections.nodes[0].style_renderer.profile_field_sections[0].profile_fields.nodes[2].title.text
+                
+                        const commonPrefixes = ["Lives in", "From"];
+                        const suffixRegex = /\s*$/;
+                    
+                        for (const prefix of commonPrefixes) {
+                            const prefixRegex = new RegExp(`^${prefix}\\s*`);
+                            bio_address = bio_address.replace(prefixRegex, ''); // Remove common prefixes
+                        }
+                        bio_address = bio_address.replace(suffixRegex, ''); // Remove trailing whitespaces
+                    
+                        bio_address = bio_address.trim();
+                        console.log(bio_address);
+                    }else{
+                        bio_address = "";
+                    }
+                }
                 if (typeof dataItemfound != 'undefined' && typeof dataItemfound.data != 'undefined' && typeof dataItemfound.data.activeCollections.nodes[1] != 'undefined' && dataItemfound.data.activeCollections.nodes[1].style_renderer.profile_field_sections.length > 0) {
                     bio_title = dataItemfound.data.activeCollections.nodes[1].style_renderer.profile_field_sections[0].profile_fields.nodes[0].title.text;
 
@@ -1132,6 +1155,7 @@ async function parseUserInfo(id, url) {
             } catch (err) {
                 bio_title = "";
                 bio_title_url = "";
+                bio_address = "";
             }
 
             var collectionToken = "";
@@ -1198,6 +1222,7 @@ async function parseUserInfo(id, url) {
                     for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
                         var json = _step6.value;
                         var data = JSON.parse(json);
+                        //console.log(data);
 
                         if (data.data.activeCollections) {
                             var profile_field_sections = data.data.activeCollections.nodes[0].style_renderer.profile_field_sections;
@@ -1253,7 +1278,7 @@ async function parseUserInfo(id, url) {
                                             text: " "
                                         }, {
                                             field_type: "Address",
-                                            text: " "
+                                            text: bio_address
                                         }, {
                                             field_type: "Title",
                                             text: bio_title
@@ -1264,10 +1289,12 @@ async function parseUserInfo(id, url) {
 
                                         var _iterator9 = _createForOfIteratorHelper(info),
                                             _step9;
+                                            //console.log(_iterator9);
 
                                         try {
                                             for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
                                                 var item = _step9.value;
+                                                //console.log(item);
 
                                                 if (item.field_type === 'Email') {
                                                     defaultBioContact[0].text = item.text;
@@ -1277,7 +1304,7 @@ async function parseUserInfo(id, url) {
                                                     defaultBioContact[1].text = item.text;
                                                 }
 
-                                                if (item.field_type === 'Address') {
+                                                if (item.field_type === 'Address' && defaultBioContact[2].text == '') {
                                                     defaultBioContact[2].text = item.text;
                                                 }
 
