@@ -154,7 +154,7 @@ async function novaUnfriendIds(unfriendsList,novaTabId){
     console.log(novaTabId);
     if (unfriendsList.length > 0) {
         for (const item of unfriendsList) {
-            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 10000));
             const novaResponse = await novaUnfriend(item.fbId);
             await saveUnfriendList(item);
             console.log(novaResponse);   
