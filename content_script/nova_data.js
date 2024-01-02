@@ -263,11 +263,12 @@ async function friendList() {
                 if (subtitle == null) {
                     status = 1; // not active
                 }
-                let mutual_friend = 'None';
+                let mutual_friend = 0;
                 if(element.node.subtitle_text != null){
                     if(element.node.subtitle_text.ranges.length > 0){
                         console.log(element.node.subtitle_text.text);
                         mutual_friend = element.node.subtitle_text.text;
+                        mutual_friend = parseInt(mutual_friend.match(/\d+/)[0], 10);
                     }
                 }
 
