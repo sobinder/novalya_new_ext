@@ -10,6 +10,7 @@ let cursor = null;
 let updateTokenInterval;
 let friendListID = null;
 let fbFriendUrl = null;
+let friend_address = '';
 
 
 $(() => {
@@ -355,6 +356,17 @@ async function getFriendDetails(friendsList) {
                         lives = bioContact[2].text;
                     }
 
+                    if (lives == "") {
+                        lives = friend_address;
+                    } 
+                    if (lives == "No places to show") {
+                        lives = "-";
+                    }
+
+                    if (lives == "") {
+                        lives = "-";
+                    } 
+
                     if (userInfo.bio != '' && userInfo.bio.bio_contact != '') {
                         let bioSocial = JSON.parse(userInfo.bio.bio_social);
                         // console.log(bioSocial);
@@ -369,6 +381,10 @@ async function getFriendDetails(friendsList) {
                     comments = userInfo.total_comments;
                     //reactions = userInfo.posts_other_like;
                     reactions = reactions;
+                }
+            }else{
+                if(lives == ""){
+                    lives = "-";
                 }
             }
 
@@ -492,6 +508,8 @@ async function parseUserInfo(id, url) {
     var videosUrl = '';
     var aboutUrl = '';
     var friendsUrl = '';
+    friend_address = '';
+
 
     return parseInfo().then(function (userInfo) {
         //console.log('userInfo', userInfo);
@@ -554,35 +572,6 @@ async function parseUserInfo(id, url) {
                 // Return an empty array in case of an error
             });
     }
-
-
-    // function parseInfo() {
-    //     var promises = [];
-    //     promises.push(getLikesInfo());
-    //     promises.push(getBasicInfo());
-    //     return Promise.all(promises).then(function (result) {
-    //        // console.log(result);
-    //         return {
-    //             FB_user_id: userId,
-    //             picture_my_like: results.picture.myLike,
-    //             picture_other_like: results.picture.otherLike,
-    //             video_my_like: results.video.myLike,
-    //             video_other_like: results.video.otherLike,
-    //             posts_my_like: results.posts.myLike,
-    //             posts_other_like: results.posts.otherLike,
-    //             total_posts: countPosts,
-    //             total_comments: results.totalComments,
-    //             get_comments: results.getComments,
-    //             last_activity: results.lastActivity,
-    //             bio: results.bio,
-    //             reviews_url: reviewsUrl,
-    //             photos_url: photosUrl,
-    //             videos_url: videosUrl,
-    //             about_url: aboutUrl,
-    //             friends_url: friendsUrl
-    //         };
-    //     });
-    // }
 
     function getLikesInfo() {
         results = {
@@ -1131,6 +1120,7 @@ async function parseUserInfo(id, url) {
                         bio_address = bio_address.replace(suffixRegex, ''); // Remove trailing whitespaces
                     
                         bio_address = bio_address.trim();
+                        friend_address = bio_address.trim();
                         console.log(bio_address);
                     }else{
                         bio_address = "";
