@@ -48,10 +48,18 @@ $(() => {
         totalUnFriends = dataUnfriend.userIds.length;
         console.log(totalUnFriends);
         if (totalUnFriends > 0) {
-            unFriendProgressModel();
-            $('#count-show').show();
-            $('#processed_unfriend_member').text(unfriendCounter);
-            chrome.runtime.sendMessage({ 'action': 'unfriendIds', 'from': 'unfollow', 'unfriendIds': unfriendIds });
+            if (totalUnFriends <= 50) {
+                unFriendProgressModel();
+                $('#count-show').show();
+                $('#processed_unfriend_member').text(unfriendCounter);
+                chrome.runtime.sendMessage({
+                    'action': 'unfriendIds',
+                    'from': 'unfollow',
+                    'unfriendIds': unfriendIds
+                });
+            } else {
+                toastr["error"]("You cannot unfriend more than 50 people at a time");
+            }
         } else {
             toastr["error"]("Please select members");
         }
