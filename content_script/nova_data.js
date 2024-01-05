@@ -355,6 +355,8 @@ async function getFriendDetails(friendsList) {
                             } else if (bioBasic[0].text == 'Female') {
                                 gender = 'Female';
                             }
+                        }else{
+                            gender = '';
                         }
                     }
 
