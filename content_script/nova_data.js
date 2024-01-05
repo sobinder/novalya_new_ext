@@ -342,17 +342,19 @@ async function getFriendDetails(friendsList) {
             $('h4.friend_name').text(item.name);
             if (item.status == 0) {
                 const userInfo = await parseUserInfo(friendId, friendUrl);
-               // console.log(userInfo);
+                console.log(userInfo);
                 if (userInfo != undefined && userInfo != '') {
                     if (userInfo.bio != '' && userInfo.bio.bio_basic != '') {
                         let bioBasic = JSON.parse(userInfo.bio.bio_basic);
-                        //console.log(bioBasic);
-                        if (bioBasic[0].text == 'No basic info to show') {
-                            gender = '';
-                        } else if (bioBasic[0].text == 'Male') {
-                            gender = 'Male';
-                        } else if (bioBasic[0].text == 'Female') {
-                            gender = 'Female';
+                        console.log(bioBasic);
+                        if(bioBasic[0] != undefined && bioBasic[0].text != undefined ){
+                            if (bioBasic[0].text == 'No basic info to show') {
+                                gender = '';
+                            } else if (bioBasic[0].text == 'Male') {
+                                gender = 'Male';
+                            } else if (bioBasic[0].text == 'Female') {
+                                gender = 'Female';
+                            }
                         }
                     }
 
