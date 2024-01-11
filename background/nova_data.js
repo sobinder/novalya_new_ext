@@ -78,6 +78,46 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
             });               
         } 
     }
+
+    if(message.action === 'deactiveIds'  && message.from === 'unfollow'){
+        let deactiveIds =  message.deactiveIds;
+        deactiveListTabId = sender.tab.id;
+        let token = authToken;
+        if(token != undefined && token != ''){
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer "+token);
+            myHeaders.append("Content-Type", "application/json");
+ 
+            let raw = deactiveIds;
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+            fetch("https://novalyabackend.novalya.com/novadata/api/get-deactivated", requestOptions)
+            .then((response) => response.json())
+            .then((result) => { 
+                console.log(result);
+                if(result.status === "success"){
+                    console.log(result.data);
+                    novaDeactiveIds(result.data,deactiveListTabId);
+                }else{
+                    chrome.tabs.sendMessage(deactiveListTabId, {
+                        action: 'closeunfriendPopup',
+                        from: 'background'
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('error', error); 
+                chrome.tabs.sendMessage(unfriendListTabId, {
+                    action: 'closeunfriendPopup',
+                    from: 'background'
+                })
+            });               
+        } 
+    }
 });
 
 function saveFriendDetails(friendsInfo,friendListTabId){
@@ -167,6 +207,22 @@ async function novaUnfriendIds(unfriendsList,novaTabId){
         console.log('done');
     }
 }
+async function novaDeactiveIds(deactiveList,novaTabId){
+    if (deactiveList.length > 0) {
+        for (const item of deactiveList) {
+            await new Promise((resolve) => setTimeout(resolve, 10000));
+            const novaResponse = await novaUnfriend(item.fbId);
+            await deleteDeactiveList(item);
+            console.log(novaResponse);   
+        }
+        chrome.tabs.sendMessage(novaTabId, {
+            action: 'deactiveProcess',
+            from: 'background',
+            message: 'complete'
+        });
+        console.log('done');
+    }
+}
 
 async function getToken() {
     return fetch('https://www.facebook.com/help').then(function (response) {
@@ -233,6 +289,32 @@ async function saveUnfriendList(item){
             redirect: 'follow'
         };
         fetch("https://novalyabackend.novalya.com/novadata/api/save-unfriended", requestOptions)
+        .then((response) => response.json())
+        .then((result) => { 
+            console.log(result);  
+        })
+        .catch((error) => {
+            console.error('error', error); 
+        });               
+    } 
+}
+
+async function deleteDeactiveList(item){
+    console.log(item);
+    let token = authToken;
+    if(token != undefined && token != ''){
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer "+token);
+        myHeaders.append("Content-Type", "application/json");
+
+        let raw = JSON.stringify(item);
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        fetch("https://novalyabackend.novalya.com/novadata/api/delete-deactivated", requestOptions)
         .then((response) => response.json())
         .then((result) => { 
             console.log(result);  

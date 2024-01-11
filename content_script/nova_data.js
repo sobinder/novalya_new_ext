@@ -64,6 +64,33 @@ $(() => {
             toastr["error"]("Please select members");
         }
     });
+
+    //Deactive
+    $(document).on('click', '#async_decativated', async function () {
+        deactiveCounter = 0;
+        deactiveIds = $(this).attr('attr-data');
+        deactivefriends = JSON.parse(deactiveIds);
+        console.log(deactivefriends);
+        totalDeactive = deactivefriends.userIds.length;
+        console.log(totalDeactive);
+        if (totalDeactive > 0) {
+            if (totalDeactive <= 50) {
+                deactiveFriendProgressModel();
+                $('#count-show').show();
+                $('#processed_unfriend_member').text(deactiveCounter);
+                chrome.runtime.sendMessage({
+                    'action': 'deactiveIds',
+                    'from': 'unfollow',
+                    'deactiveIds': deactiveIds
+                });
+            } else {
+                toastr["error"]("You cannot dective more than 50 people at a time");
+            }
+        } else {
+            toastr["error"]("Please select members");
+        }
+    });
+
 });
 
 
@@ -92,6 +119,13 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         $("h3.title_lg").text("Complete");
         $("h4.title_lg").text("");
     }
+    if (message.action === 'deactiveProcess' && message.from === 'background') {
+        $("#stop_unfriend").text("Close popup");
+        $(".loading").remove();
+        $("h3.title_lg").text("Complete");
+        $("h4.title_lg").text("");
+    }
+    
 });
 async function groupListIntial(message) {
     novaDataProgressModel(message.extTabId);
@@ -320,6 +354,19 @@ async function friendList() {
     }
 }
 
+async function imageUrlToBase64(imageUrl) {
+	return fetch(imageUrl)
+	  .then(response => response.blob())
+	  .then(blob => {
+		return new Promise((resolve, reject) => {
+		  const reader = new FileReader();
+		  reader.onloadend = () => resolve(reader.result);
+		  reader.onerror = reject;
+		  reader.readAsDataURL(blob);
+		});
+	});
+}
+
 async function getFriendDetails(friendsList) {
     console.log(friendsList);
     if (friendsList.length > 0) {
@@ -399,11 +446,22 @@ async function getFriendDetails(friendsList) {
                     lives = "-";
                 }
             }
+            let image = item.image;
+            if(image != ''){
+                await imageUrlToBase64(image)
+                .then(base64String => {
+                    console.log('Base64 image:', base64String);
+                    image = base64String;
+                    // Use the base64String as needed, for example, display it in an image tag:
+                    // document.getElementById('yourImageElementId').src = base64String;
+                })
+                .catch(error => console.error('Error:', error));
+            }
 
             let temp = {
                 id: item.id,
                 name: item.name,
-                image: item.image,
+                image: image,
                 url: item.url,
                 mutual_friend: item.mutual_friend,
                 gender: gender,
@@ -1584,6 +1642,24 @@ function _arrayLikeToArray(arr, len) {
 //unfriendFriend();
 // `<p class="simple-txt" id="count-show"><span id="processed_unfriend_member">0</span> REQUESTS IS ON <span class="total_members"> ${totalUnFriends}</span></p>`
 function unFriendProgressModel() {
+    let html_processing_model = `<section class="main-app">
+                        <div class="overlay-ld">
+                            <div class="container-ld">
+                                <h3 class="title_lg">UNFRIEND IS PROCESSING</h3>
+                                <p class="simple-txt fs-spacing">PLEASE DO NOT CLOSE THIS WINDOW <br> AND KEEP INTERNET CONNECTION ON</p>
+                                <div class="loading">
+                                    <span class="fill"></span>
+                                </div>
+                                
+                                <button class="btn__lg gredient-button scl-process-btn" type="button" id="stop_unfriend" data-tabid="">Stop Process</button>
+                            </div>
+                        </div>
+                    </section>`;
+    $("body:not('.process-model-added')").prepend(html_processing_model);
+    $("body").addClass("process-model-added");
+}
+
+function deactiveFriendProgressModel(){
     let html_processing_model = `<section class="main-app">
                         <div class="overlay-ld">
                             <div class="container-ld">
