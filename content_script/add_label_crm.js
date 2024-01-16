@@ -866,11 +866,13 @@ let AddLabelCRM;
                                     $(this).attr('fb_user_id', fb_user);
                                     $(this).append(add_label_button);
                                 }
-
+                                console.log(fb_user);
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user == item.fb_user_id) {
+                                    console.log(item.fb_user_id);
+                                    console.log(item.numeric_fb_id);
+                                    if (fb_user == item.fb_user_id ) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
-                                        //console.log(filteredTags);
+                                        console.log(filteredTags);
                                         if (filteredTags.length > 0) {
                                             //console.log('in')
                                             $(this).attr('tag-id', filteredTags[0].id)
@@ -884,16 +886,17 @@ let AddLabelCRM;
                             });
                         }
                         if (window.location.origin.indexOf('facebook') > -1) {
+                           //    console.log('facebook');
                             processing = true;
                             var add_label_button = '<div id="add-icon" class="add-button-container-chat contact-pop-up-chat-window"><span class="add-icon">+</span>';
                             //$(this).parents(".x164qtfw").prepend(add_label_button);
                             //ADD LABEL BUTTON ON EVERY MEMBERS BEHIND
                             $(selector_parent_of_contacts_list).parents(".x164qtfw>div").each(function (index) {
-                                //console.log($(this));
+                                console.log($(this));
                                 $(this).parents(".x164qtfw").addClass('cts-message-thread-id-1');
                                 var fb_user = '';
                                 currentWindowUrl = window.location.origin;
-
+                               // console.log($(this).find('a:eq(0)').attr('href'));
                                 if (typeof $(this).find('a:eq(0)').attr('href') != 'undefined') {
                                     fb_user = $(this).find('a:eq(0)').attr('href').split('/')[1];
                                     if (fb_user.indexOf('?') > -1) {
@@ -903,7 +906,7 @@ let AddLabelCRM;
                                 } else {
                                     //console.log('fb id not found');
                                 }
-                                //console.log(fb_user);
+                                console.log(fb_user);
                                 if (fb_user != '') {
                                     if ($(this).find('div.add-button-container-chat').length > 0) {
                                         $(this).find('div.add-button-container-chat').remove();
@@ -913,7 +916,7 @@ let AddLabelCRM;
                                 }
 
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user == item.fb_user_id) {
+                                    if (fb_user == item.fb_user_id ) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
                                         if (filteredTags.length > 0) {
                                             var style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -973,7 +976,7 @@ let AddLabelCRM;
                                 }
 
                                 userTagsArray.forEach((item) => {
-                                    if (fb_user == item.fb_user_id) {
+                                    if (fb_user == item.fb_user_id ) {
                                         const filteredTags = item.tags.filter(tag => tag.id == item.primary_tag);
 
 
@@ -1084,7 +1087,7 @@ let AddLabelCRM;
                 });
             }, 1000);
             setTimeout(() => {
-                console.log(window.location.href);
+                //console.log(window.location.href);
                 setInterval(() => {
                     if (window.location.href.includes('messenger')) {
                         let noteContainers = $(".x1uvtmcs");
@@ -1150,7 +1153,7 @@ let AddLabelCRM;
                             if (fb_user != '' && fb_user != null) {
                                 fb_user = fb_user.replace(/\//g, '');
                             }
-
+                            //console.log(fb_user);
                             if (fb_user != '' && fb_user != null) {
                                 if ($(".x5oxk1f.xym1h4x").find('div.add-button-container').length > 0) {
                                     $(".x5oxk1f.xym1h4x").find('div.add-button-container').remove();
@@ -1158,10 +1161,12 @@ let AddLabelCRM;
                                 $(".x5oxk1f.xym1h4x ").attr('fb_user_id', fb_user);
                                 $(".x9a2f9n").attr('fb_user_id', fb_user);
                             }
+                        //    console.log(userTagsArray);
+                        //    console.log(fb_user);
                             let filteredTags = userTagsArray
-                                .filter(item => fb_user == item.fb_user_id)
+                                .filter(item =>  fb_user == item.fb_user_id ||  fb_user == item.numeric_fb_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
-                               // console.log(filteredTags);
+                             //  console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 $(this).attr('tag-id', filteredTags[0].id);
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;
@@ -1225,11 +1230,14 @@ let AddLabelCRM;
                 if (all_users_tag_get.length > 0) {
                     for (let i = 0; i < all_users_tag_get.length; i++) {
                         const userData = all_users_tag_get[i];
+                       // console.log(userData);
                         const fbUserId = userData.fb_user_id;
                         const primary_tag = userData.is_primary;
                         const tags = userData.tags;
+                        const numeric_fb_id = userData.numeric_fb_id;
                         userTagsArray.push({
                             fb_user_id: fbUserId,
+                            numeric_fb_id:numeric_fb_id,
                             tags: tags,
                             primary_tag: primary_tag
                         });

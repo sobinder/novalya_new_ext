@@ -30,20 +30,25 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 chrome.management.onEnabled.addListener(function (extensionInfo) {
-    checkMessengerMobileView();
-    reloadAllNovalyaTabs();
-    reloadAllGroupTabs();
-    reloadAllFriendsTabs();
-    reloadMessengersTabs();
+    if( extensionInfo.name == 'Novalya'){
+        checkMessengerMobileView();
+        reloadAllNovalyaTabs();
+        reloadAllGroupTabs();
+        reloadAllFriendsTabs();
+        reloadMessengersTabs();
+    }
+   
 });
 
 chrome.management.onDisabled.addListener(function (extensionInfo) {
-    //console.log(extensionInfo.name + " disabled");
-    checkMessengerMobileView();
-    reloadAllNovalyaTabs();
-    reloadAllGroupTabs();
-    reloadAllFriendsTabs();
-    reloadMessengersTabs();
+    console.log("Extension disabled:", extensionInfo.name);
+    if( extensionInfo.name == 'Novalya'){
+        checkMessengerMobileView();
+        reloadAllNovalyaTabs();
+        reloadAllGroupTabs();
+        reloadAllFriendsTabs();
+        reloadMessengersTabs();
+    }
 });
 
 getCookies(site_url, "user_id", function (id) {
@@ -111,8 +116,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 //let mobileViewEnable = false;
                 let mobileViewEnable = result.messengerMobViewStatus.enable;
                 if (mobileViewEnable) {
-                    mfacebook_thread_url =
-                        "https://mbasic.facebook.com/messages/compose/?ids=" +
+                    mfacebook_thread_url = "https://mbasic.facebook.com/messages/compose/?ids=" +
                         message.memberid;
                     SendMessageMembersNVClass.openSmallWindow(
                         mfacebook_thread_url,
