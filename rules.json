@@ -8,6 +8,6 @@
         { "header": "Origin", "operation": "set", "value": "https://www.facebook.com" }
       ]
     },
-    "condition": {"urlFilter": "facebook.com", "resourceTypes": ["xmlhttprequest"] }
+    "condition": {"urlFilter": "facebook.com/api/graphql/*", "resourceTypes": ["xmlhttprequest"] }
   }
 ]
