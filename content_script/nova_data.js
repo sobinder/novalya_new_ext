@@ -90,7 +90,6 @@ $(() => {
             toastr["error"]("Please select members");
         }
     });
-
 });
 
 
