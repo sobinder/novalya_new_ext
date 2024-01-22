@@ -1337,8 +1337,10 @@ async function syncGroupTaggedUserInDB(item) {
 }
 
 async function getUserLimit() {
+    // https://novalyabackend.novalya.com/plan/plan-details
+    //https://novalyabackend.novalya.com/userlimit/api/check
     try {
-        const url = "https://novalyabackend.novalya.com/userlimit/api/check";
+        const url = "https://novalyabackend.novalya.com/plan/plan-details";
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", "Bearer " + authToken);
