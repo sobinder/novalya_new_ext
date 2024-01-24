@@ -15,28 +15,28 @@ async function callAPIs(request_method, api_name, formdata) {
     let url = base_api_url + api_name + '.php';
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-    if(request_method == "GET") {
+    if (request_method == "GET") {
         var requestOptions = {
             method: 'GET',
             headers: myHeaders,
             redirect: 'follow'
         };
     } else {
-        var raw = JSON.stringify(formdata);    
+        var raw = JSON.stringify(formdata);
         var requestOptions = {
-          method: request_method,
-          headers: myHeaders,
-          body: raw,
-          redirect: 'follow'
+            method: request_method,
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
         };
     }
     return new Promise(function (resolve, reject) {
         fetch(url, requestOptions)
-        .then(response => response.json())
-        .then(result => resolve(result))
-        .catch(error => reject(error));
+            .then(response => response.json())
+            .then(result => resolve(result))
+            .catch(error => reject(error));
     });
-  }
+}
 
 
 // HELPER TO RELOAD ALL GROUP TABS
@@ -45,7 +45,7 @@ function reloadAllGroupTabs() {
         windows.forEach(function (window) {
             if (window.type == "normal") {
                 window.tabs.forEach(function (tab) {
-                    if (tab.url && (tab.url.indexOf('/groups/') != -1 && tab.url.indexOf('facebook.com') != -1) ) {
+                    if (tab.url && (tab.url.indexOf('/groups/') != -1 && tab.url.indexOf('facebook.com') != -1)) {
                         chrome.tabs.reload(tab.id);
                     }
                 });
@@ -58,43 +58,49 @@ function reloadAllGroupTabs() {
 
 // HELPER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
 async function getNumericID(facebook_id) {
+    console.log(facebook_id);
+    if (facebook_id == 'friends') {
+       return false;
+    }
+
     return new Promise(function (resolve, reject) {
-      fetch("https://www.facebook.com/" + facebook_id)
-        .then((response) => response.text())
-        .then((str) => {
-          var mySubString = str.substring(
-            str.lastIndexOf('"props":') + 8,
-            str.lastIndexOf(',"entryPoint"') + 0
-          );
-          //console.log(mySubString);
-          if (CS_isValidJSONString(mySubString)) {
-            decoded_data = JSON.parse(mySubString);
-            viewerID = decoded_data.viewerID;
-            userVanity = decoded_data.userVanity;
-            userID = decoded_data.userID;
-            userInfo = {
-              viewerID: decoded_data.viewerID,
-              userVanity: decoded_data.userVanity,
-              userID: decoded_data.userID,
-            };
-            resolve(userInfo);
-          } else {
-            reject(false);
-          }
-        });
+        fetch("https://www.facebook.com/" + facebook_id)
+            .then((response) => response.text())
+            .then((str) => {
+                var mySubString = str.substring(
+                    str.lastIndexOf('"props":') + 8,
+                    str.lastIndexOf(',"entryPoint"') + 0
+                );
+                //console.log(mySubString);
+                if (CS_isValidJSONString(mySubString)) {
+                    decoded_data = JSON.parse(mySubString);
+                    viewerID = decoded_data.viewerID;
+                    userVanity = decoded_data.userVanity;
+                    userID = decoded_data.userID;
+                    userInfo = {
+                        viewerID: decoded_data.viewerID,
+                        userVanity: decoded_data.userVanity,
+                        userID: decoded_data.userID,
+                    };
+                    resolve(userInfo);
+                } else {
+                    reject(false);
+                }
+            });
     });
-  }
+
+}
 
 
 
-  function CS_isValidJSONString(str) {
+function CS_isValidJSONString(str) {
     try {
-      JSON.parse(str);
+        JSON.parse(str);
     } catch (e) {
-      return false;
+        return false;
     }
     return true;
-  }
+}
 
 
 // HELPER TO RELOAD ALL GROUP TABS
@@ -121,7 +127,7 @@ function reloadMessengersTabs() {
                     if (tab.url && (tab.url.indexOf('messenger.com') != -1 && tab.url.indexOf('/t/') != -1)) {
                         chrome.tabs.reload(tab.id);
                     }
-                    if(tab.url && (tab.url.indexOf('facebook') != -1)){
+                    if (tab.url && (tab.url.indexOf('facebook') != -1)) {
                         chrome.tabs.reload(tab.id);
                     }
                 });
@@ -151,13 +157,13 @@ async function getBothAlphaAndNumericId(numericFBid) {
     return await new Promise(function (resolve, reject) {
         fetch("https://www.facebook.com/" + numericFBid).then(function (response) {
             tempFBIDs = {};
-            if(response.url.indexOf("profile.php") > -1) {
+            if (response.url.indexOf("profile.php") > -1) {
                 tempFBIDs.fb_user_id = numericFBid;
                 tempFBIDs.numeric_fb_id = numericFBid;
             } else {
-                if(response.url.indexOf("https://www.facebook.com/") == 0) {
+                if (response.url.indexOf("https://www.facebook.com/") == 0) {
                     tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://www.facebook.com/", ""));
-                } else if(response.url.indexOf("https://web.facebook.com/") == 0) {
+                } else if (response.url.indexOf("https://web.facebook.com/") == 0) {
                     tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://web.facebook.com/", ""));
                 }
                 tempFBIDs.numeric_fb_id = numericFBid;
@@ -166,7 +172,6 @@ async function getBothAlphaAndNumericId(numericFBid) {
             resolve(tempFBIDs);
         });
     });
-    
 }
 
 async function sleep(delay) {
@@ -175,7 +180,7 @@ async function sleep(delay) {
 }
 
 function removeQueryStringFromFbID(id) {
-    if(id.indexOf("?")>-1) {
+    if (id.indexOf("?") > -1) {
         return id.split("?")[0]
     } else {
         return id;

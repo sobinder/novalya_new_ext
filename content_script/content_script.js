@@ -2,9 +2,13 @@
 let loop1 = 0;
 var loopValue = 0;
 var segementMessage = "";
+let no_friend_request = 0;
+let total_no_friend_request = 0;
 let timeOutIdsArray = [];
 let clearMessageInt = [];
 let total_message_limit = 300000; // read by api or by storage of specific user settings.
+let update_no_friend_requests_received = 0;
+let total_no_friend_requests_received = 0;
 
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
@@ -434,7 +438,7 @@ $("body").append(please_Wait_overlay);
 //                     tone: tone_Array,
 //                     language:language
 //                 };
-        
+
 //                 if (result.language) {
 //                     temp.language = result.language;
 //                 }
@@ -453,12 +457,12 @@ $("body").append(please_Wait_overlay);
 //             $('.loader').hide();
 //             showCustomToastr('info', 'The input Text is too less', 4000, false, false, false );
 //         }
-      
+
 //     } else {
 //         $('.loader').hide();
 //         showCustomToastr('info', 'There is no text for input in this post', 4000, false, false, false );
 //     }
-   
+
 // })
 
 // $(document).on("click", ".reload", function (e) {
@@ -670,11 +674,11 @@ document.addEventListener("click", function (event) {
 });
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-   // console.log(message);
+    // console.log(message);
     if (message.subject === "addTargetProcess") {
         //console.log('result', message);
         chrome.storage.local.get(
-            ["nvFriendReqInputs", "nvAddFriendProcess", "no_of_send_message"],
+            ["nvFriendReqInputs", "nvAddFriendProcess", "no_friend_request", "total_no_friend_request"],
             function (result) {
                 console.log("addTargetProcess");
                 console.log(result);
@@ -683,7 +687,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     result.nvFriendReqInputs != ""
                 ) {
                     add_friend_settings = result.nvFriendReqInputs;
-                    no_of_send_message = result.no_of_send_message;
+                    no_friend_request = result.no_friend_request;
+                    total_no_friend_request = result.total_no_friend_request;
+
+                    console.log(no_friend_request);
+                    console.log(total_no_friend_request);
                     if (
                         typeof result.nvAddFriendProcess != "undefined" &&
                         result.nvAddFriendProcess != "" &&
@@ -691,7 +699,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                     ) {
                         // console.log(add_friend_settings);
                         extTabId = message.extTabId;
-                        AddTargetFriendNV.startAddingFriend(add_friend_settings, no_of_send_message, extTabId);
+                        AddTargetFriendNV.startAddingFriend(add_friend_settings, no_friend_request, extTabId, total_no_friend_request);
                         sendResponse({ status: "ok" });
                     }
                 }
@@ -1257,7 +1265,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
 
     if (message.type == "tag_update_done" && message.from == "background") {
-        setTimeout(()=>{
+        setTimeout(() => {
             let response = message.result;
             $('.bulk-tag-checkbox').prop('checked', false);
             if (response != undefined && response != '') {
@@ -1274,7 +1282,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             $('.hide-by-escape').hide();
             var currentLocationUrl = window.location.origin;
             chrome.runtime.sendMessage({ action: "Reload_all_novalya_tabs", currentLocationUrl: currentLocationUrl });
-        },2000);    
+        }, 2000);
     }
     //unfollow module
     if (message.action === 'getGenderAndPlace') {
@@ -1308,12 +1316,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         $(".loading").remove();
         $("h2.title_lg").text("There is an error.").css('color', 'red');
     }
-    // if (message.action === 'friendUnfollowProcess' && message.from === "background") {
-    //     console.log(message);
-    //     setTimeout(() => {
-    //         Unfollow.groupListIntial(message);
-    //     }, 1000);
-    // }
     if (message.action === 'syncingComplete') {
         toastr["success"]('Sync complete');
         setTimeout(() => {
@@ -1414,16 +1416,20 @@ $(document).ready(function () {
         let total_memberss = data.peopleCount;
         setTimeout(() => {
             chrome.runtime.sendMessage({ action: "getCRMSettings", settins: data }, (res7) => {
-                let no_of_send_message = res7.no_of_send_message;
+                let no_crm_message = res7.no_crm_message;
+                let total_no_crm_message = res7.total_no_crm_message;
+
+                console.log('total_no_crm_message - ', total_no_crm_message);
+                console.log('no_crm_message - ', no_crm_message);
                 let errorShown = false;
                 let status_api = res7.setting.status;
                 if (status_api == "success") {
                     toastr["success"]('setting saved successfully! fetching members');
-                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings",'userIds':userIds}, async (res17) => {
+                    chrome.runtime.sendMessage({ action: "getMessagesANDSettings", 'userIds': userIds }, async (res17) => {
                         let reponse17 = res17.api_data.data;
                         console.log(reponse17);
                         let crm_settings = reponse17[0];
-                       
+
                         // console.log(total_memberss);
                         if (userIds.length > 0) {
                             total_memberss = userIds.length;
@@ -1469,8 +1475,9 @@ $(document).ready(function () {
 
                         selected_group_members.map((item, i) => {
                             setTimeout(() => {
-                                if (i < total_memberss && parseInt(total_message_limit) > parseInt(no_of_send_message)) {
-                                    no_of_send_message++;
+                                if (i < total_memberss && parseInt(total_no_crm_message) > parseInt(no_crm_message)) {
+                                    no_crm_message++;
+                                    console.log('no_crm_message - ', no_crm_message);
                                     let thread_id = item.fb_user_id;
                                     console.log(thread_id);
                                     let crmMessage = [];
@@ -1490,9 +1497,10 @@ $(document).ready(function () {
                                     chrome.runtime.sendMessage({ action: "sendMessageFromCRMOnebyOne", textMsg: crmMessageText, thread_id: thread_id }, (res18) => {
                                         if (res18.status === "ok") {
                                             raw = JSON.stringify({
-                                                'no_of_send_message': 1,
+                                                'no_crm_message': no_crm_message,
                                             });
-                                            chrome.runtime.sendMessage({ action: "updateNoOfsendMessage", request: raw });
+                                            // send message to update crm message limit
+                                            chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
                                         }
                                         $('#processed_member').text(i + 1);
                                         if (i === selected_group_members.length - 1) {
@@ -1621,72 +1629,104 @@ $(document).ready(function () {
     });
 
     // CLICK DELETE BUTTON ON FRIEND REQUEST PAGE
-    chrome.storage.local.get(["requestSettings"], function (result) {
+    chrome.storage.local.get(["requestSettings", "userlimitSettings"], function (result) {
         if (
             typeof result.requestSettings != "undefined" &&
             result.requestSettings != "" && result.requestSettings != null
         ) {
+            console.log(result.userlimitSettings);
+            userlimitSettings = result.userlimitSettings;
+
+            let new_packages = userlimitSettings.new_packages;
+            total_no_friend_requests_received = new_packages?.no_friend_requests_received ?? 1000;
+            if(total_no_friend_requests_received == 0){
+                total_no_friend_requests_received = 1000;
+            }
+
+            let userlimit = userlimitSettings.userlimit;
+            update_no_friend_requests_received = userlimit?.no_friend_requests_received ?? 0;
+
             requestSettings1 = result.requestSettings;
             if (requestSettings1.reject_status == 1) {
                 $(document).on(
                     "click",
                     'div[aria-label="Delete"][role="button"]',
                     function () {
-                        requestedMemberURL = $(this)
-                            .parent()
-                            .parent()
-                            .find('a[href*="/friends/requests/"]')
-                            .attr("href");
-                        requestedMemberFullName = $(this)
-                            .parent()
-                            .parent()
-                            .find('a[href*="/friends/requests/"]')
-                            .text();
-                        const rArray = requestedMemberURL.split("?profile_id");
-                        var requestedMemberId = rArray[1].replace("=", "");
-                        requestedMember = {
-                            id: requestedMemberId,
-                            name: requestedMemberFullName,
-                        };
-                        chrome.runtime.sendMessage({ action: "deleteRequest", data: requestedMember },
-                            (res7) => {
-                                //alert('yes');
-                                // body
-                            }
-                        );
+                        if (total_no_friend_requests_received > update_no_friend_requests_received){
+                            requestedMemberURL = $(this)
+                                .parent()
+                                .parent()
+                                .find('a[href*="/friends/requests/"]')
+                                .attr("href");
+                            requestedMemberFullName = $(this)
+                                .parent()
+                                .parent()
+                                .find('a[href*="/friends/requests/"]')
+                                .text();
+                            const rArray = requestedMemberURL.split("?profile_id");
+                            var requestedMemberId = rArray[1].replace("=", "");
+                            requestedMember = {
+                                id: requestedMemberId,
+                                name: requestedMemberFullName,
+                            };
+                            chrome.runtime.sendMessage({ action: "deleteRequest", data: requestedMember },
+                                (res7) => {
+                                    update_no_friend_requests_received++; 
+                                    console.log('update_no_friend_requests_received',update_no_friend_requests_received);
+                                    updateRequestReceivedLimit(update_no_friend_requests_received); 
+                                    //alert('yes');
+                                    // body
+                                }
+                            );
+                        }else{
+                            toastr["error"]('Your friend requests received limit is reached. Please consider upgrading your plan.');
+                        }
                     }
                 );
             }
 
             // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
-            // console.log(requestSettings1.accept_status);
+            console.log(requestSettings1);
             if (requestSettings1.accept_status == 1) {
+                console.log('total-limit - ', total_no_friend_requests_received);
+                console.log('friend request receivied - ', update_no_friend_requests_received);
                 $(document).on(
                     "click",
                     'div[aria-label="Confirm"][role="button"]',
                     function () {
-                        requestedMemberURL = $(this)
-                            .parent()
-                            .parent()
-                            .find('a[href*="/friends/requests/"]')
-                            .attr("href");
-                        requestedMemberFullName = $(this)
-                            .parent()
-                            .parent()
-                            .find('a[href*="/friends/requests/"]')
-                            .text();
-                        const rArray = requestedMemberURL.split("?profile_id");
-                        var requestedMemberId = rArray[1].replace("=", "");
-                        requestedMember = {
-                            id: requestedMemberId,
-                            name: requestedMemberFullName,
-                        };
-                        console.log(requestedMember);
-                        chrome.runtime.sendMessage({ action: "confirmRequest", data: requestedMember },
-                            (res8) => {
-                                // body
-                            }
-                        );
+                        if (total_no_friend_requests_received > update_no_friend_requests_received){
+                            console.log('in');
+                            requestedMemberURL = $(this)
+                                .parent()
+                                .parent()
+                                .find('a[href*="/friends/requests/"]')
+                                .attr("href");
+                            requestedMemberFullName = $(this)
+                                .parent()
+                                .parent()
+                                .find('a[href*="/friends/requests/"]')
+                                .text();
+                            const rArray = requestedMemberURL.split("?profile_id");
+                            var requestedMemberId = rArray[1].replace("=", "");
+
+                            requestedMember = {
+                                id: requestedMemberId,
+                                name: requestedMemberFullName,
+                            };
+
+                            console.log(requestedMember);
+                            console.log('in');
+
+                            chrome.runtime.sendMessage({ 
+                                action: "confirmRequest", 
+                                data: requestedMember 
+                            },(res8) => {
+                                update_no_friend_requests_received++; 
+                                updateRequestReceivedLimit(update_no_friend_requests_received); 
+                            });
+                        } else {
+                            toastr["error"]('Your friend requests received limit is reached. Please consider upgrading your plan.');
+                        }
                     }
                 );
             }
@@ -1916,5 +1956,12 @@ function showOverlay() {
 // Function to hide the overlay
 function hideOverlay() {
     document.getElementById('overlay_pleaseWait').style.display = 'none';
+}
+
+function updateRequestReceivedLimit(no_friend_requests_received) {
+    raw = JSON.stringify({
+        'no_friend_requests_received': no_friend_requests_received,
+    });
+    chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
 }
 

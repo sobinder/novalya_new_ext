@@ -48,9 +48,13 @@ let AddTargetFriendNV;
       }, [1000])
     },
 
-    startAddingFriend: function (settings,no_of_send_message, extTabId) {
-      // $this.addProgressModel(extTabId);
-      console.log(settings , no_of_send_message);
+    startAddingFriend: function (settings, no_friend_request, extTabId, total_no_friend_request) {
+      no_friend_request = no_friend_request;
+      total_no_friend_request = total_no_friend_request;
+
+      console.log(settings, no_friend_request);
+      console.log(settings, total_no_friend_request);
+
       processing_status = "running";
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
       totalGroupMembers = totalGroupMembers.replace(/[^\d]/g, "");
@@ -121,8 +125,7 @@ let AddTargetFriendNV;
           messageArray,
           prospect,
           selectedInterval,
-          dateValue,
-          no_of_send_message
+          dateValue
         );
       }, 8000);
     },
@@ -137,10 +140,8 @@ let AddTargetFriendNV;
       messageArray,
       prospect,
       selectedInterval,
-      dateValue,
-      no_of_send_message
+      dateValue
     ) {
-
       selector_for_validclass2 =
         'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
       /****************FIND AND ADDING FRINED***************************/
@@ -150,44 +151,39 @@ let AddTargetFriendNV;
 
         selector_for_validclass =
           'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed):eq(0)';
-        //console.log('Length of main selector', $(selector_for_validclass).length);
-        if ($(selector_for_validclass).length > 0 && loop1 < limit_req) {
+        if (total_no_friend_request > no_friend_request) {
+          if ($(selector_for_validclass).length > 0 && loop1 < limit_req) {
 
-          var incrementedLoop = loop2 + 1;
-          // if (loop2 + 1 == limit_req) {
-          //   $("#toastrMessage").text("Limit Exceeded Process Completed");
-          // }
-          btnText = $(selector_for_validclass).find(
-            'div[aria-label="Add Friend"]:containsI("Add Friend")'
-          );
-
-          if (btnText.length == 0) {
+            var incrementedLoop = loop2 + 1;
             btnText = $(selector_for_validclass).find(
-              'div[aria-label="Add friend"]:containsI("Add Friend")'
+              'div[aria-label="Add Friend"]:containsI("Add Friend")'
             );
-          }
 
-          //console.log('btnText.length', btnText.length);
+            if (btnText.length == 0) {
+              btnText = $(selector_for_validclass).find(
+                'div[aria-label="Add friend"]:containsI("Add Friend")'
+              );
+            }
 
-          let groupHref2 = $(selector_for_validclass2)
-            .find('a[href*="/groups/"]')
-            .attr("href");
-            if(groupHref2.includes("user/")){
+            let groupHref2 = $(selector_for_validclass2)
+              .find('a[href*="/groups/"]')
+              .attr("href");
+            if (groupHref2.includes("user/")) {
               console.log(groupHref2);
               let memberurl2 = groupHref2.split("user/");
               let memberid2 = memberurl2[1].replace("/", "");
               console.log(memberid2);
-    
+
               if (prospect == "yes") {
-    
+
                 chrome.runtime.sendMessage({
                   action: "checkProspectUser",
                   memberid: memberid2,
                 }, (res) => {
                   console.log(res.result);
                   if (res.result.message == "no record found") {
-    
-                    $this.addFriendButtonCheck( randomDelay,
+                    $this.addFriendButtonCheck(
+                      randomDelay,
                       limit_req,
                       keywordTypeValue,
                       negative_keyword,
@@ -197,19 +193,17 @@ let AddTargetFriendNV;
                       messageArray,
                       prospect,
                       selectedInterval,
-                      dateValue ,
-                      btnText , loop2 , no_of_send_message);
+                      dateValue,
+                      btnText,
+                      loop2
+                    );
                   } else if (res.result.message == "Record already found") {
                     console.log("record allready found");
-    
                     if (selectedInterval == "custom") {
-                      // var currentDate = new Date().getTime();
-    
                       var currentDate = new Date(dateValue).getTime();
                       var userAddDate = new Date(res.result.data.date_add);
                       var dateInMilliseconds = userAddDate.getTime();
                       console.log(currentDate, dateInMilliseconds);
-    
                     } else {
                       console.log(selectedInterval);
                       var currentDate = new Date().valueOf();
@@ -221,12 +215,13 @@ let AddTargetFriendNV;
                       var dateInMilliseconds = userAddDate.getTime();
                       console.log(currentDate, dateInMilliseconds);
                     }
-              
-                    if(selectedInterval !== "alltime"){
+
+                    if (selectedInterval !== "alltime") {
                       console.log("in the selectedInterval not empty");
                       if (currentDate >= dateInMilliseconds) {
                         console.log("in the sending condition");
-                        $this.addFriendButtonCheck( randomDelay,
+                        $this.addFriendButtonCheck(
+                          randomDelay,
                           limit_req,
                           keywordTypeValue,
                           negative_keyword,
@@ -236,7 +231,10 @@ let AddTargetFriendNV;
                           messageArray,
                           prospect,
                           selectedInterval,
-                          dateValue , btnText , loop2 , no_of_send_message);
+                          dateValue,
+                          btnText,
+                          loop2
+                        );
                       } else {
                         console.log("in the not sendong condition");
                         $(selector_for_validclass).addClass("sca-member-proccessed");
@@ -260,14 +258,14 @@ let AddTargetFriendNV;
                             messageArray,
                             prospect,
                             selectedInterval,
-                            dateValue,
-                            no_of_send_message
+                            dateValue
                           );
                         }, 4000);
                       }
-                    }else{
+                    } else {
                       console.log("in the selectedInterval is empty");
-                      $this.addFriendButtonCheck( randomDelay,
+                      $this.addFriendButtonCheck(
+                        randomDelay,
                         limit_req,
                         keywordTypeValue,
                         negative_keyword,
@@ -277,7 +275,10 @@ let AddTargetFriendNV;
                         messageArray,
                         prospect,
                         selectedInterval,
-                        dateValue , btnText , loop2, no_of_send_message);
+                        dateValue,
+                        btnText,
+                        loop2
+                      );
                     }
                   }
                 });
@@ -289,17 +290,21 @@ let AddTargetFriendNV;
                 }, (res) => {
                   console.log(res.result);
                   if (res.result.message == "no record found") {
-                    $this.addFriendButtonCheck( randomDelay,
+                    $this.addFriendButtonCheck(
+                      randomDelay,
                       limit_req,
                       keywordTypeValue,
                       negative_keyword,
-                      countryvalue, 
+                      countryvalue,
                       totalGroupMembers,
                       gender,
                       messageArray,
                       prospect,
                       selectedInterval,
-                      dateValue , btnText , loop2 , no_of_send_message);
+                      dateValue,
+                      btnText,
+                      loop2
+                    );
                   } else {
                     $(selector_for_validclass).addClass("sca-member-proccessed");
                     if ($(selector_for_validclass)[0] != undefined) {
@@ -322,14 +327,13 @@ let AddTargetFriendNV;
                         messageArray,
                         prospect,
                         selectedInterval,
-                        dateValue,
-                        no_of_send_message
+                        dateValue
                       );
                     }, 4000);
                   }
                 });
               }
-            }else{
+            } else {
               if (loop1 < limit_req) {
                 $("html, body").animate({ scrollTop: $(document).height() }, 1000);
                 setTimeout(() => {
@@ -344,40 +348,45 @@ let AddTargetFriendNV;
                     messageArray,
                     prospect,
                     selectedInterval,
-                    dateValue,
-                    no_of_send_message
+                    dateValue
                   );
                 }, 4000);
               }
             }
-       
-        } else {
-          if (loop1 < limit_req) {
-            $("html, body").animate({ scrollTop: $(document).height() }, 1000);
-            setTimeout(() => {
-              $this.checkValidUsers(
-                randomDelay,
-                limit_req,
-                keywordTypeValue,
-                negative_keyword,
-                countryvalue,
-                totalGroupMembers,
-                gender,
-                messageArray,
-                prospect,
-                selectedInterval,
-                dateValue,
-                no_of_send_message
-              );
-            }, 4000);
+
           } else {
-            console.log("stopped");
-            $("#loop1").text(loop1);
-            $("#stop_run").text("STOPPED");
-            $(".loading").remove();
-            $("h3.title_lg").text("Limit Exceed");
-            chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
+            if (loop1 < limit_req) {
+              $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+              setTimeout(() => {
+                $this.checkValidUsers(
+                  randomDelay,
+                  limit_req,
+                  keywordTypeValue,
+                  negative_keyword,
+                  countryvalue,
+                  totalGroupMembers,
+                  gender,
+                  messageArray,
+                  prospect,
+                  selectedInterval,
+                  dateValue
+                );
+              }, 4000);
+            } else {
+              console.log("stopped");
+              $("#loop1").text(loop1);
+              $("#stop_run").text("STOPPED");
+              $(".loading").remove();
+              $("h3.title_lg").text("Limit Exceed");
+              chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
+            }
           }
+        } else {
+          $("#customToastr0").css("background-color", "red");
+          $("#toastrMessage").text(`Your message request limit is reached. Please consider upgrading your plan. `);
+          setTimeout(() => {
+            chrome.runtime.sendMessage({ action: "closeTabs", extTabId: extTabId });
+          }, 2000);
         }
       }
     },
@@ -604,6 +613,8 @@ let AddTargetFriendNV;
                                   console.log(res);
                                 });
                                 loop1++;
+                                no_friend_request++;
+                                $this.updateRequestLimit();
                                 $this.checkValidUsers(
                                   randomDelay,
                                   limit_req,
@@ -615,8 +626,7 @@ let AddTargetFriendNV;
                                   messageArray,
                                   prospect,
                                   selectedInterval,
-                                  dateValue,
-                                  no_of_send_message
+                                  dateValue
                                 );
                               }
                             );
@@ -624,6 +634,8 @@ let AddTargetFriendNV;
                             showCustomToastr('error', 'Message Sending Failled', 3000, false);
                             console.log("reached iin else condition");
                             loop1++;
+                            no_friend_request++;
+                            $this.updateRequestLimit();
                             $(".loading_w_scl").addClass("failed-scl");
                             setTimeout(() => {
                               $(".failed-scl").removeClass("loading_w_scl");
@@ -645,8 +657,7 @@ let AddTargetFriendNV;
                                 messageArray,
                                 prospect,
                                 selectedInterval,
-                                dateValue,
-                                no_of_send_message
+                                dateValue
                               );
                             }, 4000);
                             warningStatus = false;
@@ -682,8 +693,7 @@ let AddTargetFriendNV;
                         messageArray,
                         prospect,
                         selectedInterval,
-                        dateValue,
-                        no_of_send_message
+                        dateValue
                       );
                     }, 4000);
                   }
@@ -711,8 +721,7 @@ let AddTargetFriendNV;
                   messageArray,
                   prospect,
                   selectedInterval,
-                  dateValue,
-                  no_of_send_message
+                  dateValue
                 );
               }, 4000);
             }
@@ -738,8 +747,7 @@ let AddTargetFriendNV;
                 messageArray,
                 prospect,
                 selectedInterval,
-                dateValue,
-                no_of_send_message
+                dateValue
               );
             }, 4000);
           }
@@ -873,6 +881,12 @@ let AddTargetFriendNV;
         warningStatus = true;
       }
     },
+    updateRequestLimit: function () {
+      raw = JSON.stringify({
+        'no_friend_request': no_friend_request,
+      });
+      chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+    }
   };
   AddTargetFriendNV.initilaize();
 })(jQuery);

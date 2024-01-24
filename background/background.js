@@ -404,10 +404,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 if (res1.status == "error") {
                     console.log(res1.message);
                 } else {
-                    // let no_of_send_message = await getConnectMessageSent();
-                    let no_of_send_message = 1;
-                    console.log(no_of_send_message);
-                    chrome.storage.local.set({ nvFriendReqInputs: res1.data, no_of_send_message: no_of_send_message }, function () {
+                    let response = await getUserPlanLimit();
+                    total_no_friend_request = response.data.new_packages.no_friend_request ?? 1000;
+                    if(total_no_friend_request == 0){
+                        total_no_friend_request = 1000;
+                    }
+                    no_friend_request = response.data.userlimit.no_friend_request ?? 0;
+                    chrome.storage.local.set({
+                        nvFriendReqInputs: res1.data,
+                        no_friend_request: no_friend_request,
+                        total_no_friend_request: total_no_friend_request
+                    }, function () {
                         console.log(res1.data[0].groups.url);
                         chrome.tabs.create({ url: res1.data[0].groups.url, active: true },
                             function (tabs) {
@@ -581,6 +588,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     };
                     mfacebook_thread_url =
                         "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+
                     SendMessageMembersNVClass.openSmallWindow(
                         mfacebook_thread_url,
                         window_data
@@ -770,11 +778,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(response => response.json())
             .then(async (result) => {
                 console.log(result);
-                //let response = await getUserLimit();
-                // let no_of_send_message = response.data.no_of_send_message;
-                let no_of_send_message = 1;
-                console.log(no_of_send_message);
-                sendResponse({ setting: result, no_of_send_message: no_of_send_message })
+                let response = await getUserPlanLimit();
+                let total_no_crm_message = response.data.new_packages.no_crm_message ?? 1000;
+                if(total_no_crm_message == 0){
+                    total_no_crm_message = 1000;
+                }
+                let no_crm_message = response.data.userlimit.no_crm_message ?? 0;
+
+                console.log(total_no_crm_message);
+                console.log(no_crm_message);
+
+                sendResponse({ setting: result, total_no_crm_message: total_no_crm_message, no_crm_message: no_crm_message })
             })
             .catch(error => console.log('error', error));
         return true;
@@ -1019,8 +1033,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     }
 
-    if (message.action === "updateNoOfsendMessage") {
-        updateUserLimit(message, sendResponse);
+    //all update no_crm_message, no_friend_request
+    if (message.action === "updateLimit") {
+        updateLimit(message, sendResponse);
+        setTimeout(()=>{
+            getUserPlanLimit();
+        },1000);
+        
     }
 
     if (message.action === "updateNoSendConnects") {
@@ -1095,7 +1114,7 @@ function groupPageTabListener(tabId, changeInfo, tab) {
 }
 
 function getGroupName(sendResponse, grouppage_url) {
-    //console.log(grouppage_url);
+    console.log(grouppage_url);
     fetch(grouppage_url, { method: "GET" })
         .then((response) => response.text())
         .then((textResponse) => {
@@ -1104,6 +1123,10 @@ function getGroupName(sendResponse, grouppage_url) {
 }
 
 FriendRequestsNVClass.getRequestSettings();
+setTimeout(()=>{
+    getUserPlanLimit();
+},5000);
+
 // FriendCRMClass.getCRMStatus();
 
 // GET FACEBOOK LOGGED-IN USER 1ID FROM APIS AND SET CUSTOMER ID
@@ -1120,6 +1143,7 @@ function GetFacebookLoginId() {
 
 // HEPgfcvbcER TO GET APLHANUMERIC AND NUMERIC ID IF GetBothAphaAndNumericId FUNCTION NOT WORKING. DUE TO BLOCK M.FACEBOOK.COM
 async function getNumericID(facebook_id) {
+    console.log(facebook_id)
     return new Promise(function (resolve, reject) {
         fetch("https://www.facebook.com/" + facebook_id)
             .then((response) => response.text())
@@ -1421,31 +1445,60 @@ async function updateNoOfConnects(message, sendResponse) {
     }
 }
 
-async function getConnectMessageSent() {
+//Get all user Plan Limits-> crm messages, requests,
+async function getUserPlanLimit() {
     try {
-        const url = "https://novalyabackend.novalya.com/userlimit/api/check";
+        const url = `https://novalyabackend.novalya.com/plan/plan-details`;
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         myHeaders.append("Authorization", "Bearer " + authToken);
 
         const requestOptions = {
-            method: 'POST',
+            method: 'GET',
             headers: myHeaders,
         };
 
         const response = await fetch(url, requestOptions);
         if (response.ok) {
             const result = await response.json();
-            console.log(result.data.no_of_connect);
-            return result.data.no_of_connect;
+            chrome.storage.local.set({ userlimitSettings: result.data}, function() {   });
+           // console.log(result);
+            return result;
         } else {
-            // Handle the error here if needed
             console.log('Error:', response.status, response.statusText);
-            return null; // Or you can throw an error
+            return null;
         }
     } catch (error) {
-        // Handle any other errors that may occur during the request
         console.error('Error:', error);
-        return null; // Or you can throw an error
+        return null;
+    }
+}
+
+// use to update update limits -> no_crm_group, no_stages_group,no_friend_request,no_crm_message,no_ai_comment,
+async function updateLimit(message, sendResponse) {
+    try {
+        const url = "https://novalyabackend.novalya.com/plan/update-limit";
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer " + authToken);
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: message.request
+        };
+        const response = await fetch(url, requestOptions);
+        if (response.ok) {
+            const result = await response.json();
+            sendResponse(result);
+            return result;
+        } else {
+            console.log('Error:', response.status, response.statusText);
+            sendResponse(null);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        sendResponse(null);
+        return null;
     }
 }
