@@ -41,7 +41,6 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 
 $(document).on("click", "#comment_Ai", function () {
-    console.log("clicked");
     const notesModal = createNotesModal();
     $('body').append($(notesModal));
     $('.popup-backdrop').show();
@@ -59,7 +58,6 @@ $(document).on('click', '#custom_comment', function () {
 $(document).on('click', '#custom_time', function () {
     $('input[name="custom_times"][type="text"]').focus();
 });
-
 
 
 $(document).on("click", ".play", function (e) {
