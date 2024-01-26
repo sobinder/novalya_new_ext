@@ -46,18 +46,43 @@ $(document).on("click", "#comment_Ai", function () {
     $('.popup-backdrop').show();
 });
 
-$(document).on('click', 'i.bi.bi-x', function () {
+$(document).on('click', 'i.close_Ai_popup', function () {
     $(".popup-backdrop").remove();
 });
 
 
 $(document).on('click', '#custom_comment', function () {
-    $('input[name="comments"][type="text"]').focus();
+    $('input[name="custom_comments"][type="text"]').focus();
+    $('input[name="custom_comments"][type="text"]').css('display','block');
 });
 
 $(document).on('click', '#custom_time', function () {
     $('input[name="custom_times"][type="text"]').focus();
+    $('input[name="custom_times"][type="text"]').css('display','block');
 });
+
+$(document).on('change','input[name="times"]', function() {
+    // Perform your operation here
+    console.log("Selected value:", $(this).val());
+    if($(this).val() == 'custom'){
+        $('input[name="custom_times"][type="text"]').focus();
+        $('input[name="custom_times"][type="text"]').css('display','block');
+    }else{
+        $('input[name="custom_times"][type="text"]').css('display','none'); 
+    }
+  });
+
+  $(document).on('change','input[name="comments"]', function() {
+    // Perform your operation here
+    console.log("Selected value:", $(this).val());
+    if($(this).val() == 'custom'){
+        $('input[name="custom_comments"][type="text"]').focus();
+        $('input[name="custom_comments"][type="text"]').css('display','block');
+    }else{
+        $('input[name="custom_comments"][type="text"]').css('display','none'); 
+    }
+  });
+
 
 
 $(document).on("click", ".play", function (e) {
@@ -601,14 +626,15 @@ $(document).on("click", ".popup_play", function (e) {
         $('.opinion_popup').focus();
         return false;
     } 
-
-    let writing_style_popup = $('.writing_style_popup').val();
+    let writing_style_popup = [];
+     writing_style_popup = $('.writing_style_popup').val();
     if (writing_style_popup == ""){
         $('.writing_style_popup').focus();
         return false;
     }
 
-    let tone_popup = $('.tone_popup').val();
+    let tone_popup = [];
+      tone_popup = $('.tone_popup').val();
     if (tone_popup == ""){
         $('.tone_popup').focus();
         return false;
@@ -655,7 +681,7 @@ $(document).on("click", ".popup_play", function (e) {
 
 setInterval(function () {
     checkactive();
-}, 5000);
+}, 4000);
 
 function checkactive() {
     chrome.storage.sync.get(["responsedata"], function (result) {
@@ -728,6 +754,7 @@ appendHTML = ` <div id="quentintou">
 <li class="tone">Tone</li>
 <li class="size">Size</li>
 <li class="language">Language</li>
+<li class="emojis">Emojis</li>
 </ul>
 <div  class="like_option" style="display:flex">
 
@@ -786,28 +813,45 @@ appendHTML = ` <div id="quentintou">
         <li>French</li>
     </ul>
 </div>
+<div class="emojis_option">
+    <ul>
+        <li>Yes</li>
+        <li>No</li>
+    </ul>
+</div>
 <div class="response">
 <span class="inner1"></span>
 <span class="inner2"></span>
 <span class="inner3"></span>
 <span class="inner4"></span>
 <span class="inner5"></span>
+<span class="inner6"></span>
 </div>`;
 
 function createNotesModal() {
     return `
-        <main class="popup-backdrop">
-      <div class="ai-popup">
-        <div class="ai-popup-head">
-          <h3>AI Comments</h3>
-          <i class="bi bi-x"></i>
-        </div>
+    <main class="popup-backdrop">
+    <div class="ai-popup">
+      <div class="ai-popup-head">
+        <h3>
+          Customize Your Automated AI Comments <br />
+          <a href="#">How does it work?</a>
+        </h3>
+        <i class="close_Ai_popup">✕</i>
+      </div>
+      <div class="sb-grid">
         <div class="selection-box">
           <div class="default-values">
             <h6>Select the number of comments</h6>
             <div class="selection-grid">
               <div class="selection-card">
-                <input type="radio" value="3" name="comments" id="comment1" checked />
+                <input
+                  type="radio"
+                  value="3"
+                  name="comments"
+                  id="comment1"
+                  checked
+                />
                 <label for="comment1">3</label>
               </div>
               <div class="selection-card">
@@ -815,31 +859,60 @@ function createNotesModal() {
                 <label for="comment2">5</label>
               </div>
               <div class="selection-card">
-                <input type="radio" value="10" name="comments" id="comment3" />
+                <input
+                  type="radio"
+                  value="10"
+                  name="comments"
+                  id="comment3"
+                />
                 <label for="comment3">10</label>
               </div>
               <div class="selection-card">
-                <input type="radio" value="15" name="comments" id="comment4" />
+                <input
+                  type="radio"
+                  value="15"
+                  name="comments"
+                  id="comment4"
+                />
                 <label for="comment4">15</label>
               </div>
               <div class="selection-card">
-                <input type="radio" value="20" name="comments" id="comment5" />
+                <input
+                  type="radio"
+                  value="20"
+                  name="comments"
+                  id="comment5"
+                />
                 <label for="comment5">20</label>
               </div>
               <div class="selection-card">
-                <input type="radio" value="custom" name="comments" id="custom_comment" />
-                <label for="custom_comment">custom</label>
+                <input
+                  type="radio"
+                  value="custom"
+                  name="comments"
+                  id="custom_comment"
+                />
+                <label for="custom_comment">Custom</label>
               </div>
             </div>
           </div>
           <div class="custom-amount">
-            <div class="or">
+            <!-- <div class="or">
               OR
               <div></div>
-            </div>
+            </div> -->
             <div class="input-box">
-               <span class="warning" style="display:none">Custom can’t be higher than ‘50’</span>
-              <input name="custom_comments" type="text" placeholder="Enter Custom Number of Comments" />
+              <span class="warning" style="display: none"
+                >Custom can’t be higher than ‘50’</span
+              >
+
+              <input
+                id="custom_comment_input"
+                name="custom_comments"
+                type="text"
+                style="display: none"
+                placeholder="Custom Number of Comments"
+              />
             </div>
           </div>
         </div>
@@ -848,7 +921,13 @@ function createNotesModal() {
             <h6>Select the number of seconds</h6>
             <div class="selection-grid">
               <div class="selection-card">
-                <input type="radio" value="30" name="times" id="time1" checked />
+                <input
+                  type="radio"
+                  value="30"
+                  name="times"
+                  id="time1"
+                  checked
+                />
                 <label for="time1">30</label>
               </div>
               <div class="selection-card">
@@ -867,79 +946,95 @@ function createNotesModal() {
                 <input type="radio" value="120" name="times" id="time5" />
                 <label for="time5">120</label>
               </div>
-              <div class="selection-card">
-                <input type="radio" value="custom" name="times" id="custom_time" />
-                <label for="custom_time">custom</label>
+              <div class="selection-card sc-custom">
+                <input
+                  type="radio"
+                  value="custom"
+                  name="times"
+                  id="custom_time"
+                />
+                <label for="custom_time">Custom</label>
               </div>
             </div>
           </div>
           <div class="custom-amount">
-            <div class="or">
+            <!-- <div class="or">
               OR
               <div></div>
-            </div>
+            </div> -->
             <div class="input-box">
-                <span class="warning" style="display:none">Custom can’t be lower than ‘30’ seconds</span>
-              <input type="text" name="custom_times" placeholder="Enter Custom Number of Seconds" />
+              <span class="warning" style="display: none"
+                >Custom can’t be lower than ‘30’ seconds</span
+              >
+              <input
+              style="display: none"
+                type="text"
+                name="custom_times"
+                placeholder="Custom Number of Seconds"
+              />
             </div>
           </div>
         </div>
-
+      </div>
+      <div class="settings-box">
         <h6>Select your settings</h6>
 
         <div class="options-box">
           <div class="input-box">
             <select class="opinion_popup" data-type="opinion_popup">
-                <option value="">opinion</option>
-                <option value="Agreed">Agreed</option>
-                <option value="Disagreed">Disagreed</option>
-                <option value="Question">Question</option>
-                <option value="Congratulations">Congratulations</option>
-                <option value="Encouragement">Encouragement</option>
-                <option value="Neutral">Neutral</option>
+              <option value="">opinion</option>
+              <option value="Agreed">Agreed</option>
+              <option value="Disagreed">Disagreed</option>
+              <option value="Question">Question</option>
+              <option value="Congratulations">Congratulations</option>
+              <option value="Encouragement">Encouragement</option>
+              <option value="Neutral">Neutral</option>
             </select>
           </div>
           <div class="input-box">
-            <select class="writing_style_popup" data-type="writing_style_popup">
-                <option value="">Writing</option>
-                <option value="Academic">Academic</option>
-                <option value="Analytical">Analytical</option>
-                <option value="Argumentative">Argumentative</option>
-                <option value="Conversational">Conversational</option>
-                <option value="Creative">Creative</option>
-                <option value="Critical">Critical</option>
-                <option value="Descriptive">Descriptive</option>
-                <option value="Concise and witty">Concise and witty</option>
-                <option value="Personal and direct">Personal and direct</option>
+            <select
+              class="writing_style_popup"
+              data-type="writing_style_popup"
+            >
+              <option value="">Writing</option>
+              <option value="Academic">Academic</option>
+              <option value="Analytical">Analytical</option>
+              <option value="Argumentative">Argumentative</option>
+              <option value="Conversational">Conversational</option>
+              <option value="Creative">Creative</option>
+              <option value="Critical">Critical</option>
+              <option value="Descriptive">Descriptive</option>
+              <option value="Concise and witty">Concise and witty</option>
+              <option value="Personal and direct">Personal and direct</option>
             </select>
           </div>
           <div class="input-box">
             <select class="tone_popup" data-type="tone_popup">
-                <option value="">Tone</option>
-                <option value="Funny">Funny</option>
-                <option value="Emotional">Emotional</option>
-                <option value="Informative">Informative</option>
-                <option value="Narative">Narative</option>
-                <option value="Enthusiastic">Enthusiastic</option>
-                <option value="Serious">Serious</option>
-                <option value="Respectful">Respectful</option>
-                <option value="Professional">Professional</option>
+              <option value="">Tone</option>
+              <option value="Funny">Funny</option>
+              <option value="Emotional">Emotional</option>
+              <option value="Informative">Informative</option>
+              <option value="Narative">Narative</option>
+              <option value="Enthusiastic">Enthusiastic</option>
+              <option value="Serious">Serious</option>
+              <option value="Respectful">Respectful</option>
+              <option value="Professional">Professional</option>
             </select>
           </div>
           <div class="input-box">
             <select class="size_popup" data-type="tone_popup">
-                <option value="">Size</option>
-                <option value="Long">Long</option>
-                <option value="Medium">Medium</option>
-                <option value="Short">Short</option>
+              <option value="">Size</option>
+              <option value="Long">Long</option>
+              <option value="Medium">Medium</option>
+              <option value="Short">Short</option>
             </select>
           </div>
           <div class="input-box">
             <select class="language_popup" data-type="language_popup">
-                <option value="">Language</option>
-                <option value="Auto detect">Auto detect</option>
-                <option value="English">English</option>
-                <option value="French">French</option>
+              <option value="">Language</option>
+              <option value="Auto detect">Auto detect</option>
+              <option value="English">English</option>
+              <option value="French">French</option>
             </select>
           </div>
           <div class="input-box">
@@ -950,16 +1045,11 @@ function createNotesModal() {
             </select>
           </div>
         </div>
-        <div  class="loader" style="display:none">     
-            
-        </div>
-        <div class="play-box">
-          <span class="popup_play"> LAUNCH AI 
-            <i class="bi bi-play"></i>
-          </span>
-        </div>
       </div>
-    </main>`;
+      <div class="loader" style="display: none"></div>
+      <span class="btn-purple btn-launch popup_play"> LAUNCH AI </span>
+    </div>
+  </main>`;
 }
 
 

@@ -31,6 +31,9 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+button {
+  cursor: pointer;
+}
 .popup-backdrop {
   width: 100vw;
   height: 100vh;
@@ -49,23 +52,38 @@
   padding: 20px;
   background-color: var(--white);
   border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .ai-popup-head {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
 }
 .ai-popup-head h3 {
-  font-size: 22.5px;
+  font-size: 20px;
   color: var(--zinc-700);
   font-weight: 600;
+  line-height: 20px;
+}
+.ai-popup-head h3 a {
+  font-size: 13.5px;
+  color: var(--zinc-500);
+  font-weight: 500;
+  transition: 0.35s;
+}
+.ai-popup-head h3 a:hover {
+  color: var(--purpleNVL);
 }
 .ai-popup-head i {
-  font-size: 25px;
+  font-size: 20px;
   cursor: pointer;
   transition: 0.25s;
+  font-style: normal;
+  color: var(--zinc-500);
 }
 .ai-popup-head i:hover {
   color: rgb(195, 71, 71);
@@ -73,33 +91,47 @@
 .selection-box {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-gap: 15px;
-  background-color: var(--zinc-100);
+  background-color: var(--zinc-50);
   padding: 15px;
   border-radius: 10px;
-  margin: 0 0 20px 0;
+  margin: 0 0 15px 0;
+}
+.sb-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+.settings-box {
+  width: 100%;
+  display: grid;
+  background-color: var(--zinc-50);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 0 0 15px 0;
 }
 .options-box {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 10px;
-  margin: 0 0 20px 0;
 }
 .default-values {
   width: 100%;
 }
-.selection-box h6 {
+h6 {
   font-size: 15px;
   color: var(--zinc-700);
   font-weight: 500;
   margin: 0 0 10px 0;
+  width: 100%;
 }
 .selection-grid {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 10px;
 }
 .custom-amount {
@@ -117,7 +149,7 @@
 }
 .selection-card label {
   width: 100%;
-  height: 45px;
+  height: 35px;
   padding: 5px 0;
   display: flex;
   align-items: center;
@@ -191,4 +223,112 @@
   font-size: 25px;
   padding: 2px 0 0 2px;
   cursor: pointer;
+}
+.btn-purple {
+  width: max-content;
+  outline: 0;
+  padding: 0;
+  font-size: 15px;
+  background-color: var(--purpleNVL);
+  color: var(--white);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.btn-dark {
+  width: max-content;
+  outline: 0;
+  padding: 0;
+  font-size: 15px;
+  background-color: var(--zinc-700);
+  color: var(--white);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  transition: 0.35s;
+  cursor: pointer;
+}
+.btn-dark:hover {
+  background-color: var(--purpleNVL);
+}
+.btn-light {
+  width: max-content;
+  outline: 0;
+  padding: 0;
+  font-size: 15px;
+  background-color: transparent;
+  color: var(--zinc-600);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border: 2px solid var(--zinc-300);
+  transition: 0.35s;
+  cursor: pointer;
+}
+.btn-light:hover {
+  border: 2px solid var(--purpleNVL);
+  color: var(--purpleNVL);
+}
+.btn-launch {
+  padding: 0.5rem 3.5rem;
+}
+
+/* Comment Panel */
+.comment-panel-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 50px;
+}
+.comment-panel-box {
+  width: 100%;
+  height: max-content;
+  padding: 20px;
+}
+.comment-panel {
+  width: 100%;
+  height: max-content;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.comment-btn input {
+  display: none;
+}
+
+.comment-btn label {
+  width: max-content;
+  font-size: 15px;
+  background-color: transparent;
+  color: var(--zinc-600);
+  padding: 0.35rem 1.5rem;
+  border: 2px solid var(--zinc-300);
+  transition: 0.35s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1000px;
+  transition: 0.35s;
+}
+
+.comment-btn label:hover {
+  border: 2px solid var(--purpleNVL);
+  color: var(--purpleNVL);
+}
+.comment-btn input:checked + label {
+  background-color: var(--purpleNVL);
+  color: var(--white);
+  border: 2px solid var(--purpleNVL);
+}
+.btn-start {
+  margin: 10px 0 0 0;
+}
+.btn-start button {
+  padding: 10px 50px;
+}
+.custom-box {
+  display: grid;
+  grid-template-columns: 100px 1fr;
 }
