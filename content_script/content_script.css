@@ -1730,3 +1730,12 @@ ul.model-labels-list.novalya-scroll {
 .filter-msg {
   cursor: pointer;
 }
+.inactive-ext{
+  display: none !important;
+}
+.install-extension-btn{
+  display: none !important;
+}
+.active-ext{
+  display: flex !important;
+}

@@ -405,11 +405,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     console.log(res1.message);
                 } else {
                     let response = await getUserPlanLimit();
-                    total_no_friend_request = response.data.new_packages.no_friend_request ?? 1000;
-                    if(total_no_friend_request == 0){
-                        total_no_friend_request = 1000;
-                    }
-                    no_friend_request = response.data.userlimit.no_friend_request ?? 0;
+                    total_no_friend_request = response?.data?.new_packages?.no_friend_request ?? 0;
+
+                    no_friend_request = response?.data?.userlimit?.no_friend_request ?? 0;
                     chrome.storage.local.set({
                         nvFriendReqInputs: res1.data,
                         no_friend_request: no_friend_request,
@@ -779,11 +777,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(async (result) => {
                 console.log(result);
                 let response = await getUserPlanLimit();
-                let total_no_crm_message = response.data.new_packages.no_crm_message ?? 1000;
-                if(total_no_crm_message == 0){
-                    total_no_crm_message = 1000;
-                }
-                let no_crm_message = response.data.userlimit.no_crm_message ?? 0;
+                let total_no_crm_message = response?.data?.new_packages?.no_crm_message ?? 0;
+                let no_crm_message = response?.data?.userlimit?.no_crm_message ?? 0;
 
                 console.log(total_no_crm_message);
                 console.log(no_crm_message);

@@ -1637,14 +1637,12 @@ $(document).ready(function () {
             console.log(result.userlimitSettings);
             userlimitSettings = result.userlimitSettings;
 
-            let new_packages = userlimitSettings.new_packages;
-            total_no_friend_requests_received = new_packages?.no_friend_requests_received ?? 1000;
+            total_no_friend_requests_received = userlimitSettings?.new_packages?.no_friend_requests_received ?? 0;
             if(total_no_friend_requests_received == 0){
-                total_no_friend_requests_received = 1000;
+                total_no_friend_requests_received = 0;
             }
 
-            let userlimit = userlimitSettings.userlimit;
-            update_no_friend_requests_received = userlimit?.no_friend_requests_received ?? 0;
+            update_no_friend_requests_received = userlimitSettings?.userlimit?.no_friend_requests_received ?? 0;
 
             requestSettings1 = result.requestSettings;
             if (requestSettings1.reject_status == 1) {
