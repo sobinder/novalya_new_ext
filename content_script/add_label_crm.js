@@ -310,13 +310,14 @@ let AddLabelCRM;
                     console.log(cliked_Fb_Id);
                     const notesModal = $this.createNotesModal(cliked_Fb_Id);
                     $('body').append($(notesModal));
+                    $('#notes-modal').css('display', 'block');
                     const res = await $this.getNotesData(cliked_Fb_Id);
                     console.log(res.api_data);
 
                     const filteredArray = res.api_data.filter(item => item.user_id == res.user_id && item.fb_user_id == cliked_Fb_Id);
                     console.log(filteredArray);
                     $this.updateNotesContainer(filteredArray);
-                    $('#notes-modal').css('display', 'block');
+                   
                 } catch (error) {
                     console.error(error);
                 }
