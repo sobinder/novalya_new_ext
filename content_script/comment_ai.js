@@ -626,15 +626,17 @@ $(document).on("click", ".popup_play", function (e) {
         $('.opinion_popup').focus();
         return false;
     } 
-    let writing_style_popup = [];
-     writing_style_popup = $('.writing_style_popup').val();
+    var writing_style_popup = [];
+    var writing_style_popup_val = $('.writing_style_popup').val();
+    writing_style_popup.push(writing_style_popup_val);
     if (writing_style_popup == ""){
         $('.writing_style_popup').focus();
         return false;
     }
 
-    let tone_popup = [];
-      tone_popup = $('.tone_popup').val();
+    var tone_popup = [];
+     var tone_popup_val = $('.tone_popup').val();
+     tone_popup.push(tone_popup_val);
     if (tone_popup == ""){
         $('.tone_popup').focus();
         return false;
