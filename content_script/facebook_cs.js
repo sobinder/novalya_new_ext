@@ -104,13 +104,29 @@ let FacebookDOM;
             $newResponseLanguageElement.insertBefore('.inner5');
           }
         }
+
+        const $responseEmojisElements = $('.response_Emojis');
+        if ($responseEmojisElements.length > 0) {
+          $responseEmojisElements.remove();
+          if (result.responsedata.emoji) {
+            const $newResponseEmojisElement = $('<div class="response_emojis"><span>' + result.responsedata.emoji + '</span></div>');
+            $newResponseEmojisElement.insertBefore('.inner6');
+          }
+        }
       });
     },
     addReactionPannelFB: function () {
       let url = window.location.href;
       $comment_box = $(
-        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]:not(".que-processed-class")`
-      );
+        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `[aria-label="Write a comment…"]:not(".que-processed-class"),` +
+        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `[aria-label="Write a public comment…"]:not(".que-processed-class"),` +
+        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `[aria-label="Write an answer…"]:not(".que-processed-class"),` +
+        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `[aria-label="Submit your first comment…"]:not(".que-processed-class")`
+    );
       // Find the Comment Box to append ChatGPT HTML 
       if ($comment_box.length > 0) {
         if (url.indexOf('facebook.com') > -1 && url.indexOf('/messages/t/') > -1) {
@@ -123,7 +139,7 @@ let FacebookDOM;
             .parent()
             .parent()
             .addClass('ai2-message-page');
-          $('#quentintou').remove();
+          // $('#quentintou').remove();
         } else {
           $comment_box
             .parent()
@@ -189,6 +205,16 @@ let FacebookDOM;
       if ($(selector_comment_btn).length == 0) {
         selector_comment_btn = '.que-current-container div[aria-label="Write a comment…"]';
       }
+      if ($(selector_comment_btn).length == 0) {
+        selector_comment_btn = '.que-current-container div[aria-label="Write a public comment…"]';
+      }
+      if ($(selector_comment_btn).length == 0) {
+        selector_comment_btn = '.que-current-container div[aria-label="Write an answer…"]';
+      }
+      if ($(selector_comment_btn).length == 0) {
+        selector_comment_btn = '.que-current-container div[aria-label="Submit your first comment…"]';
+      }
+      $(selector_comment_btn).click();
       $(selector_comment_btn).click();
      
       selector_comment_btn.textContent = '';
@@ -197,6 +223,7 @@ let FacebookDOM;
         temp: feelings,
         type: 'facebook',
       });
+      console.log(raw);
 
       chrome.runtime.sendMessage(
         { from: 'content', action: 'getResponseFromChatGPT', request: raw },
@@ -234,7 +261,7 @@ let FacebookDOM;
         selection.addRange(range);
       }
         
-      if ($(selector + ' p br').length) {
+      if ($(selector + ' p ').length) {
         // Copy the result to the clipboard
         navigator.clipboard.writeText(result).then(async () => {
           await waitForElm(selector);

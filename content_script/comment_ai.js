@@ -10,8 +10,8 @@ let CommentAI;
     let $this;
     let button = $('<button>', {
         id: 'comment_Ai',
-        text: ' + Ai Comment',
-        style: " height: 50px;"
+        text: 'Comment with NovaAI',
+        style: "  height: 40px; width: 100%; margin-top: 15px;"
 
     });
     CommentAI = {
@@ -31,6 +31,7 @@ let CommentAI;
                 $('.size_option').hide();
                 $('.tone_option').hide();
                 $('.language_option').hide();
+                $('.emojis_option').hide();
                 $('.response').show();
             })
 
@@ -40,6 +41,7 @@ let CommentAI;
                 $('.size_option').hide();
                 $('.tone_option').hide();
                 $('.language_option').hide();
+                $('.emojis_option').hide();
                 $('.response').show();
             })
 
@@ -49,6 +51,7 @@ let CommentAI;
                 $('.size_option').hide();
                 $('.tone_option').show();
                 $('.language_option').hide();
+                $('.emojis_option').hide();
                 $('.response').show();
             })
 
@@ -58,6 +61,7 @@ let CommentAI;
                 $('.size_option').show();
                 $('.tone_option').hide();
                 $('.language_option').hide();
+                $('.emojis_option').hide();
                 $('.response').show();
             })
 
@@ -67,6 +71,17 @@ let CommentAI;
                 $('.size_option').hide();
                 $('.tone_option').hide();
                 $('.language_option').show();
+                $('.emojis_option').hide();
+                $('.response').show();
+            });
+
+            $(document).on("click", ".emojis", function (e) {
+                $('.opinion_option').hide();
+                $('.writing_option').hide();
+                $('.size_option').hide();
+                $('.tone_option').hide();
+                $('.language_option').hide();
+                $('.emojis_option').show();
                 $('.response').show();
             });
 
@@ -84,6 +99,24 @@ let CommentAI;
                 chrome.storage.sync.get(["responsedata"], function (result) {
                     let responsedata = result.responsedata;
                     responsedata.opinion = value;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                })
+            });
+
+            $(document).on("click", ".emojis_option ul li", function (e) {
+                let value = "";
+                $(".response_emojis").remove();
+                if ($(this).hasClass("option_active")) {
+                    $('.emojis_option ul li').removeClass('option_active')
+                } else {
+                    $('.emojis_option ul li').removeClass('option_active');
+                    $(this).addClass("option_active");
+                    value = $(this).text();
+                    $('<div class="response_emojis"><span>' + value + '</span></div>').insertBefore(".inner6")
+                }
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.emoji = value;
                     chrome.storage.sync.set({ "responsedata": responsedata });
                 })
             });
@@ -203,6 +236,12 @@ let CommentAI;
                     var response4 = `.response_language span:contains(${checktext})`;
                     $(response4).parent().remove();
                 }
+                if (classfind == 'emojis_option') {
+                    var check5 = `.emojis_option ul li:contains(${checktext})`;
+                    $(check5).removeClass('option_active')
+                    var response5 = `.response_language span:contains(${checktext})`;
+                    $(response5).parent().remove();
+                }
                 storageupdate($(this));
             });
 
@@ -238,15 +277,33 @@ let CommentAI;
                     $('.language_option ul li').removeClass('option_active')
                     $('.language').removeClass('option_active')
                 }
+                if (classfind == 'response_emojis') {
+                    $('.emojis_option ul li').removeClass('option_active')
+                    $('.emojis').removeClass('option_active')
+                }
                 $(this).parent().remove();
             });
         }, 
         addAIButton: function() {
             let current_url = window.location.href;  
+            console.log(current_url);
             if(current_url === "https://www.facebook.com/" || current_url === "https://www.facebook.com") {
                 if ($('#comment_Ai').length == 0) {
-                    $('.x78zum5[role="main"]').append(button);
+                    $('div[aria-label="Create a post"]').parent().parent().parent().append(button);
                 }
+            }else if(window.location.href.indexOf('groups') > -1){
+                console.log("in the groups");
+                
+                    if ($('#comment_Ai').length == 0) {
+                        $('.x78zum5.xdt5ytf.x1wsgfga.x9otpla').append(button);
+                        $('#comment_Ai').css("width", "250px");
+                    }
+            }else{
+                console.log("in the groups");
+                    if ($('#comment_Ai').length == 0) {
+                        $('div[data-pagelet="ProfileActions"]').append(button);
+                        $('#comment_Ai').css("width", "250px");
+                    } 
             }  
         } 
     };
@@ -342,7 +399,7 @@ $(document).on("click", ".popup_play", async function (e) {
         writing: writing_style_popup,
         tone: tone_popup,
         language: language_popup[0],
-        emojis: emojis_popup[0]
+        emoji: emojis_popup[0]
     };
 
     console.log(temp);
@@ -362,11 +419,14 @@ $(document).on("click", ".play", function (e) {
     $('.size_option').hide();
     $('.tone_option').hide();
     $('.language_option').hide();
+    $('.emojis_option').hide();
     // $('.response').hide();
     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
     var language = $(this).parents('#quentintou').find('.response .response_language span').text();
+    var emoji = $(this).parents('#quentintou').find('.response .response_emojis span').text();
+    console.log(emoji);
     var writing_array = [];
     if ($(writing).length > 0) {
         $(writing).each(function (i) {
@@ -411,7 +471,8 @@ $(document).on("click", ".play", function (e) {
                 size: size,
                 writing: writing_array,
                 tone: tone_Array,
-                language: language
+                language: language,
+                emoji:emoji
             };
 
 
@@ -442,12 +503,14 @@ $(document).on("click", ".reload", function (e) {
     $('.writing_option').hide();
     $('.size_option').hide();
     $('.tone_option').hide();
+    $('.emojis_option').hide();
     $('.response').hide();
     var opinion = $(this).parents('#quentintou').find('.response .response_opinion span').text();
     console.log("hello", opinion)
     var size = $(this).parents('#quentintou').find('.response .response_size span').text();
     var writing = $(this).parents('#quentintou').find('.response .response_writing span');
     var language = $(this).parents('#quentintou').find('.response .response_language span').text();
+    var emoji = $(this).parents('#quentintou').find('.response .response_emojis span').text();
     var writing_array = [];
     if ($(writing).length > 0) {
         $(writing).each(function (i) {
@@ -521,6 +584,7 @@ $(document).on("click", ".reload", function (e) {
             temp.writing = writing_array;
             temp.tone = tone_Array;
             temp.laguage = language;
+            temp.emoji = emoji;
 
         }
         if (typeof result.sector != "undefined" && result.sector != "") {
@@ -530,6 +594,7 @@ $(document).on("click", ".reload", function (e) {
             temp.writing = writing_array;
             temp.tone = tone_Array;
             temp.language = language;
+            temp.emoji = emoji;
 
         }
         if (typeof result.temperature != "undefined" && result.temperature != "") {
@@ -539,6 +604,7 @@ $(document).on("click", ".reload", function (e) {
             temp.writing = writing_array;
             temp.tone = tone_Array;
             temp.language = language;
+            temp.emoji = emoji;
 
         }
         else {
@@ -547,6 +613,7 @@ $(document).on("click", ".reload", function (e) {
             temp.writing = writing_array;
             temp.tone = tone_Array;
             temp.language = language;
+            temp.emoji = emoji;
         }
         console.log("new temp", temp)
         chrome.storage.sync.set({ "responsedata": temp });
@@ -975,11 +1042,11 @@ function validateAndFocus(selector, variableName) {
 
 setInterval(function () {
     checkactive();
-}, 4000);
+}, 3000);
 
 function checkactive() {
     chrome.storage.sync.get(["responsedata"], function (result) {
-        // console.log(result);
+         console.log(result);
         if (typeof result.responsedata != "undefined" && result.responsedata != "") {
             // var opinioncheck = $('.response_opinion').remove();
             $(".response_opinion").remove();
@@ -987,6 +1054,7 @@ function checkactive() {
             $(".response_tone").remove();
             $(".response_size").remove();
             $(".response_language").remove();
+            $(".response_emojis").remove();
 
             if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
                 var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
@@ -1033,6 +1101,15 @@ function checkactive() {
                     $('<div class="response_language"><span>' + result.responsedata.language + '</span></div>').insertBefore(".inner5")
                 }
             }
+
+            if (typeof result.responsedata.emoji != "undefined" && result.responsedata.emoji != "") {
+                var check = `.emojis_option ul li:contains(${result.responsedata.emoji})`;
+                // console.log("getcheck",check)
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_emojis"><span>' + result.responsedata.emoji + '</span></div>').insertBefore(".inner6")
+                }
+            }
         }
     });
 }
@@ -1045,7 +1122,7 @@ async function startAiAutomation(time_interval, temp, limit, commentSent) {
     if (commentSent < limit) {
         console.log("Comment AI Automation start");
         let delay_ci = time_interval * 1000;     
-        showCustomToastr('info', 'Searching new post feed, Comment send: '+commentSent, 5000, true);
+        showCustomToastr('info', 'Searching new post feed, Comment send: '+commentSent, 5000);
         await processFeed(time_interval, temp, limit, commentSent);
     } else {
         showCustomToastr('success', 'Process completed..', 10000, true);
@@ -1225,6 +1302,6 @@ function checkPopupActive(){
           $(".language_popup").val(result.responsedata.language);
   
           // Set the selected option for emojis
-          $(".emojis_popup").val(result.responsedata.emojis);
+          $(".emojis_popup").val(result.responsedata.emoji);
     });
 }
