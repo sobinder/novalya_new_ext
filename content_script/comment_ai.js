@@ -22,7 +22,224 @@ let CommentAI;
                 $this.onInitMethods();
             });
         },
-        onInitMethods: function() {            
+        onInitMethods: function() { 
+
+            $(document).on("click", ".opinion", function (e) {
+                $('.agree_div ul li').removeClass('option_active')
+                $('.opinion_option').show();
+                $('.writing_option').hide();
+                $('.size_option').hide();
+                $('.tone_option').hide();
+                $('.language_option').hide();
+                $('.response').show();
+            })
+
+            $(document).on("click", ".writing_style", function (e) {
+                $('.opinion_option').hide();
+                $('.writing_option').show();
+                $('.size_option').hide();
+                $('.tone_option').hide();
+                $('.language_option').hide();
+                $('.response').show();
+            })
+
+            $(document).on("click", ".tone", function (e) {
+                $('.opinion_option').hide();
+                $('.writing_option').hide();
+                $('.size_option').hide();
+                $('.tone_option').show();
+                $('.language_option').hide();
+                $('.response').show();
+            })
+
+            $(document).on("click", ".size", function (e) {
+                $('.opinion_option').hide();
+                $('.writing_option').hide();
+                $('.size_option').show();
+                $('.tone_option').hide();
+                $('.language_option').hide();
+                $('.response').show();
+            })
+
+            $(document).on("click", ".language", function (e) {
+                $('.opinion_option').hide();
+                $('.writing_option').hide();
+                $('.size_option').hide();
+                $('.tone_option').hide();
+                $('.language_option').show();
+                $('.response').show();
+            });
+
+            $(document).on("click", ".opinion_option ul li", function (e) {
+                let value = "";
+                $(".response_opinion").remove();
+                if ($(this).hasClass("option_active")) {
+                    $('.opinion_option ul li').removeClass('option_active')
+                } else {
+                    $('.opinion_option ul li').removeClass('option_active');
+                    $(this).addClass("option_active");
+                    value = $(this).text();
+                    $('<div class="response_opinion"><span>' + value + '</span></div>').insertBefore(".inner1")
+                }
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.opinion = value;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                })
+            });
+
+            $(document).on("click", ".writing_option ul li", function (e) {
+                if ($(this).hasClass('option_active')) {
+                    $(this).removeClass('option_active');
+                } else {
+                    $(this).addClass('option_active');
+                }
+                let allActiveOptions = $(this).parent().find("li.option_active");
+                $(".response_writing").remove();
+                let writeText = [];;
+                allActiveOptions.map((index, val,) => {
+                    let value = $(val).text();
+                    writeText.push(value);
+                    $('<div class="response_writing"><span>' + value + '</span></div>').insertBefore(".inner2")
+                })
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.writing = writeText;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                })
+            })
+
+            $(document).on("click", ".tone_option ul li", function (e) {
+                if ($(this).hasClass('option_active')) {
+                    $(this).removeClass('option_active');
+                } else {
+                    $(this).addClass('option_active');
+                }
+                let allActiveOptions = $(this).parent().find("li.option_active");
+                $(".response_tone").remove();
+                let toneText = [];;
+                allActiveOptions.map((index, val,) => {
+                    let value = $(val).text();
+                    toneText.push(value);
+                    $('<div class="response_tone"><span>' + value + '</span></div>').insertBefore(".inner3")
+                })
+                console.log('toneText-----------', toneText)
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.tone = toneText;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                })
+            });
+
+            $(document).on("click", ".size_option ul li", function (e) {
+                let value = "";
+                $(".response_size").remove();
+                if ($(this).hasClass("option_active")) {
+                    $('.size_option ul li').removeClass('option_active')
+                } else {
+                    $('.size_option ul li').removeClass('option_active');
+                    $(this).addClass("option_active");
+                    value = $(this).text();
+                    $('<div class="response_size"><span>' + value + '</span></div>').insertBefore(".inner4")
+                }
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.size = value;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                })
+            });
+
+            $(document).on("click", ".language_option ul li", function (e) {
+                let value = "";
+                $(".response_language").remove();
+                if ($(this).hasClass("option_active")) {
+                    $('.language_option ul li').removeClass('option_active');
+                } else {
+                    $('.language_option ul li').removeClass('option_active');
+                    $(this).addClass("option_active");
+                    value = $(this).text();
+                    $('<div class="response_language"><span>' + value + '</span></div>').insertBefore(".inner5");
+                }
+                chrome.storage.sync.get(["responsedata"], function (result) {
+                    let responsedata = result.responsedata;
+                    responsedata.language = value;
+                    chrome.storage.sync.set({ "responsedata": responsedata });
+                });
+            });
+
+
+            $(document).on('click', '.option_active', function () {
+                var checktext = $(this).text();
+                var classfind = $(this).parent().parent().attr('class');
+
+                if (classfind == 'opinion_option') {
+                    var check = `.opinion_option ul li:contains(${checktext})`;
+                    $(check).removeClass('option_active')
+                    var response1 = `.response_opinion span:contains(${checktext})`;
+                    $(response1).parent().remove();
+                }
+
+                if (classfind == 'writing_option') {
+                    var check2 = `.writing_option ul li:contains(${checktext})`;
+                    $(check2).removeClass('option_active')
+                    var response2 = `.response_writing span:contains(${checktext})`;
+                    $(response2).parent().remove();
+                }
+                if (classfind == 'tone_option') {
+                    var check3 = `.tone_option ul li:contains(${checktext})`;
+                    $(check3).removeClass('option_active')
+                    var response3 = `.response_tone span:contains(${checktext})`;
+                    $(response3).parent().remove();
+                }
+                if (classfind == 'size_option') {
+                    var check3 = `.size_option ul li:contains(${checktext})`;
+                    $(check3).removeClass('option_active')
+                    var response3 = `.size_tone span:contains(${checktext})`;
+                    $(response3).parent().remove();
+                }
+                if (classfind == 'language_option') {
+                    var check4 = `.language_option ul li:contains(${checktext})`;
+                    $(check4).removeClass('option_active')
+                    var response4 = `.response_language span:contains(${checktext})`;
+                    $(response4).parent().remove();
+                }
+                storageupdate($(this));
+            });
+
+            $(document).on('click', '.response div p', function () {
+                var checktext = $(this).parent().children('span').text();
+                var classfind = $(this).parent().attr('class');
+
+                if (classfind == 'response_opinion') {
+                    $('.opinion_option ul li').removeClass('option_active')
+                    $('.opinion').removeClass('option_active')
+                }
+                if (classfind == 'response_writing') {
+                    var check = `.writing_option ul li:contains(${checktext})`;
+                    $(check).removeClass('option_active')
+                    var checkparent = $('.response_writing span')
+                    if (checkparent.length <= 1) {
+                        $('.writing_style').removeClass('option_active');
+                    }
+                }
+                if (classfind == 'response_tone') {
+                    var check = `.tone_option ul li:contains(${checktext})`;
+                    $(check).removeClass('option_active')
+                    var checkparent = $('.response_tone span')
+                    if (checkparent.length <= 1) {
+                        $('.tone').removeClass('option_active')
+                    }
+                }
+                if (classfind == 'response_size') {
+                    $('.size_option ul li').removeClass('option_active')
+                    $('.size').removeClass('option_active')
+                }
+                if (classfind == 'response_language') {
+                    $('.language_option ul li').removeClass('option_active')
+                    $('.language').removeClass('option_active')
+                }
+                $(this).parent().remove();
+            });
         }, 
         addAIButton: function() {
             let current_url = window.location.href;  
@@ -44,6 +261,7 @@ $(document).on("click", "#comment_Ai", function () {
     const notesModal = createNotesModal();
     $('body').append($(notesModal));
     $('.popup-backdrop').show();
+    checkPopupActive();
 });
 
 $(document).on('click', 'i.close_Ai_popup', function () {
@@ -70,9 +288,9 @@ $(document).on('change','input[name="times"]', function() {
     }else{
         $('input[name="custom_times"][type="text"]').css('display','none'); 
     }
-  });
+});
 
-  $(document).on('change','input[name="comments"]', function() {
+$(document).on('change','input[name="comments"]', function() {
     // Perform your operation here
     console.log("Selected value:", $(this).val());
     if($(this).val() == 'custom'){
@@ -81,8 +299,58 @@ $(document).on('change','input[name="times"]', function() {
     }else{
         $('input[name="custom_comments"][type="text"]').css('display','none'); 
     }
-  });
+});
 
+// FUNCTIONLATIES START AFTER CLICK ON LAUNCH AI BUTTON
+$(document).on("click", ".popup_play", async function (e) {
+    let index = 0;
+    let clickedBtn = $(this);
+    let commentSent = 0;    
+
+    let limit = getValue('comments');
+    let time_interval = getValue('times');
+
+    if (limit > 50 || time_interval < 30) {
+        $('.warning').show();
+        let inputName = (limit > 50) ? 'custom_comments' : 'custom_times';
+        $(`input[name="${inputName}"][type="text"]`).focus();
+        return false;
+    }
+
+    let writing_style_popup = validateAndFocus('.writing_style_popup', 'writing_style_popup');
+    let tone_popup = validateAndFocus('.tone_popup', 'tone_popup');
+
+    if (!writing_style_popup || !tone_popup) {
+        return false;
+    }
+
+    let opinion_popup = validateAndFocus('.opinion_popup', 'opinion_popup');
+    let size_popup = validateAndFocus('.size_popup', 'size_popup');
+    let language_popup = validateAndFocus('.language_popup', 'language_popup');
+    let emojis_popup = validateAndFocus('.emojis_popup', 'emojis_popup');
+
+    if (!opinion_popup || !size_popup || !language_popup || !emojis_popup) {
+        return false;
+    }
+
+    $('.loader').show();
+    $('.popup_play').hide();
+
+    let temp = {
+        opinion: opinion_popup[0],
+        size: size_popup[0],
+        writing: writing_style_popup,
+        tone: tone_popup,
+        language: language_popup[0],
+        emojis: emojis_popup[0]
+    };
+
+    console.log(temp);
+
+    chrome.storage.sync.set({ responsedata: temp });
+    await delay(1000); 
+    startAiAutomation(time_interval,temp, limit, commentSent);
+}) 
 
 
 $(document).on("click", ".play", function (e) {
@@ -165,7 +433,6 @@ $(document).on("click", ".play", function (e) {
         commentLengthStatus = true;
         showCustomToastr('info', 'There is no text for input in this post', 4000, false, false, false);
     }
-
 })
 
 $(document).on("click", ".reload", function (e) {
@@ -293,231 +560,6 @@ $(document).on("click", ".reload", function (e) {
     })
 });
 
-$(document).ready(function () {
-    
-    $(document).on("click", ".opinion", function (e) {
-        $('.agree_div ul li').removeClass('option_active')
-        $('.opinion_option').show();
-        $('.writing_option').hide();
-        $('.size_option').hide();
-        $('.tone_option').hide();
-        $('.language_option').hide();
-        $('.response').show();
-    })
-    $(document).on("click", ".writing_style", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').show();
-        $('.size_option').hide();
-        $('.tone_option').hide();
-        $('.language_option').hide();
-        $('.response').show();
-    })
-    $(document).on("click", ".tone", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').hide();
-        $('.size_option').hide();
-        $('.tone_option').show();
-        $('.language_option').hide();
-        $('.response').show();
-    })
-
-    $(document).on("click", ".size", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').hide();
-        $('.size_option').show();
-        $('.tone_option').hide();
-        $('.language_option').hide();
-        $('.response').show();
-    })
-
-    $(document).on("click", ".language", function (e) {
-        $('.opinion_option').hide();
-        $('.writing_option').hide();
-        $('.size_option').hide();
-        $('.tone_option').hide();
-        $('.language_option').show();
-        $('.response').show();
-    });
-    $(document).on("click", ".opinion_option ul li", function (e) {
-        let value = "";
-        $(".response_opinion").remove();
-        if ($(this).hasClass("option_active")) {
-            $('.opinion_option ul li').removeClass('option_active')
-        } else {
-            $('.opinion_option ul li').removeClass('option_active');
-            $(this).addClass("option_active");
-            value = $(this).text();
-            $('<div class="response_opinion"><span>' + value + '</span></div>').insertBefore(".inner1")
-        }
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.opinion = value;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    });
-    function storageupdate(something) {
-        console.log("something", something)
-    }
-
-    $(document).on("click", ".writing_option ul li", function (e) {
-        if ($(this).hasClass('option_active')) {
-            $(this).removeClass('option_active');
-        } else {
-            $(this).addClass('option_active');
-        }
-        let allActiveOptions = $(this).parent().find("li.option_active");
-        $(".response_writing").remove();
-        let writeText = [];;
-        allActiveOptions.map((index, val,) => {
-            let value = $(val).text();
-            writeText.push(value);
-            $('<div class="response_writing"><span>' + value + '</span></div>').insertBefore(".inner2")
-        })
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.writing = writeText;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    })
-
-    $(document).on("click", ".tone_option ul li", function (e) {
-        if ($(this).hasClass('option_active')) {
-            $(this).removeClass('option_active');
-        } else {
-            $(this).addClass('option_active');
-        }
-        let allActiveOptions = $(this).parent().find("li.option_active");
-        $(".response_tone").remove();
-        let toneText = [];;
-        allActiveOptions.map((index, val,) => {
-            let value = $(val).text();
-            toneText.push(value);
-            $('<div class="response_tone"><span>' + value + '</span></div>').insertBefore(".inner3")
-        })
-        console.log('toneText-----------', toneText)
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.tone = toneText;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    });
-
-
-    $(document).on("click", ".size_option ul li", function (e) {
-        let value = "";
-        $(".response_size").remove();
-        if ($(this).hasClass("option_active")) {
-            $('.size_option ul li').removeClass('option_active')
-        } else {
-            $('.size_option ul li').removeClass('option_active');
-            $(this).addClass("option_active");
-            value = $(this).text();
-            $('<div class="response_size"><span>' + value + '</span></div>').insertBefore(".inner4")
-        }
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.size = value;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        })
-    });
-
-
-
-    $(document).on("click", ".language_option ul li", function (e) {
-        let value = "";
-        $(".response_language").remove();
-        if ($(this).hasClass("option_active")) {
-            $('.language_option ul li').removeClass('option_active');
-        } else {
-            $('.language_option ul li').removeClass('option_active');
-            $(this).addClass("option_active");
-            value = $(this).text();
-            $('<div class="response_language"><span>' + value + '</span></div>').insertBefore(".inner5");
-        }
-        chrome.storage.sync.get(["responsedata"], function (result) {
-            let responsedata = result.responsedata;
-            responsedata.language = value;
-            chrome.storage.sync.set({ "responsedata": responsedata });
-        });
-    });
-
-
-    $(document).on('click', '.option_active', function () {
-        var checktext = $(this).text();
-        var classfind = $(this).parent().parent().attr('class');
-
-        if (classfind == 'opinion_option') {
-            var check = `.opinion_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var response1 = `.response_opinion span:contains(${checktext})`;
-            $(response1).parent().remove();
-        }
-
-        if (classfind == 'writing_option') {
-            var check2 = `.writing_option ul li:contains(${checktext})`;
-            $(check2).removeClass('option_active')
-            var response2 = `.response_writing span:contains(${checktext})`;
-            $(response2).parent().remove();
-        }
-        if (classfind == 'tone_option') {
-            var check3 = `.tone_option ul li:contains(${checktext})`;
-            $(check3).removeClass('option_active')
-            var response3 = `.response_tone span:contains(${checktext})`;
-            $(response3).parent().remove();
-        }
-        if (classfind == 'size_option') {
-            var check3 = `.size_option ul li:contains(${checktext})`;
-            $(check3).removeClass('option_active')
-            var response3 = `.size_tone span:contains(${checktext})`;
-            $(response3).parent().remove();
-        }
-        if (classfind == 'language_option') {
-            var check4 = `.language_option ul li:contains(${checktext})`;
-            $(check4).removeClass('option_active')
-            var response4 = `.response_language span:contains(${checktext})`;
-            $(response4).parent().remove();
-        }
-        storageupdate($(this));
-    });
-
-    $(document).on('click', '.response div p', function () {
-        var checktext = $(this).parent().children('span').text();
-        var classfind = $(this).parent().attr('class');
-
-        if (classfind == 'response_opinion') {
-            $('.opinion_option ul li').removeClass('option_active')
-            $('.opinion').removeClass('option_active')
-        }
-        if (classfind == 'response_writing') {
-            var check = `.writing_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var checkparent = $('.response_writing span')
-            if (checkparent.length <= 1) {
-                $('.writing_style').removeClass('option_active');
-            }
-        }
-        if (classfind == 'response_tone') {
-            var check = `.tone_option ul li:contains(${checktext})`;
-            $(check).removeClass('option_active')
-            var checkparent = $('.response_tone span')
-            if (checkparent.length <= 1) {
-                $('.tone').removeClass('option_active')
-            }
-        }
-        if (classfind == 'response_size') {
-            $('.size_option ul li').removeClass('option_active')
-            $('.size').removeClass('option_active')
-        }
-        if (classfind == 'response_language') {
-            $('.language_option ul li').removeClass('option_active')
-            $('.language').removeClass('option_active')
-        }
-        $(this).parent().remove();
-    });
-    storageupdate($(this));
-});
-
-
 $(document).on('change', '.opinion', function () {
     let value = "";
     var selectedType = $(this).data('type');
@@ -595,239 +637,92 @@ $(document).on('change', '.language', function () {
     })
 });
 
-$(document).on("click", ".popup_play", function (e) {
-    var index = 0;
-    clickedBtn = $(this);
-    var limit = $('input[name="comments"]:checked').val();
-    if(limit == "custom") {
-        limit = $('input[name="custom_comments"][type="text"]').val();
-    }
-    var time_interval = $('input[name="times"]:checked').val();
-    if(time_interval == "custom") {
-        time_interval = $('input[name="custom_times"][type="text"]').val();
-    }
-    console.log(limit);
-    console.log(time_interval);
-
-    if(limit > 50) {
-        $('.warning').show();
-        $('input[name="custom_comments"][type="text"]').focus();
-        return false;
-    }   
-
-    if(time_interval < 30) {
-        $('.warning').show();
-        $('input[name="custom_times"][type="text"]').focus();
-        return false;
-    }
-
-    let opinion_popup = $('.opinion_popup').val();
-    if (opinion_popup == ""){
-        $('.opinion_popup').focus();
-        return false;
-    } 
-    var writing_style_popup = [];
-    var writing_style_popup_val = $('.writing_style_popup').val();
-    writing_style_popup.push(writing_style_popup_val);
-    if (writing_style_popup == ""){
-        $('.writing_style_popup').focus();
-        return false;
-    }
-
-    var tone_popup = [];
-     var tone_popup_val = $('.tone_popup').val();
-     tone_popup.push(tone_popup_val);
-    if (tone_popup == ""){
-        $('.tone_popup').focus();
-        return false;
-    }
-
-    let size_popup = $('.size_popup').val();
-    if (size_popup == ""){
-        $('.size_popup').focus();
-        return false;
-    }
-
-    let language_popup = $('.language_popup').val();
-    if (language_popup == ""){
-        $('.language_popup').focus();
-        return false;
-    }
-
-    let emojis_popup = $('.emojis_popup').val();
-    if (emojis_popup == ""){
-        $('.emojis_popup').focus();
-        return false;
-    }
-
-    $('.loader').show();
-    $('.popup_play').hide();
-
-        var temp = {
-            opinion: opinion_popup,
-            size: size_popup,
-            writing: writing_style_popup,
-            tone: tone_popup,
-            language: language_popup,
-            emojis: emojis_popup
-        };
-
-        console.log(temp);
-        chrome.storage.sync.set({ responsedata: temp });
-        setTimeout(() => {
-            startAiAutomation(time_interval,temp, limit, index);
-        }, 3000);
-
-    //});
-})
-
-setInterval(function () {
-    checkactive();
-}, 4000);
-
-function checkactive() {
-    chrome.storage.sync.get(["responsedata"], function (result) {
-        // console.log(result);
-        if (typeof result.responsedata != "undefined" && result.responsedata != "") {
-            // var opinioncheck = $('.response_opinion').remove();
-            $(".response_opinion").remove();
-            $(".response_writing").remove();
-            $(".response_tone").remove();
-            $(".response_size").remove();
-            $(".response_language").remove();
-
-            if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
-                var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
-                if (check.length > 0) {
-                    $(check).addClass("option_active")
-                    $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
-                }
-            }
-
-            if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
-                $(result.responsedata.writing).each(function (i) {
-                    var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
-                    if (check2.length) {
-                        $(check2).addClass("option_active")
-                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner2")
-                    }
-                });
-            }
-
-            if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
-                $(result.responsedata.tone).each(function (i) {
-                    var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
-                    if (check3.length) {
-                        $(check3).addClass("option_active")
-                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner3")
-                    }
-                });
-            }
-
-            if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
-                var check = `.size_option ul li:contains(${result.responsedata.size})`;
-                // console.log("getcheck",check)
-                if (check.length > 0) {
-                    $(check).addClass("option_active")
-                    $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
-                }
-            }
-
-            if (typeof result.responsedata.language != "undefined" && result.responsedata.language != "") {
-                var check = `.language_option ul li:contains(${result.responsedata.language})`;
-                // console.log("getcheck",check)
-                if (check.length > 0) {
-                    $(check).addClass("option_active")
-                    $('<div class="response_language"><span>' + result.responsedata.language + '</span></div>').insertBefore(".inner5")
-                }
-            }
-        }
-    });
-}
+storageupdate($(this));
 
 
 // -------------------------------------COMMENT AI CODE STARTS------------------------
-appendHTML = ` <div id="quentintou">
-       <div class="loader" style="display:none"></div>
-<div class="agree_div">
-<ul>
-<li class="opinion">Opinion</li>
-<li class="writing_style">Writing</li>
-<li class="tone">Tone</li>
-<li class="size">Size</li>
-<li class="language">Language</li>
-<li class="emojis">Emojis</li>
-</ul>
-<div  class="like_option" style="display:flex">
+appendHTML = `
+<div id="quentintou">
+    <div class="loader" style="display:none"></div>
+    <div class="agree_div">
+        <ul>
+            <li class="opinion">Opinion</li>
+            <li class="writing_style">Writing</li>
+            <li class="tone">Tone</li>
+            <li class="size">Size</li>
+            <li class="language">Language</li>
+            <li class="emojis">Emojis</li>
+        </ul>
+        <div  class="like_option" style="display:flex">
+            <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
+            <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
+        </div>
+    </div>
+    <div class="opinion_option">
+        <ul>
+            <li>Agreed</li>
+            <li>Disagreed</li>
+            <li>Question</li>
+            <li>Congratulations</li>
+            <li>Encouragement</li>
+            <li>Neutral</li>
+        </ul>
+    </div>
+    <div class="tone_option">
+        <ul>
+            <li>Funny</li>
+            <li>Emotional</li>
+            <li>Informative</li>
+            <li>Narative</li>
+            <li>iRONIC</li>
+            <li>Enthusiastic</li>
+            <li>Serious</li>
+            <li>Respectful</li>
+            <li>Professional</li>
+        </ul>
+    </div>
+    <div class="writing_option">
+        <ul>
+            <li>Academic</li>
+            <li>Analytical</li>
+            <li>Argumentative</li>
+            <li>Conversational</li>
+            <li>Creative</li>
+            <li>Critical</li>
+            <li>Descriptive</li>
+            <li>Concise and witty</li>
+            <li>Personal and direct</li>
+        </ul>
+    </div>
+    <div class="size_option">
+        <ul>
+            <li>Long</li>
+            <li>Medium</li>
+            <li>Short</li>
+        </ul>
+    </div>
 
-    <img  style="display:none" class="reload" src="`+ chrome.runtime.getURL("assets/images/reload.png") + `">
-    <span class="play"><img  src="`+ chrome.runtime.getURL("assets/images/play_submit.png") + `"></span>
-</div>
-</div>
-<div class="opinion_option">
-<ul>
-    <li>Agreed</li>
-    <li>Disagreed</li>
-    <li>Question</li>
-    <li>Congratulations</li>
-    <li>Encouragement</li>
-    <li>Neutral</li>
-    </ul>
-</div>
-<div class="tone_option">
-<ul>
-    <li>Funny</li>
-    <li>Emotional</li>
-    <li>Informative</li>
-    <li>Narative</li>
-    <li>iRONIC</li>
-    <li>Enthusiastic</li>
-    <li>Serious</li>
-    <li>Respectful</li>
-    <li>Professional</li>
-</ul>
-</div>
-<div class="writing_option">
-<ul>
-    <li>Academic</li>
-    <li>Analytical</li>
-    <li>Argumentative</li>
-    <li>Conversational</li>
-    <li>Creative</li>
-    <li>Critical</li>
-    <li>Descriptive</li>
-    <li>Concise and witty</li>
-    <li>Personal and direct</li>
-    </ul>
-</div>
-<div class="size_option">
-<ul>
-    <li>Long</li>
-    <li>Medium</li>
-    <li>Short</li>
-    </ul>
-</div>
-
-<div class="language_option">
-    <ul>
-        <li>Auto detect</li>
-        <li>English</li>
-        <li>French</li>
-    </ul>
-</div>
-<div class="emojis_option">
-    <ul>
-        <li>Yes</li>
-        <li>No</li>
-    </ul>
-</div>
-<div class="response">
-<span class="inner1"></span>
-<span class="inner2"></span>
-<span class="inner3"></span>
-<span class="inner4"></span>
-<span class="inner5"></span>
-<span class="inner6"></span>
+    <div class="language_option">
+        <ul>
+            <li>Auto detect</li>
+            <li>English</li>
+            <li>French</li>
+        </ul>
+    </div>
+    <div class="emojis_option">
+        <ul>
+            <li>Yes</li>
+            <li>No</li>
+        </ul>
+    </div>
+    <div class="response">
+        <span class="inner1"></span>
+        <span class="inner2"></span>
+        <span class="inner3"></span>
+        <span class="inner4"></span>
+        <span class="inner5"></span>
+        <span class="inner6"></span>
+    </div>
 </div>`;
 
 function createNotesModal() {
@@ -1059,69 +954,137 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function storageupdate(something) {
+    console.log("something", something)
+}
+
+function getValue(name) {
+    let value = $(`input[name="${name}"]:checked`).val();
+    return (value === 'custom') ? $(`input[name="custom_${name}"][type="text"]`).val() : value;
+}
+
+function validateAndFocus(selector, variableName) {
+    let value = $(selector).val();
+    if (value === "") {
+        $(selector).focus();
+        return false;
+    }
+    return [value];
+}
+
+
+setInterval(function () {
+    checkactive();
+}, 4000);
+
+function checkactive() {
+    chrome.storage.sync.get(["responsedata"], function (result) {
+        // console.log(result);
+        if (typeof result.responsedata != "undefined" && result.responsedata != "") {
+            // var opinioncheck = $('.response_opinion').remove();
+            $(".response_opinion").remove();
+            $(".response_writing").remove();
+            $(".response_tone").remove();
+            $(".response_size").remove();
+            $(".response_language").remove();
+
+            if (typeof result.responsedata.opinion != "undefined" && result.responsedata.opinion != "") {
+                var check = `.opinion_option ul li:contains(${result.responsedata.opinion})`;
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_opinion"><span>' + result.responsedata.opinion + '</span></div>').insertBefore(".inner1")
+                }
+            }
+
+            if (typeof result.responsedata.writing != "undefined" && result.responsedata.writing.length != "") {
+                $(result.responsedata.writing).each(function (i) {
+                    var check2 = `.writing_option ul li:contains(${result.responsedata.writing[i]})`;
+                    if (check2.length) {
+                        $(check2).addClass("option_active")
+                        $('<div class="response_writing"><span>' + result.responsedata.writing[i] + '</span></div>').insertBefore(".inner2")
+                    }
+                });
+            }
+
+            if (typeof result.responsedata.tone != "undefined" && result.responsedata.tone.length != "") {
+                $(result.responsedata.tone).each(function (i) {
+                    var check3 = `.tone_option ul li:contains(${result.responsedata.tone[i]})`;
+                    if (check3.length) {
+                        $(check3).addClass("option_active")
+                        $('<div class="response_tone"><span>' + result.responsedata.tone[i] + '</span></div>').insertBefore(".inner3")
+                    }
+                });
+            }
+
+            if (typeof result.responsedata.size != "undefined" && result.responsedata.size != "") {
+                var check = `.size_option ul li:contains(${result.responsedata.size})`;
+                // console.log("getcheck",check)
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_size"><span>' + result.responsedata.size + '</span></div>').insertBefore(".inner4")
+                }
+            }
+
+            if (typeof result.responsedata.language != "undefined" && result.responsedata.language != "") {
+                var check = `.language_option ul li:contains(${result.responsedata.language})`;
+                // console.log("getcheck",check)
+                if (check.length > 0) {
+                    $(check).addClass("option_active")
+                    $('<div class="response_language"><span>' + result.responsedata.language + '</span></div>').insertBefore(".inner5")
+                }
+            }
+        }
+    });
+}
 
 // To start the CommntAi automation process  
 async function startAiAutomation(time_interval, temp, limit, commentSent) {
-    commentSent++;
-
-    
     $('.loader').hide();
-    await delay(time_interval * 1000);
     $('.popup-backdrop').remove();
-    if (commentSent <= limit) {
-        console.log("start Ai Automation is called");
+    console.log(commentSent,limit);
+    if (commentSent < limit) {
+        console.log("Comment AI Automation start");
+        let delay_ci = time_interval * 1000;     
+        showCustomToastr('info', 'Searching new post feed, Comment send: '+commentSent, 5000, true);
         await processFeed(time_interval, temp, limit, commentSent);
+    } else {
+        showCustomToastr('success', 'Process completed..', 10000, true);
     }
 }
 
 
 // To get the dom of the POSTS for comment AI autimation
-async function processFeed(time_interval, temp, limit, commentSent) {
-    var feedDiv = $('div[role="feed"]');
-    var selector_for_validclass = feedDiv.find('div[data-pagelet]:not(.cai-post-proccessed):eq(0)');
-console.log(selector_for_validclass);
-    if ($(selector_for_validclass).length > 0) {
-        console.log("here");
-        $(selector_for_validclass).addClass("cai-post-proccessed");
-        await processPost(selector_for_validclass, time_interval, temp, limit, commentSent);
+async function processFeed(time_interval, temp, limit, commentSent) {    
+    const SELECTOR_POST_FEED_LI = $(`div[role="main"] div[aria-posinset][aria-describedby]:not(.cai-post-proccessed):eq(0)`);
+    if($(SELECTOR_POST_FEED_LI).length > 0) { 
+        await delay(1000);  
+        if(SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').length > 0 || SELECTOR_POST_FEED_LI.find("blockquote").length > 0) {
+            SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
+            //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
+            await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
+        } else {
+            scrollwindowAi(SELECTOR_POST_FEED_LI);
+            SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
+            await delay(10000);                     
+            startAiAutomation(time_interval, temp, limit, commentSent);
+        }                     
     } else {
-        // selector_for_validclass1 = $('.x1yztbdb.x1n2onr6:not(.cai-post-proccessed):eq(0)');
-        selector_for_validclass1 = $('.x1unhpq9 .x1yztbdb.x1n2onr6:not(.cai-post-proccessed):eq(0)');
-        console.log(selector_for_validclass1);
-        if ($(selector_for_validclass1).length > 0) {
-            console.log("here");
-            $(selector_for_validclass1).addClass("cai-post-proccessed");
-            await processPost(selector_for_validclass1, time_interval, temp, limit, commentSent);
-        }else{
-            $(selector_for_validclass1).addClass("cai-post-proccessed");
-        }
-      
+        await delay(10000);  
+        startAiAutomation(time_interval, temp, limit, commentSent);
     }
 }
 
 // To Process Text or description of the Post For Comment AI automation
-async function processPost(selector_for_validclass, time_interval, temp, limit, commentSent) {
-    console.log(selector_for_validclass);
-    var selector_post_description = selector_for_validclass.find(
-        'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-    );
-    if (selector_post_description.text() == "") {
-        selector_post_description = selector_for_validclass.find("blockquote");
-    }
-
-    var facebook_post_description = selector_post_description.text();
-    console.log(selector_post_description.text());
-
-    $('.loader').hide();
-    $(selector_for_validclass).css("border", "2px solid green");
-
-    await delay(6000);
-    await processButtons(selector_for_validclass, time_interval, temp, limit, commentSent);
-    $(selector_for_validclass).addClass("cai-post-proccessed");
-}
+// async function processPost(selector_for_validclass, time_interval, temp, limit, commentSent) {
+//     $('.loader').hide();
+//     //await delay(6000);
+//     await processButtons(selector_for_validclass, time_interval, temp, limit, commentSent);
+//     $(selector_for_validclass).addClass("cai-post-proccessed");
+// }
 
 // To start the processinng of buutons like play button for comment Ai automation
 async function processButtons(selector_for_validclass, time_interval, temp, limit, commentSent) {
+    await delay(10000);
     const play_button = selector_for_validclass.find("span.play");
     const commentInputbox = selector_for_validclass.find('div[aria-label][contenteditable="true"]');
 
@@ -1135,26 +1098,23 @@ async function processButtons(selector_for_validclass, time_interval, temp, limi
 
 async function processPlayButton(play_button, selector_for_validclass, time_interval, temp, limit, commentSent) {
     play_button.click();
-    await delay(7000);
+    await delay(10000);
     var popupint =  setInterval(async() => {
         var sendComment = selector_for_validclass.find('div[aria-label="Comment"]:not([aria-disabled])');
-        console.log(sendComment);
+        clearInterval(popupint);
         if(sendComment.length > 0){
-            console.log(sendComment);
-            clearInterval(popupint);
             sendComment.click();
-            setTimeout(() => {
-                
-                startAiAutomation(time_interval, temp, limit, commentSent);
-            }, 3000);
-        }else if(commentLengthStatus){
-            clearInterval(popupint);
-            setTimeout(() => {
-               
-                startAiAutomation(time_interval, temp, limit, commentSent);
-            }, 3000);
+            commentSent++;
+            delay_next = time_interval * 1000; 
+            showCustomToastr('success', 'Sent Comment no. '+commentSent, 5000, true);
+        } else if(commentLengthStatus){
+            delay_next = 10000;
             commentLengthStatus = false;
+            showCustomToastr('error', 'Not valid Searching again Comment no: '+commentSent, delay_next, true);
         }
+        scrollwindowAi(selector_for_validclass);
+        await delay(10000);
+        startAiAutomation(time_interval, temp, limit, commentSent);
     })
 }
 
@@ -1164,8 +1124,8 @@ async function processCommentButton(selector_for_validclass, time_interval, temp
     if (comment_button.length > 0) {
         await processCommentButtonClick(comment_button, selector_for_validclass, time_interval, temp, limit, commentSent);
     } else {
-        await delay(3000);
-       
+        scrollwindowAi(selector_for_validclass);
+        await delay(10000);       
         await startAiAutomation(time_interval, temp, limit, commentSent);
     }
 }
@@ -1173,75 +1133,98 @@ async function processCommentButton(selector_for_validclass, time_interval, temp
 
 async function processCommentButtonClick(comment_button, selector_for_validclass, time_interval, temp, limit, commentSent) {
     comment_button.click();
-    await delay(5000);
-
+    await delay(10000);
     const play_button2 = selector_for_validclass.find("span.play");
     if (play_button2.length > 0) {
         await processPlayButton(play_button2, selector_for_validclass, time_interval, temp, limit, commentSent);
     } else {
-        await processPlayButton3(time_interval, temp, limit, commentSent);
+        await processPlayButton3(time_interval, temp, limit, commentSent, selector_for_validclass);
     }
 }
 
-async function processPlayButton3(time_interval, temp, limit, commentSent) {
-    await delay(5000);
+async function processPlayButton3(time_interval, temp, limit, commentSent, selected_selector) {
     // console.log(commentAiPannel.length);
-    var play_button3 = $('div.x1al4vs7').find("span.play");
+    //FIND COMMENT AI PLAY BUTTON IN SET INTERVAL
+    let clearInterval_findplybtn = setInterval( async function() {
+        var play_button3 = $('div.x1al4vs7').find("span.play");
+        if (play_button3.length > 0) {
+            play_button3.click();
+            clearInterval(clearInterval_findplybtn);
+            await delay(10000);
+            var popupint =  setInterval(async() => {
+                // SENT COMMENT BUTTON FIND
+                var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
+                if(sendComment2.length > 0){
+                    sendComment2.click();  
+                    commentSent++;                
+                } else if(commentLengthStatus) {
+                    commentLengthStatus = false;
+                }
 
-    if (play_button3.length > 0) {
-        play_button3.click();
-        await delay(7000);
-
-       var popupint =  setInterval(async() => {
-        var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
-        console.log(sendComment2);
-            if(sendComment2.length > 0){
-                console.log(sendComment2);
                 clearInterval(popupint);
-                sendComment2.click();
-                var closeButton = $('div[aria-label="Close"]');
-               setTimeout(() => {
-                 closeButton.click();
-               }, 3000);
-               
-                setTimeout(() => {
-                    
-                    startAiAutomation(time_interval, temp, limit, commentSent);
-                }, 6000);
-              
-            }else if(commentLengthStatus){
-                clearInterval(popupint);
+                
+                // COMMENT POPUP CLOSE BUTTON
                 var closeButton = $('div[aria-label="Close"]');
                 setTimeout(() => {
                     closeButton.click();
-                  }, 3000);
-                setTimeout(() => {
-                   
-                    startAiAutomation(time_interval, temp, limit, commentSent);
-                }, 4000);
-                commentLengthStatus = false;
-            }
-        }, 1000);
-       
-    } else {
-        alert('some problem in comment');
-    }
+                    console.log("COMMENT POPUP CLOSE BUTTON");
+                }, 5000);
+               
+                scrollwindowAi(selected_selector);
+                let next_comment_delay = time_interval * 1000;
+                showCustomToastr('info', 'pb3 next comment will be send in ', next_comment_delay, true);
+                startAiAutomation(time_interval, temp, limit, commentSent);
+            }, 1000);           
+        }
+    }, 5000)
+
 }   
 
-async function scrollwindowAi() {
-    let scrollAiDynamic = 0; // Set the appropriate value for scrollAiDynamic
-    let scrollAiStatic = 5; // Set the appropriate value for scrollAiStatic
-    if (currentScrollStep < numScrollSteps) {
-        // Calculate the next scroll position
-        let nextScrollPosition = currentScrollStep * scrollStep;
+async function scrollwindowAi(selector_for_validclass) {
+    // let scrollAiDynamic = 0; // Set the appropriate value for scrollAiDynamic
+    // let scrollAiStatic = 5; // Set the appropriate value for scrollAiStatic
+    // if (currentScrollStep < numScrollSteps) {
+    //     // Calculate the next scroll position
+    //     let nextScrollPosition = currentScrollStep * scrollStep;
 
-        // Animate the scroll to the next position
-        $("html, body").animate({ scrollTop: nextScrollPosition }, scrollAiDynamic + scrollAiStatic);
+    //     // Animate the scroll to the next position
+    //     $("html, body").animate({ scrollTop: nextScrollPosition }, scrollAiDynamic + scrollAiStatic);
+    //     $("html, body").animate({ scrollTop: nextScrollPosition }, scrollAiDynamic + scrollAiStatic);
 
-        // Increment the current scroll step
-        currentScrollStep++;
-    }
+    //     // Increment the current scroll step
+    //     currentScrollStep++;
+    // }
+    //$("html, body").animate({ scrollTop: commentSent * 1400 }, 500);
+    window.scrollTo(0,window.pageYOffset +$(selector_for_validclass)[0].getBoundingClientRect().top -500);
 }
 
 
-// ----------------------------------COMMENTAI CODE STOPS--------------------------------
+function checkPopupActive(){
+    console.log("checkPopupActive called");
+    chrome.storage.sync.get(["responsedata"], function (result) {
+        console.log(result);
+        //   // Set the selected options for comments
+        //   $("input[name=comments]").filter("[value='" + result.responsedata.comments + "']").prop("checked", true);
+
+        //   // Set the selected options for seconds
+        //   $("input[name=times]").filter("[value='" + result.responsedata.times + "']").prop("checked", true);
+  
+          // Set the selected option for opinion
+          $(".opinion_popup").val(result.responsedata.opinion);
+  
+          // Set the selected option for writing style
+          $(".writing_style_popup").val(result.responsedata.writing[0]);
+  
+          // Set the selected option for tone
+          $(".tone_popup").val(result.responsedata.tone[0]);
+  
+          // Set the selected option for size
+          $(".size_popup").val(result.responsedata.size);
+  
+          // Set the selected option for language
+          $(".language_popup").val(result.responsedata.language);
+  
+          // Set the selected option for emojis
+          $(".emojis_popup").val(result.responsedata.emojis);
+    });
+}

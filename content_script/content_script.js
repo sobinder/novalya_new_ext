@@ -10,6 +10,9 @@ let total_message_limit = 300000; // read by api or by storage of specific user 
 let update_no_friend_requests_received = 0;
 let total_no_friend_requests_received = 0;
 
+// GLOBAL VARIABAL FOR COMMENT AI FILE.
+let commentLengthStatus = false;
+
 // FOR CHECK PROCESSING MESSENGER LIST OF SELECTOR
 var processing = false;
 let stoprequest = false;
