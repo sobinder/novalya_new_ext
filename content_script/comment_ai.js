@@ -11,7 +11,7 @@ let CommentAI;
     let button = $('<button>', {
         id: 'comment_Ai',
         text: 'Comment with NovaAI',
-        style: "  height: 40px; width: 100%; margin-top: 15px;"
+        style: "  height: 40px; width: 100%; margin-top: 15px; margin-bottom: 15px;"
 
     });
     CommentAI = {
@@ -295,14 +295,22 @@ let CommentAI;
                 console.log("in the groups");
                 
                     if ($('#comment_Ai').length == 0) {
-                        $('.x78zum5.xdt5ytf.x1wsgfga.x9otpla').append(button);
-                        $('#comment_Ai').css("width", "250px");
+                     
+                        $('.x1yztbdb').find('[aria-label="Profile"]').parent().parent().parent().parent().parent().parent().append(button);
+                        // $('#comment_Ai').css("width", "250px");
                     }
-            }else{
+            }else if(window.location.href.indexOf('profile.php?') > -1){
+                if ($('#comment_Ai').length == 0) {
+
+                    $('.x1yztbdb').find('[aria-label="Filters"]').parent().parent().parent().parent().parent().parent().parent().prepend(button);
+                    // $('#comment_Ai').css("width", "250px");
+                }
+            }
+            else{
                 console.log("in the groups");
                     if ($('#comment_Ai').length == 0) {
-                        $('div[data-pagelet="ProfileActions"]').append(button);
-                        $('#comment_Ai').css("width", "250px");
+                        $('.x1yztbdb').find('[role="tablist"]').parent().parent().parent().prepend(button);
+                        // $('#comment_Ai').css("width", "250px");
                     } 
             }  
         } 
@@ -324,6 +332,20 @@ $(document).on("click", "#comment_Ai", function () {
 $(document).on('click', 'i.close_Ai_popup', function () {
     $(".popup-backdrop").remove();
 });
+
+$(document).on('click','.popup-backdrop',function (event) {
+    console.log("backdrop clicked");
+    if (!$(event.target).closest('.ai-popup').length) {
+        // If the click is not within the ai-popup, close it
+        $(".popup-backdrop").remove();
+    }
+});
+
+// Prevent propagation of click events from .ai-popup to .popup-backdrop
+$(document).on('click','.ai-popup',function (event) {
+    event.stopPropagation();
+});
+
 
 
 $(document).on('click', '#custom_comment', function () {
@@ -414,7 +436,6 @@ $(document).on("click", ".popup_play", async function (e) {
     await delay(3000); 
     startAiAutomation(time_interval,temp, limit, commentSent);
 }) 
-
 
 $(document).on("click", ".play", function (e) {
     clickedBtn = $(this);
@@ -733,38 +754,29 @@ appendHTML = `
     </div>
     <div class="opinion_option">
         <ul>
-            <li>Agreed</li>
-            <li>Disagreed</li>
-            <li>Question</li>
-            <li>Congratulations</li>
-            <li>Encouragement</li>
+            <li>Positive</li>
+            <li>Engaging</li>
+            <li>Constructive Criticism</li>
             <li>Neutral</li>
         </ul>
     </div>
     <div class="tone_option">
         <ul>
-            <li>Funny</li>
-            <li>Emotional</li>
-            <li>Informative</li>
-            <li>Narative</li>
-            <li>iRONIC</li>
-            <li>Enthusiastic</li>
-            <li>Serious</li>
+            <li>Encouraging</li>
             <li>Respectful</li>
-            <li>Professional</li>
+            <li>Enthusiastic</li>
+            <li>Humorous</li>
+            <li>Objective</li>
         </ul>
     </div>
     <div class="writing_option">
         <ul>
-            <li>Academic</li>
-            <li>Analytical</li>
-            <li>Argumentative</li>
             <li>Conversational</li>
-            <li>Creative</li>
-            <li>Critical</li>
+            <li>Informative</li>
             <li>Descriptive</li>
-            <li>Concise and witty</li>
-            <li>Personal and direct</li>
+            <li>Creative</li>
+            <li>Friendly</li>
+            <li>Professional</li>
         </ul>
     </div>
     <div class="size_option">
@@ -805,7 +817,7 @@ function createNotesModal() {
       <div class="ai-popup-head">
         <h3>
           Customize Your Automated AI Comments <br />
-          <a href="#">How does it work?</a>
+          <a href="https://app.novalya.com/comment-ai">How does it work?</a>
         </h3>
         <i class="close_Ai_popup">✕</i>
       </div>
@@ -953,11 +965,9 @@ function createNotesModal() {
           <div class="input-box">
             <select class="opinion_popup" data-type="opinion_popup">
               <option value="">opinion</option>
-              <option value="Agreed">Agreed</option>
-              <option value="Disagreed">Disagreed</option>
-              <option value="Question">Question</option>
-              <option value="Congratulations">Congratulations</option>
-              <option value="Encouragement">Encouragement</option>
+              <option value="Positive">Positive</option>
+              <option value="Engaging">Engaging</option>
+              <option value="Constructive Criticism">Constructive Criticism</option>
               <option value="Neutral">Neutral</option>
             </select>
           </div>
@@ -967,28 +977,22 @@ function createNotesModal() {
               data-type="writing_style_popup"
             >
               <option value="">Writing</option>
-              <option value="Academic">Academic</option>
-              <option value="Analytical">Analytical</option>
-              <option value="Argumentative">Argumentative</option>
               <option value="Conversational">Conversational</option>
-              <option value="Creative">Creative</option>
-              <option value="Critical">Critical</option>
+              <option value="Informative">Informative</option>
               <option value="Descriptive">Descriptive</option>
-              <option value="Concise and witty">Concise and witty</option>
-              <option value="Personal and direct">Personal and direct</option>
+              <option value="Creative">Creative</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Professional">Professional</option>
             </select>
           </div>
           <div class="input-box">
             <select class="tone_popup" data-type="tone_popup">
               <option value="">Tone</option>
-              <option value="Funny">Funny</option>
-              <option value="Emotional">Emotional</option>
-              <option value="Informative">Informative</option>
-              <option value="Narative">Narative</option>
-              <option value="Enthusiastic">Enthusiastic</option>
-              <option value="Serious">Serious</option>
+              <option value="Encouraging">Encouraging</option>
               <option value="Respectful">Respectful</option>
-              <option value="Professional">Professional</option>
+              <option value="Enthusiastic">Enthusiastic</option>
+              <option value="Humorous">Humorous</option>
+              <option value="Objective">Objective</option>
             </select>
           </div>
           <div class="input-box">
@@ -1264,8 +1268,6 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
     let clearInterval_findplybtn = setInterval( async function() {
         var play_button3 = $('div.x1al4vs7').find("span.play");
         if (play_button3.length > 0) {
-            selector_for_validclass.css("border", "1px solid green"); 
-            selector_for_validclass.addClass("cai-post-proccessed");
             play_button3.click();
             clearInterval(clearInterval_findplybtn);
             await delay(10000);
@@ -1274,7 +1276,9 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
                 var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
                 if(sendComment2.length > 0){
                     sendComment2.click();  
-                    commentSent++;  
+                    commentSent++; 
+                    selector_for_validclass.css("border", "1px solid green"); 
+                    selector_for_validclass.addClass("cai-post-proccessed"); 
                     showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 3000, true);              
                 } else if(commentLengthStatus) {
                     commentLengthStatus = false;
@@ -1303,6 +1307,7 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
 }   
 
 async function scrollwindowAi(index_post) {
+
 //async function scrollwindowAi(selector_for_validclass) {
     // let scrollAiDynamic = 0; // Set the appropriate value for scrollAiDynamic
     // let scrollAiStatic = 5; // Set the appropriate value for scrollAiStatic

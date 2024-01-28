@@ -71,7 +71,8 @@ button {
 }
 .ai-popup-head h3 a {
   font-size: 13.5px;
-  color: var(--zinc-500);
+  /* color: var(--zinc-500); */
+  color:rgb(101, 101, 230);
   font-weight: 500;
   transition: 0.35s;
 }
