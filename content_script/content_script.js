@@ -1027,7 +1027,7 @@ $(document).ready(function () {
             typeof result.requestSettings != "undefined" &&
             result.requestSettings != "" && result.requestSettings != null
         ) {
-            console.log(result.userlimitSettings);
+            //console.log(result.userlimitSettings);
             userlimitSettings = result.userlimitSettings;
 
             total_no_friend_requests_received = userlimitSettings?.new_packages?.no_friend_requests_received ?? 0;
@@ -1077,10 +1077,10 @@ $(document).ready(function () {
             }
 
             // IF ENABLE FROM BACKOFFICE THEN CLICK ON CONFIRM BUTTON
-            console.log(requestSettings1);
+            //console.log(requestSettings1);
             if (requestSettings1.accept_status == 1) {
-                console.log('total-limit - ', total_no_friend_requests_received);
-                console.log('friend request receivied - ', update_no_friend_requests_received);
+                //console.log('total-limit - ', total_no_friend_requests_received);
+                //console.log('friend request receivied - ', update_no_friend_requests_received);
                 $(document).on(
                     "click",
                     'div[aria-label="Confirm"][role="button"]',
@@ -1260,14 +1260,14 @@ $(document).ready(function () {
 
 ///////////////////////////  ADD COMMENT AI BUTTON && ADD COMMENT SETTING PANEL IN EVERY POST /////////////////////////////
 
-    // customBtnFound = setInterval(() => {   
-    //     if (window.location.href.indexOf('facebook.com') > -1) {
-    //         CommentAI.addAIButton();
-    //         FacebookDOM.addReactionPannelFB();
-    //     } else {
-    //         clearInterval(customBtnFound);
-    //     }
-    // }, [1000]);
+    customBtnFound = setInterval(() => {   
+        if (window.location.href.indexOf('facebook.com') > -1) {
+            CommentAI.addAIButton();
+            FacebookDOM.addReactionPannelFB();
+        } else {
+            clearInterval(customBtnFound);
+        }
+    }, [1000]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 

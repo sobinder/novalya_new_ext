@@ -242,7 +242,7 @@ let CommentAI;
                     var response5 = `.response_language span:contains(${checktext})`;
                     $(response5).parent().remove();
                 }
-                storageupdate($(this));
+                //storageupdate($(this));
             });
 
             $(document).on('click', '.response div p', function () {
@@ -286,7 +286,7 @@ let CommentAI;
         }, 
         addAIButton: function() {
             let current_url = window.location.href;  
-            console.log(current_url);
+            //console.log(current_url);
             if(current_url === "https://www.facebook.com/" || current_url === "https://www.facebook.com") {
                 if ($('#comment_Ai').length == 0) {
                     $('div[aria-label="Create a post"]').parent().parent().parent().append(button);
@@ -358,6 +358,9 @@ $(document).on('change','input[name="comments"]', function() {
     }
 });
 
+
+let index_post = 1; 
+
 // FUNCTIONLATIES START AFTER CLICK ON LAUNCH AI BUTTON
 $(document).on("click", ".popup_play", async function (e) {
     let index = 0;
@@ -401,11 +404,14 @@ $(document).on("click", ".popup_play", async function (e) {
         language: language_popup[0],
         emoji: emojis_popup[0]
     };
-
-    console.log(temp);
-
+    //console.log(temp);
     chrome.storage.sync.set({ responsedata: temp });
-    await delay(1000); 
+    await delay(1000);
+    $('.loader').hide();
+    $('.popup-backdrop').remove();
+    showCustomToastr('info', 'Comment AI feature started', 3000);
+    scrollwindowAi(index_post++);
+    await delay(3000); 
     startAiAutomation(time_interval,temp, limit, commentSent);
 }) 
 
@@ -704,7 +710,7 @@ $(document).on('change', '.language', function () {
     })
 });
 
-storageupdate($(this));
+//storageupdate($(this));
 
 
 // -------------------------------------COMMENT AI CODE STARTS------------------------
@@ -1021,9 +1027,9 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function storageupdate(something) {
-    console.log("something", something)
-}
+// function storageupdate(something) {
+//     //console.log("something", something)
+// }
 
 function getValue(name) {
     let value = $(`input[name="${name}"]:checked`).val();
@@ -1046,7 +1052,7 @@ setInterval(function () {
 
 function checkactive() {
     chrome.storage.sync.get(["responsedata"], function (result) {
-         console.log(result);
+         //console.log(result);
         if (typeof result.responsedata != "undefined" && result.responsedata != "") {
             // var opinioncheck = $('.response_opinion').remove();
             $(".response_opinion").remove();
@@ -1116,55 +1122,59 @@ function checkactive() {
 
 // To start the CommntAi automation process  
 async function startAiAutomation(time_interval, temp, limit, commentSent) {
-    $('.loader').hide();
-    $('.popup-backdrop').remove();
     console.log(commentSent,limit);
     if (commentSent < limit) {
-        console.log("Comment AI Automation start");
+        //console.log("Comment AI Automation start");
         let delay_ci = time_interval * 1000;     
-        showCustomToastr('info', 'Searching new post feed, Comment send: '+commentSent, 5000);
         await processFeed(time_interval, temp, limit, commentSent);
     } else {
-        showCustomToastr('success', 'Process completed..', 10000, true);
+        showCustomToastr('success', 'Process completed..', 30000, true);
     }
 }
 
-
 // To get the dom of the POSTS for comment AI autimation
-async function processFeed(time_interval, temp, limit, commentSent) {    
+async function processFeed(time_interval, temp, limit, commentSent) {   
     const SELECTOR_POST_FEED_LI = $(`div[role="main"] div[aria-posinset][aria-describedby]:not(.cai-post-proccessed):eq(0)`);
     if($(SELECTOR_POST_FEED_LI).length > 0) { 
+        showCustomToastr('info', 'Preparing a post to send a comment.', 10000);
         await delay(1000);  
-        if(SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').length > 0 || SELECTOR_POST_FEED_LI.find("blockquote").length > 0) {
-            SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
-            //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
-            await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
+        if(SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').length > 0 || SELECTOR_POST_FEED_LI.find("blockquote").length > 0 || SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").length > 0 ) {
+            let post_description_scenario1 = SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').text();
+            let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote").text();
+            let post_description_scenario3 = SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").text();
+
+            if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25) {                
+                //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
+                await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
+            } else {
+                showCustomToastr('info', 'The input Text is too less', 10000, false, false, false);
+                scrollwindowAi(index_post++);
+                SELECTOR_POST_FEED_LI.css("border", "1px solid red"); 
+                SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
+                await delay(10000);                     
+                startAiAutomation(time_interval, temp, limit, commentSent);
+            }
         } else {
-            scrollwindowAi(SELECTOR_POST_FEED_LI);
+            scrollwindowAi(index_post++);
+            SELECTOR_POST_FEED_LI.css("border", "1px solid red"); 
             SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
+            showCustomToastr('info', 'There is no text for input in this post', 10000, false, false, false);
             await delay(10000);                     
             startAiAutomation(time_interval, temp, limit, commentSent);
         }                     
     } else {
+        showCustomToastr('info', 'This is not a valid post; searching for the next one.', 10000, false, false, false);
+        scrollwindowAi(index_post++);
         await delay(10000);  
         startAiAutomation(time_interval, temp, limit, commentSent);
     }
 }
-
-// To Process Text or description of the Post For Comment AI automation
-// async function processPost(selector_for_validclass, time_interval, temp, limit, commentSent) {
-//     $('.loader').hide();
-//     //await delay(6000);
-//     await processButtons(selector_for_validclass, time_interval, temp, limit, commentSent);
-//     $(selector_for_validclass).addClass("cai-post-proccessed");
-// }
 
 // To start the processinng of buutons like play button for comment Ai automation
 async function processButtons(selector_for_validclass, time_interval, temp, limit, commentSent) {
     await delay(10000);
     const play_button = selector_for_validclass.find("span.play");
     const commentInputbox = selector_for_validclass.find('div[aria-label][contenteditable="true"]');
-
     if (play_button.length > 0) {
         await processPlayButton(play_button, selector_for_validclass, time_interval, temp, limit, commentSent);
     } else {
@@ -1176,23 +1186,46 @@ async function processButtons(selector_for_validclass, time_interval, temp, limi
 async function processPlayButton(play_button, selector_for_validclass, time_interval, temp, limit, commentSent) {
     play_button.click();
     await delay(10000);
+    let countint = 1;
     var popupint =  setInterval(async() => {
         var sendComment = selector_for_validclass.find('div[aria-label="Comment"]:not([aria-disabled])');
-        clearInterval(popupint);
         if(sendComment.length > 0){
-            sendComment.click();
+            clearInterval(popupint);
+            // i was here last time
+            selector_for_validclass.css("border", "1px solid green"); 
+            selector_for_validclass.addClass("cai-post-proccessed"); 
+            sendComment.click();   // SEND COMMENT BUTTON CLICKED
             commentSent++;
             delay_next = time_interval * 1000; 
-            showCustomToastr('success', 'Sent Comment no. '+commentSent, 5000, true);
+            showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 5000, true);
+            scrollwindowAi(index_post++);
+            await delay(delay_next);
+            startAiAutomation(time_interval, temp, limit, commentSent);
         } else if(commentLengthStatus){
             delay_next = 10000;
             commentLengthStatus = false;
-            showCustomToastr('error', 'Not valid Searching again Comment no: '+commentSent, delay_next, true);
+            // i was here last time
+            selector_for_validclass.css("border", "1px solid green"); 
+            selector_for_validclass.addClass("cai-post-proccessed"); 
+
+            showCustomToastr('error', 'Comment status length matched', delay_next, true);
+            scrollwindowAi(index_post++);
+            await delay(10000);
+            startAiAutomation(time_interval, temp, limit, commentSent);
+        } else {
+            //FacebookDOM.addReactionPannelFB();
+            countint++;
+            if(countint > 35) {
+                clearInterval(popupint);
+                selector_for_validclass.css("border", "1px solid red"); 
+                selector_for_validclass.addClass("cai-post-proccessed"); 
+                showCustomToastr('error', 'Waited for 35 seconds, but did not find the send comment button.', 5000, true);
+                scrollwindowAi(index_post++);
+                await delay(5000);
+                startAiAutomation(time_interval, temp, limit, commentSent);
+            }
         }
-        scrollwindowAi(selector_for_validclass);
-        await delay(10000);
-        startAiAutomation(time_interval, temp, limit, commentSent);
-    })
+    }, 1000)
 }
 
 
@@ -1201,7 +1234,10 @@ async function processCommentButton(selector_for_validclass, time_interval, temp
     if (comment_button.length > 0) {
         await processCommentButtonClick(comment_button, selector_for_validclass, time_interval, temp, limit, commentSent);
     } else {
-        scrollwindowAi(selector_for_validclass);
+        selector_for_validclass.css("border", "1px solid red"); 
+        selector_for_validclass.addClass("cai-post-proccessed");
+        showCustomToastr('error', 'The comment button for displaying AI panel was not found.', 10000, true);
+        scrollwindowAi(index_post++);
         await delay(10000);       
         await startAiAutomation(time_interval, temp, limit, commentSent);
     }
@@ -1209,22 +1245,27 @@ async function processCommentButton(selector_for_validclass, time_interval, temp
 
 
 async function processCommentButtonClick(comment_button, selector_for_validclass, time_interval, temp, limit, commentSent) {
+    
     comment_button.click();
     await delay(10000);
     const play_button2 = selector_for_validclass.find("span.play");
-    if (play_button2.length > 0) {
+    if (play_button2.length > 0) {  
         await processPlayButton(play_button2, selector_for_validclass, time_interval, temp, limit, commentSent);
-    } else {
+    } else {        
+        showCustomToastr('error', "The 'send comment' button was not found.", 10000, true);
         await processPlayButton3(time_interval, temp, limit, commentSent, selector_for_validclass);
     }
 }
 
-async function processPlayButton3(time_interval, temp, limit, commentSent, selected_selector) {
+async function processPlayButton3(time_interval, temp, limit, commentSent, selector_for_validclass) {
     // console.log(commentAiPannel.length);
     //FIND COMMENT AI PLAY BUTTON IN SET INTERVAL
+    pPB = 0;
     let clearInterval_findplybtn = setInterval( async function() {
         var play_button3 = $('div.x1al4vs7').find("span.play");
         if (play_button3.length > 0) {
+            selector_for_validclass.css("border", "1px solid green"); 
+            selector_for_validclass.addClass("cai-post-proccessed");
             play_button3.click();
             clearInterval(clearInterval_findplybtn);
             await delay(10000);
@@ -1233,7 +1274,8 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
                 var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
                 if(sendComment2.length > 0){
                     sendComment2.click();  
-                    commentSent++;                
+                    commentSent++;  
+                    showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 3000, true);              
                 } else if(commentLengthStatus) {
                     commentLengthStatus = false;
                 }
@@ -1242,22 +1284,26 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
                 
                 // COMMENT POPUP CLOSE BUTTON
                 var closeButton = $('div[aria-label="Close"]');
-                setTimeout(() => {
-                    closeButton.click();
-                    console.log("COMMENT POPUP CLOSE BUTTON");
-                }, 5000);
-               
-                scrollwindowAi(selected_selector);
+                await delay(3000);
+                closeButton.click();
+                console.log("COMMENT POPUP CLOSE BUTTON");
+                showCustomToastr('success', "The popup for sending a comment closes automatically.", 3000, true);  
+                await delay(3000);
+                scrollwindowAi(index_post++);
+                await delay(1000);
                 let next_comment_delay = time_interval * 1000;
-                showCustomToastr('info', 'pb3 next comment will be send in ', next_comment_delay, true);
                 startAiAutomation(time_interval, temp, limit, commentSent);
             }, 1000);           
+        } else {
+            pPB++;
+            //showCustomToastr('info', 'searching for play button'+pPB, 3000, true); 
         }
-    }, 5000)
+    }, 3000)
 
 }   
 
-async function scrollwindowAi(selector_for_validclass) {
+async function scrollwindowAi(index_post) {
+//async function scrollwindowAi(selector_for_validclass) {
     // let scrollAiDynamic = 0; // Set the appropriate value for scrollAiDynamic
     // let scrollAiStatic = 5; // Set the appropriate value for scrollAiStatic
     // if (currentScrollStep < numScrollSteps) {
@@ -1272,14 +1318,23 @@ async function scrollwindowAi(selector_for_validclass) {
     //     currentScrollStep++;
     // }
     //$("html, body").animate({ scrollTop: commentSent * 1400 }, 500);
-    window.scrollTo(0,window.pageYOffset +$(selector_for_validclass)[0].getBoundingClientRect().top -500);
+
+
+    // For modern browsers
+    var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop;
+    //console.log("Scroll height from the top: " + scrollHeight + " pixels");
+
+   // showCustomToastr('success', "Scroll height from the top: " + scrollHeight + " pixels", 10000, true);
+    $("html, body").animate({ scrollTop: (scrollHeight + 500 )}, 2800);
+
+    //window.scrollTo(0,window.pageYOffset +$(selector_for_validclass)[0].getBoundingClientRect().top -500);
 }
 
 
 function checkPopupActive(){
-    console.log("checkPopupActive called");
+    //console.log("checkPopupActive called");
     chrome.storage.sync.get(["responsedata"], function (result) {
-        console.log(result);
+        //console.log(result);
         //   // Set the selected options for comments
         //   $("input[name=comments]").filter("[value='" + result.responsedata.comments + "']").prop("checked", true);
 

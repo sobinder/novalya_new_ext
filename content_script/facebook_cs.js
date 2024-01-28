@@ -49,7 +49,7 @@ let FacebookDOM;
     },
     appendresponse: function () {
       chrome.storage.sync.get(['responsedata'], function (result) {
-        console.log(result.responsedata);
+        //console.log(result.responsedata);
         const $responseOpinion = $('.response_opinion');
         if ($responseOpinion.length > 0) {
           $responseOpinion.remove();
