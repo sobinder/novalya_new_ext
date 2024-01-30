@@ -169,8 +169,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const fbUserId = message.fb_user_id;
         getBothAlphaAndNumericId(fbUserId)
             .then(function (fbIDsObject) {
+                console.log(fbIDsObject);
                 const numericUserFbId = fbIDsObject.numeric_fb_id;
                 const alphanumericUserFbId = fbIDsObject.fb_user_id;
+
+                console.log('numericUserFbId - ',numericUserFbId);
+                console.log('alphanumericUserFbId -',alphanumericUserFbId);
 
                 let token = authToken;
                 if (token != undefined && token != '') {

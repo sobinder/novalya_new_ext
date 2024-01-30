@@ -525,6 +525,10 @@ let AddLabelCRM;
                     profilePic = '';
                 }
 
+                if (profilePic.includes('chrome-extension:')) {
+                    profilePic = $(this).parent().parent().find('div[aria-label][role="button"]:eq(0)').find('div svg g image').attr('xlink:href');
+                }
+
                 fb_user_id = $(this).parent().attr("fb_user_id");
                 if (fb_user_id == "" || fb_user_id == undefined) {
                     fb_user_id = $(this).parent().parent().parent().attr("fb_user_id");
@@ -1137,12 +1141,12 @@ let AddLabelCRM;
                                 $(".x5oxk1f.xym1h4x ").attr('fb_user_id', fb_user);
                                 $(".x9a2f9n").attr('fb_user_id', fb_user);
                             }
-                            //    console.log(userTagsArray);
-                            //    console.log(fb_user);
+                            //console.log(userTagsArray);
+                            // console.log(fb_user);
                             let filteredTags = userTagsArray
                                 .filter(item => fb_user == item.fb_user_id || fb_user == item.numeric_fb_id)
                                 .map(item => item.tags.find(tag => tag.id == item.primary_tag)).filter(Boolean);
-                            //  console.log(filteredTags);
+                            //console.log(filteredTags);
                             if (filteredTags.length > 0) {
                                 $(this).attr('tag-id', filteredTags[0].id);
                                 const style = `background-color: ${filteredTags[0].custom_color} !important;`;

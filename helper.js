@@ -152,26 +152,87 @@ function reloadAllNovalyaTabs() {
 }
 
 //Get Both Alpha and numeric id
+// async function getBothAlphaAndNumericId(numericFBid) {
+//     console.log("getBothAlphaAndNumericId called");
+//     console.log(numericFBid);
+//     return await new Promise(function (resolve, reject) {
+//         fetch("https://www.facebook.com/" + numericFBid).then(function (response) {
+//             console.log(response.url);
+//             tempFBIDs = {};
+//             if (response.url.indexOf("profile.php") > -1) {
+//                 console.log('if');
+//                 tempFBIDs.fb_user_id = numericFBid;
+//                 tempFBIDs.numeric_fb_id = numericFBid;
+//             } else {
+//                 console.log('else');
+//                 if (response.url.indexOf("https://www.facebook.com/") == 0) {
+//                     tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://www.facebook.com/", ""));
+//                     console.log(tempFBIDs.fb_user_id);
+//                 } else if (response.url.indexOf("https://web.facebook.com/") == 0) {
+//                     tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://web.facebook.com/", ""));
+//                     console.log(tempFBIDs.fb_user_id);
+//                 }
+//                 tempFBIDs.numeric_fb_id = numericFBid;
+//             }
+//             console.log("tempFBIDs 1: ", tempFBIDs);
+//             resolve(tempFBIDs);
+//         });
+//     });
+// }
+
 async function getBothAlphaAndNumericId(numericFBid) {
     console.log("getBothAlphaAndNumericId called");
-    return await new Promise(function (resolve, reject) {
-        fetch("https://www.facebook.com/" + numericFBid).then(function (response) {
-            tempFBIDs = {};
-            if (response.url.indexOf("profile.php") > -1) {
-                tempFBIDs.fb_user_id = numericFBid;
-                tempFBIDs.numeric_fb_id = numericFBid;
-            } else {
-                if (response.url.indexOf("https://www.facebook.com/") == 0) {
-                    tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://www.facebook.com/", ""));
-                } else if (response.url.indexOf("https://web.facebook.com/") == 0) {
-                    tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://web.facebook.com/", ""));
+    console.log(numericFBid);
+    if(!isNaN(numericFBid)) {
+        console.log('if');
+        return await new Promise(function (resolve, reject) {
+            fetch("https://www.facebook.com/" + numericFBid).then(function (response) {
+                console.log(response.url);
+                tempFBIDs = {};
+                if (response.url.indexOf("profile.php") > -1) {
+                    console.log('if');
+                    tempFBIDs.fb_user_id = numericFBid;
+                    tempFBIDs.numeric_fb_id = numericFBid;
+                } else {
+                    console.log('else');
+                    if (response.url.indexOf("https://www.facebook.com/") == 0) {
+                        tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://www.facebook.com/", ""));
+                        console.log(tempFBIDs.fb_user_id);
+                    } else if (response.url.indexOf("https://web.facebook.com/") == 0) {
+                        tempFBIDs.fb_user_id = removeQueryStringFromFbID(response.url.replace("https://web.facebook.com/", ""));
+                        console.log(tempFBIDs.fb_user_id);
+                    }
+                    tempFBIDs.numeric_fb_id = numericFBid;
                 }
-                tempFBIDs.numeric_fb_id = numericFBid;
-            }
-            console.log("tempFBIDs 1: ", tempFBIDs);
-            resolve(tempFBIDs);
+                console.log("tempFBIDs 1: ", tempFBIDs);
+                resolve(tempFBIDs);
+            });
         });
-    });
+    }else{
+        console.log('else');
+        return await new Promise(function (resolve, reject) {
+            fetch("https://www.facebook.com/" + numericFBid, {
+                // headers: {"Accept": "text/plain"},
+            })
+                .then(response => response.text())
+                .then(str => {
+                    var mySubString = str.substring(
+                        str.lastIndexOf(`"${numericFBid}","userID":"`) + 1,
+                        str.lastIndexOf(`"${numericFBid}","userID":"`) + (28 + numericFBid.length),
+                    );
+                    var tmpUserId = mySubString.replace(`${numericFBid}","userID":"`, "");
+                    if(isNaN(tmpUserId)) {
+                        tmpUserId = numericFBid;
+                    }
+                    var tempFBIDs = {};
+                    tempFBIDs.fb_user_id = numericFBid;
+                    tempFBIDs.numeric_fb_id = tmpUserId;
+                    console.log("tempFBIDs 3: ", tempFBIDs);
+                    resolve(tempFBIDs);
+                });
+        });
+    }
+    
 }
 
 async function sleep(delay) {

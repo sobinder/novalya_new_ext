@@ -739,7 +739,9 @@ if (window.location.href.indexOf(my_domain) > -1) {
             } else {
                 $('#download-extension').hide();
                 var latest_uploaded_version = $("#update-extension-bar").attr("data-version");
+                console.log(latest_uploaded_version);
                 const extensionVersion = chrome.runtime.getManifest().version;
+                console.log(extensionVersion);
                 if (latest_uploaded_version <= extensionVersion) {
                     $("#update-extension").hide();
                     $("#update-extension-bar").hide();
