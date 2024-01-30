@@ -733,9 +733,22 @@ function validateAndFocus(selector, variableName) {
 
 setInterval(() => {
     checkPopupActive();
+    // AiThemeChange();
 }, 1000);
 
 
+function AiThemeChange(){
+  if ($('._9dls.__fb-dark-mode').length > 0) {
+    // Perform operation when __fb-dark-mode is present
+    console.log('Dark mode is active!');
+   $('.settings-box').css("background-color","white")
+   
+} else {
+    // Perform operation when __fb-dark-mode is not present
+    console.log('Dark mode is not active!');
+    $('.settings-box').css("background-color","black")
+}
+}
 
 // To start the CommntAi automation process  
 async function startAiAutomation(time_interval, temp, limit, commentSent) {
@@ -757,7 +770,7 @@ async function processFeed(time_interval, temp, limit, commentSent) {
         await delay(1000);  
         if(SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').length > 0 || SELECTOR_POST_FEED_LI.find("blockquote").length > 0 || SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").length > 0 ) {
             let post_description_scenario1 = SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').text();
-            let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote").text();
+            let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote.x11i5rnm.xieb3on").text();
             let post_description_scenario3 = SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").text();
                  console.log("reached here");
             if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25) {                
@@ -818,18 +831,7 @@ async function processPlayButton(play_button, selector_for_validclass, time_inte
             scrollwindowAi(index_post++);
             await delay(delay_next);
             startAiAutomation(time_interval, temp, limit, commentSent);
-        } else if(commentLengthStatus){
-            delay_next = 10000;
-            commentLengthStatus = false;
-            // i was here last time
-            selector_for_validclass.css("border", "1px solid green"); 
-            selector_for_validclass.addClass("cai-post-proccessed"); 
-
-            showCustomToastr('error', 'Comment status length matched', delay_next, true);
-            scrollwindowAi(index_post++);
-            await delay(10000);
-            startAiAutomation(time_interval, temp, limit, commentSent);
-        } else {
+        }  else {
             //FacebookDOM.addReactionPannelFB();
             countint++;
             if(countint > 35) {
@@ -884,32 +886,55 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
             play_button3.click();
             clearInterval(clearInterval_findplybtn);
             await delay(10000);
+           var pPB1 = 0;
             var popupint =  setInterval(async() => {
                 // SENT COMMENT BUTTON FIND
                 var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
                 if(sendComment2.length > 0){
+                  clearInterval(popupint);
                     sendComment2.click();  
                     commentSent++; 
                     selector_for_validclass.css("border", "1px solid green"); 
                     selector_for_validclass.addClass("cai-post-proccessed"); 
-                    showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 3000, true);              
-                } else if(commentLengthStatus) {
-                    commentLengthStatus = false;
-                }
-
-                clearInterval(popupint);
-                selector_for_validclass.addClass("cai-post-proccessed");
-                // COMMENT POPUP CLOSE BUTTON
-                var closeButton = $('div[aria-label="Close"]');
-                await delay(3000);
-                closeButton.click();
-                console.log("COMMENT POPUP CLOSE BUTTON");
-                showCustomToastr('success', "The popup for sending a comment closes automatically.", 3000, true);  
-                await delay(3000);
-                scrollwindowAi(index_post++);
-                await delay(1000);
-                let next_comment_delay = time_interval * 1000;
-                startAiAutomation(time_interval, temp, limit, commentSent);
+                    showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 3000, true); 
+                    var closeButton = $('div[aria-label="Close"]');
+                    await delay(3000);
+                    closeButton.click();
+                    console.log("COMMENT POPUP CLOSE BUTTON");      
+                    await delay(3000);
+                    scrollwindowAi(index_post++);
+                    await delay(1000);
+                    let next_comment_delay = time_interval * 1000;
+                    // await delay(next_comment_delay);
+                    startAiAutomation(time_interval, temp, limit, commentSent);       
+                }else{
+                  pPB1++;
+                  if(pPB1 > 35){
+                    clearInterval(popupint);
+                    selector_for_validclass.css("border", "1px solid red"); 
+                    selector_for_validclass.addClass("cai-post-proccessed"); 
+                    var closeButton = $('div[aria-label="Close"]');
+                    await delay(3000);
+                    closeButton.click();
+                    showCustomToastr('error', 'Waited for 35 seconds, but did not find the send comment button.', 5000, true);
+                    scrollwindowAi(index_post++);
+                    await delay(5000);
+                    startAiAutomation(time_interval, temp, limit, commentSent);
+                  }
+                } 
+               
+                // selector_for_validclass.addClass("cai-post-proccessed");
+                // // COMMENT POPUP CLOSE BUTTON
+                // var closeButton = $('div[aria-label="Close"]');
+                // await delay(3000);
+                // closeButton.click();
+                // console.log("COMMENT POPUP CLOSE BUTTON");
+                // showCustomToastr('success', "The popup for sending a comment closes automatically.", 3000, true);  
+                // await delay(3000);
+                // scrollwindowAi(index_post++);
+                // await delay(1000);
+                // let next_comment_delay = time_interval * 1000;
+                // startAiAutomation(time_interval, temp, limit, commentSent);
             }, 1000);           
         } else {
             pPB++;
