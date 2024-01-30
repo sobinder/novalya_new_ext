@@ -759,7 +759,7 @@ async function processFeed(time_interval, temp, limit, commentSent) {
             let post_description_scenario1 = SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').text();
             let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote").text();
             let post_description_scenario3 = SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").text();
-
+                 console.log("reached here");
             if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25) {                
                 //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
                 await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
@@ -869,7 +869,7 @@ async function processCommentButtonClick(comment_button, selector_for_validclass
     if (play_button2.length > 0) {  
         await processPlayButton(play_button2, selector_for_validclass, time_interval, temp, limit, commentSent);
     } else {        
-        showCustomToastr('error', "The 'send comment' button was not found.", 10000, true);
+        // showCustomToastr('error', "The 'send comment' button was not found.", 10000, true);
         await processPlayButton3(time_interval, temp, limit, commentSent, selector_for_validclass);
     }
 }
@@ -898,7 +898,7 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
                 }
 
                 clearInterval(popupint);
-                
+                selector_for_validclass.addClass("cai-post-proccessed");
                 // COMMENT POPUP CLOSE BUTTON
                 var closeButton = $('div[aria-label="Close"]');
                 await delay(3000);

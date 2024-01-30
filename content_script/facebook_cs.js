@@ -118,13 +118,13 @@ let FacebookDOM;
     addReactionPannelFB: function () {
       let url = window.location.href;
       $comment_box = $(
-        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `div[contenteditable="true"][spellcheck][data-lexical-editor="true"]` +
         `[aria-label="Write a comment…"]:not(".que-processed-class"),` +
-        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `div[contenteditable="true"][spellcheck][data-lexical-editor="true"]` +
         `[aria-label="Write a public comment…"]:not(".que-processed-class"),` +
-        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `div[contenteditable="true"][spellcheck][data-lexical-editor="true"]` +
         `[aria-label="Write an answer…"]:not(".que-processed-class"),` +
-        `div[contenteditable="true"][spellcheck="true"][data-lexical-editor="true"]` +
+        `div[contenteditable="true"][spellcheck][data-lexical-editor="true"]` +
         `[aria-label="Submit your first comment…"]:not(".que-processed-class")`
     );
       // Find the Comment Box to append ChatGPT HTML 
