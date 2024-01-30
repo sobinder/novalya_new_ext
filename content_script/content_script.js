@@ -732,6 +732,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 if (window.location.href.indexOf(my_domain) > -1) {
     chrome.runtime.sendMessage({ action: "reloadExtensionId" }, (res16) => {
+        console.log('reloadExtensionId');
         authToken = res16.authToken;
         var clearTimeInt = setInterval(() => {
             if ($('.Mui-checked').length == 0) {
@@ -739,9 +740,7 @@ if (window.location.href.indexOf(my_domain) > -1) {
             } else {
                 $('#download-extension').hide();
                 var latest_uploaded_version = $("#update-extension-bar").attr("data-version");
-                console.log(latest_uploaded_version);
                 const extensionVersion = chrome.runtime.getManifest().version;
-                console.log(extensionVersion);
                 if (latest_uploaded_version <= extensionVersion) {
                     $("#update-extension").hide();
                     $("#update-extension-bar").hide();
@@ -750,11 +749,32 @@ if (window.location.href.indexOf(my_domain) > -1) {
                     $("#update-extension-bar").show();
                 }
             }
+            
         }, 1000)
     });
+
+    let clearUpdateCheckInterval = setInterval(() => {
+        chrome.storage.local.get(["extension_version"], function (result) {
+            const storedVersion = result.extension_version;
+            const currentVersion = chrome.runtime.getManifest().version;
+    
+            // console.log("Stored Version:", storedVersion);
+            // console.log("Current Version:", currentVersion);
+    
+            if (storedVersion && storedVersion > currentVersion) {
+                // Extension is up-to-date or stored version is not available
+            } else {
+                // Extension update is required
+                $('.update-extension-modal').remove();
+            }
+        });
+    }, 2000);
+
 }
 
 $(document).ready(function () {
+
+
 
     $(document).on("click", "#sync_fbname", function () {
         let groupId = $(this).val();

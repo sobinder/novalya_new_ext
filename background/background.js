@@ -26,6 +26,7 @@ chrome.runtime.onInstalled.addListener(function () {
     reloadAllGroupTabs();
     reloadAllFriendsTabs();
     reloadMessengersTabs();
+    getAdminSettings();
     clearAlarm("requestIsReceived");
 });
 
@@ -36,6 +37,7 @@ chrome.management.onEnabled.addListener(function (extensionInfo) {
         reloadAllGroupTabs();
         reloadAllFriendsTabs();
         reloadMessengersTabs();
+        getAdminSettings();
     }
    
 });
@@ -1500,4 +1502,28 @@ async function updateLimit(message, sendResponse) {
         sendResponse(null);
         return null;
     }
+}
+
+function getAdminSettings() {
+    let url = `https://novalyabackend.novalya.com/admin/api/getadminaccountsettings`;
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+        redirect: 'follow'
+    };
+
+    fetch(url, requestOptions)
+        .then(response => response.json())
+        .then((result) => {
+            if(result.status == 'success'){
+                const extension_version = result.data[0].extension_version;
+                chrome.storage.local.set({ extension_version: extension_version}, function() {   });
+            }
+        })
+        .catch(error => console.log('error', error));
+    return true;
 }
