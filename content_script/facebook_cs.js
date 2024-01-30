@@ -139,7 +139,7 @@ let FacebookDOM;
             .parent()
             .parent()
             .addClass('ai2-message-page');
-          // $('#quentintou').remove();
+          $('#quentintou').remove();
         } else {
           $comment_box
             .parent()
@@ -209,11 +209,12 @@ let FacebookDOM;
         selector_comment_btn = '.que-current-container div[aria-label="Write a public comment…"]';
       }
       if ($(selector_comment_btn).length == 0) {
-        selector_comment_btn = '.que-current-container div[aria-label="Write an answer…"]';
-      }
-      if ($(selector_comment_btn).length == 0) {
         selector_comment_btn = '.que-current-container div[aria-label="Submit your first comment…"]';
       }
+      if ($(selector_comment_btn).length == 0) {
+        selector_comment_btn = '.que-current-container div[aria-label="Write an answer…"]';
+      }
+
       $(selector_comment_btn).click();
       $(selector_comment_btn).click();
      
@@ -228,6 +229,7 @@ let FacebookDOM;
       chrome.runtime.sendMessage(
         { from: 'content', action: 'getResponseFromChatGPT', request: raw },
         function (response) {
+          console.log(response);
           $this.putMessageinTextArea(response.result, elem);
         }
       );
@@ -242,7 +244,9 @@ let FacebookDOM;
       }
 
       // Hide/show various elements
+
       const $parent = $(clickedBtn).parent();
+      console.log($parent);
       $parent.find('.play').hide();
       $parent.find('.reload').show();
       $('.loader').hide();
@@ -295,12 +299,14 @@ let FacebookDOM;
 
         // Create and dispatch an 'input' event
         const evt = new Event('input', { bubbles: true });
+
         if ($(selector + ' p br').length) {
-          const input = document.querySelector(selector + ' p br');
+          const input = document.querySelector(selector + 'p');
           $(input).html('');
           input.innerHTML = result;
           input.dispatchEvent(evt);
         }
+
       }
     },
     like: function (elem) {
