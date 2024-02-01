@@ -175,7 +175,9 @@ $(document).on("click", ".popup_play", async function (e) {
     showCustomToastr('info', 'Comment AI feature started', 3000);
     scrollwindowAi(index_post++);
     await delay(3000); 
+    showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit, 1000, true, true, true);
     startAiAutomation(time_interval,temp, limit, commentSent);
+    
 }) 
 
 $(document).on("click", ".play", function (e) {
@@ -742,25 +744,27 @@ function AiThemeChange(){
     // Perform operation when __fb-dark-mode is present
     console.log('Dark mode is active!');
    $('.settings-box').css("background-color","white")
-   
 } else {
     // Perform operation when __fb-dark-mode is not present
     console.log('Dark mode is not active!');
-    $('.settings-box').css("background-color","black")
+    $('.settings-box').css("background-color","black");
 }
 }
 
 // To start the CommntAi automation process  
 async function startAiAutomation(time_interval, temp, limit, commentSent) {
     console.log(commentSent,limit);
+   
     if (commentSent < limit) {
         //console.log("Comment AI Automation start");
         let delay_ci = time_interval * 1000;     
         await processFeed(time_interval, temp, limit, commentSent);
     } else {
-        showCustomToastr('success', 'Process completed..', 30000, true);
+      $("#toastrMessage").text(`“Goal Achieved. Congratulations!”`);
+        // showCustomToastr('success', 'Process completed..', 30000, true);
     }
 }
+
 
 // To get the dom of the POSTS for comment AI autimation
 async function processFeed(time_interval, temp, limit, commentSent) {   
@@ -770,9 +774,12 @@ async function processFeed(time_interval, temp, limit, commentSent) {
         await delay(1000);  
         if(SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').length > 0 || SELECTOR_POST_FEED_LI.find("blockquote").length > 0 || SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").length > 0 ) {
             let post_description_scenario1 = SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').text();
-            let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote.x11i5rnm.xieb3on").text();
+            let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote.x11i5rnm.xieb3on.x1d52u69").text();
             let post_description_scenario3 = SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").text();
                  console.log("reached here");
+                 console.log(post_description_scenario1);
+                 console.log(post_description_scenario2);
+                 console.log(post_description_scenario3);
             if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25) {                
                 //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
                 await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
@@ -784,7 +791,7 @@ async function processFeed(time_interval, temp, limit, commentSent) {
                 await delay(10000);                     
                 startAiAutomation(time_interval, temp, limit, commentSent);
             }
-        } else {
+        } else {                      
             scrollwindowAi(index_post++);
             SELECTOR_POST_FEED_LI.css("border", "1px solid red"); 
             SELECTOR_POST_FEED_LI.addClass("cai-post-proccessed"); 
@@ -826,6 +833,7 @@ async function processPlayButton(play_button, selector_for_validclass, time_inte
             selector_for_validclass.addClass("cai-post-proccessed"); 
             sendComment.click();   // SEND COMMENT BUTTON CLICKED
             commentSent++;
+            $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
             delay_next = time_interval * 1000; 
             showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 5000, true);
             scrollwindowAi(index_post++);
@@ -892,8 +900,10 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
                 var sendComment2 = $('div.x1al4vs7').find('div[aria-label="Comment"]:not([aria-disabled])');
                 if(sendComment2.length > 0){
                   clearInterval(popupint);
-                    sendComment2.click();  
+                    sendComment2.click();
+                      
                     commentSent++; 
+                    $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
                     selector_for_validclass.css("border", "1px solid green"); 
                     selector_for_validclass.addClass("cai-post-proccessed"); 
                     showCustomToastr('success', 'The AI comment was sent successfully. '+commentSent, 3000, true); 
