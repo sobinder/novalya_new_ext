@@ -474,6 +474,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+
     if (message.action === "getGenderCountry") {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -496,6 +497,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true; // Tells Chrome to keep the message channel open for async response
     }
+    
 
     // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON DELECT REQUEST BUTTON
     if (message.action == "deleteRequest") {
@@ -1041,6 +1043,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             getUserPlanLimit();
         },1000);
         
+    }
+
+    if(message.action === "updateGenderStorage"){
+        setTimeout(()=>{
+            getUserPlanLimit();
+        },1000);
     }
 
     if (message.action === "updateNoSendConnects") {

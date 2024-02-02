@@ -195,12 +195,13 @@ let FacebookDOM;
         $this.appendresponse();
       }
     },
-    addChatGPTforFacebook: function (elem, feelings, post_description) {
+    addChatGPTforFacebook: function (elem, feelings, post_description , faceebook_name , user_Gender) {
       clickedBtn = $(elem);
       description = post_description;
       feelingsvalue = feelings;
       chrome.storage.sync.set({ post_description: '' });
       chrome.storage.sync.set({ post_description: post_description });
+     
       selector_comment_btn = '.que-current-container div[aria-label="Write a comment"]';
       if ($(selector_comment_btn).length == 0) {
         selector_comment_btn = '.que-current-container div[aria-label="Write a comment…"]';
@@ -215,24 +216,87 @@ let FacebookDOM;
         selector_comment_btn = '.que-current-container div[aria-label="Write an answer…"]';
       }
 
-      $(selector_comment_btn).click();
-      $(selector_comment_btn).click();
-     
-      selector_comment_btn.textContent = '';
-      raw = JSON.stringify({
-        text: post_description,
-        temp: feelings,
-        type: 'facebook',
-      });
-      console.log(raw);
 
       chrome.runtime.sendMessage(
-        { from: 'content', action: 'getResponseFromChatGPT', request: raw },
-        function (response) {
-          console.log(response);
-          $this.putMessageinTextArea(response.result, elem);
-        }
-      );
+        {
+          action: "getGenderCountry",
+          name: faceebook_name,
+        },
+        (response) => {
+                  console.log(response);
+                  if (
+                    typeof response.data.body != "undefined"
+                  ) {
+                  console.log(response.data.body.gender.toLowerCase());
+                    if (response.data.body.gender.toLowerCase() != 'na' ) {
+                     var gender = response.data.body.gender;
+                     console.log(gender);
+                     $(selector_comment_btn).click();
+     
+                     selector_comment_btn.textContent = '';
+                     raw = JSON.stringify({
+                       text: post_description,
+                       temp: feelings,
+                       type: 'facebook',
+                       post_gender:gender,
+                       gender:user_Gender
+                     });
+                     console.log(raw);
+               
+                     chrome.runtime.sendMessage(
+                       { from: 'content', action: 'getResponseFromChatGPT', request: raw },
+                       function (response) {
+                         console.log(response);
+                         $this.putMessageinTextArea(response.result, elem);
+                       }
+                     );
+                    }else {
+                      var gender = "";
+                      $(selector_comment_btn).click();
+       
+                      selector_comment_btn.textContent = '';
+                      raw = JSON.stringify({
+                        text: post_description,
+                        temp: feelings,
+                        type: 'facebook',
+                        post_gender:gender,
+                        gender:user_Gender
+                      });
+                      console.log(raw);
+                
+                      chrome.runtime.sendMessage(
+                        { from: 'content', action: 'getResponseFromChatGPT', request: raw },
+                        function (response) {
+                          console.log(response);
+                          $this.putMessageinTextArea(response.result, elem);
+                        }
+                      );
+                    }
+                  }else{
+                    var gender = "";
+                    $(selector_comment_btn).click();
+     
+                    selector_comment_btn.textContent = '';
+                    raw = JSON.stringify({
+                      text: post_description,
+                      temp: feelings,
+                      type: 'facebook',
+                      post_gender:gender,
+                      gender:user_Gender
+                    });
+                    console.log(raw);
+              
+                    chrome.runtime.sendMessage(
+                      { from: 'content', action: 'getResponseFromChatGPT', request: raw },
+                      function (response) {
+                        console.log(response);
+                        $this.putMessageinTextArea(response.result, elem);
+                      }
+                    );
+                  } 
+        })
+
+   
     },
     putMessageinTextArea: function (apiResp, elem) {
       const isFacebookMessagePage = window.location.href.includes('facebook.com') && window.location.href.includes('/messages/t/');

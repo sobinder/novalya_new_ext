@@ -1282,14 +1282,14 @@ $(document).ready(function () {
 
 ///////////////////////////  ADD COMMENT AI BUTTON && ADD COMMENT SETTING PANEL IN EVERY POST /////////////////////////////
 
-    // customBtnFound = setInterval(() => {   
-    //     if (window.location.href.indexOf('facebook.com') > -1) {
-    //         CommentAI.addAIButton();
-    //         FacebookDOM.addReactionPannelFB();
-    //     } else {
-    //         clearInterval(customBtnFound);
-    //     }
-    // }, [1000]);
+    customBtnFound = setInterval(() => {   
+        if (window.location.href.indexOf('facebook.com') > -1) {
+            CommentAI.addAIButton();
+            FacebookDOM.addReactionPannelFB();
+        } else {
+            clearInterval(customBtnFound);
+        }
+    }, [1000]);
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
