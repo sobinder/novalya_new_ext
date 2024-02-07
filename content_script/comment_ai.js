@@ -25,7 +25,7 @@ let CommentAI;
       });
     },
     onInitMethods: function () {
-    
+
     },
     addAIButton: function () {
       let current_url = window.location.href;
@@ -185,83 +185,94 @@ $(document).on("click", ".popup_play", async function (e) {
 })
 
 $(document).on("click", ".play", function (e) {
-  clickedBtn = $(this);
+  chrome.storage.local.get(["userlimitSettings"], async function (result) {
+    // console.log(result.userlimitSettings);
+    var user_Gender = result.userlimitSettings.new_packages.gender;
+    //console.log(user_Gender);
+    userlimitSettings = result.userlimitSettings;
+    total_no_ai_comment = userlimitSettings?.new_packages?.no_ai_comment ?? 0;
+    //console.log(total_no_ai_comment);
+    no_ai_comment = userlimitSettings?.userlimit?.no_ai_comment ?? 0;
+    //console.log('no_ai_comment', no_ai_comment);
 
-  var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
-  $(this).addClass('current-class-ld');
+    if (parseInt(total_no_ai_comment) > parseInt(no_ai_comment)) {
+      //console.log('if');
+      clickedBtn = $(this);
 
-  let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
-  $(post_conatainer_selector).removeClass("que-current-container");
-  $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
+      var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
+      $(this).addClass('current-class-ld');
+      let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
+      $(post_conatainer_selector).removeClass("que-current-container");
+      $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
 
-  selector_post_description = $(".que-current-container").find(
-    'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
-  );
-  console.log(selector_post_description.text());
-  if (selector_post_description.text() == "") {
-    selector_post_description = $(".que-current-container").find("blockquote.x11i5rnm.xieb3on.x1d52u69");
-  }
-  console.log(selector_post_description.text());
-  if (selector_post_description.length > 0) {
-    facebook_post_description = selector_post_description.text();
-
-    let faceebook_name = $(".que-current-container").find('.xu06os2.x1ok221b a.xzsf02u.x1s688f').text();
-    console.log(faceebook_name);
-    console.log(facebook_post_description.length);
-    if (facebook_post_description.length > 25) {
-      let writing_style_popup = validateAndFocus('.writing_style_popup', 'writing_style_popup');
-      console.log(writing_style_popup);
-      let tone_popup = validateAndFocus('.tone_popup', 'tone_popup');
-
-      if (!writing_style_popup || !tone_popup) {
-        return false;
+      selector_post_description = $(".que-current-container").find(
+        'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
+      );
+      //console.log(selector_post_description.text());
+      if (selector_post_description.text() == "") {
+        selector_post_description = $(".que-current-container").find("blockquote.x11i5rnm.xieb3on.x1d52u69");
       }
+      //console.log(selector_post_description.text());
 
-      let opinion_popup = validateAndFocus('.opinion_popup', 'opinion_popup');
-      let size_popup = validateAndFocus('.size_popup', 'size_popup');
-      let language_popup = validateAndFocus('.language_popup', 'language_popup');
-      let emojis_popup = validateAndFocus('.emojis_popup', 'emojis_popup');
-
-      if (!opinion_popup || !size_popup || !language_popup || !emojis_popup) {
-        return false;
-      }
-
-      $('.loader').show();
-      let temp = {
-        opinion: opinion_popup[0],
-        size: size_popup[0],
-        writing: writing_style_popup,
-        tone: tone_popup,
-        language: language_popup[0],
-        emoji: emojis_popup[0]
-      };
-      console.log(temp);
-
-      chrome.storage.sync.set({ responsedata: temp });
-      if (window.location.href.includes("facebook.com")) {
-
-        chrome.storage.local.get(["userlimitSettings"], function (result) {
-          console.log(result.userlimitSettings.new_packages.gender);
-          var user_Gender = result.userlimitSettings.new_packages.gender;
-          console.log(user_Gender);
-          FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description, faceebook_name , user_Gender);
-     });
-        
+      if (selector_post_description.length > 0) {
+        facebook_post_description = selector_post_description.text();
+    
+        let faceebook_name = $(".que-current-container").find('.xu06os2.x1ok221b a.xzsf02u.x1s688f').text();
+        // console.log(faceebook_name);
+        // console.log(facebook_post_description.length);
+        if (facebook_post_description.length > 25) {
+          let writing_style_popup = validateAndFocus('.writing_style_popup', 'writing_style_popup');
+          // console.log(writing_style_popup);
+          let tone_popup = validateAndFocus('.tone_popup', 'tone_popup');
+    
+          if (!writing_style_popup || !tone_popup) {
+            return false;
+          }
+    
+          let opinion_popup = validateAndFocus('.opinion_popup', 'opinion_popup');
+          let size_popup = validateAndFocus('.size_popup', 'size_popup');
+          let language_popup = validateAndFocus('.language_popup', 'language_popup');
+          let emojis_popup = validateAndFocus('.emojis_popup', 'emojis_popup');
+    
+          if (!opinion_popup || !size_popup || !language_popup || !emojis_popup) {
+            return false;
+          }
+    
+          $('.loader').show();
+          let temp = {
+            opinion: opinion_popup[0],
+            size: size_popup[0],
+            writing: writing_style_popup,
+            tone: tone_popup,
+            language: language_popup[0],
+            emoji: emojis_popup[0]
+          };
+          console.log(temp);
+    
+          chrome.storage.sync.set({ responsedata: temp });
+          if (window.location.href.includes("facebook.com")) {
+            console.log('chatgpt call',user_Gender);
+            FacebookDOM.addChatGPTforFacebook(clickedBtn, temp, facebook_post_description, faceebook_name, user_Gender);
+          }
+        } else {
+          $('.loader').hide();
+          $('.agree_div').show();
+          $('.response').show();
+          commentLengthStatus = true;
+          showCustomToastr('info', 'The input Text is too less', 4000, false, false, false);
+        }
+      } else {
+        $('.loader').hide();
+        $('.agree_div').show();
+        $('.response').show();
+        commentLengthStatus = true;
+        showCustomToastr('info', 'There is no text for input in this post', 4000, false, false, false);
       }
     } else {
-      $('.loader').hide();
-      $('.agree_div').show();
-      $('.response').show();
-      commentLengthStatus = true;
-      showCustomToastr('info', 'The input Text is too less', 4000, false, false, false);
+      toastr["error"]('Your comment ai limit is reached. Please consider upgrading your plan.');
     }
-  } else {
-    $('.loader').hide();
-    $('.agree_div').show();
-    $('.response').show();
-    commentLengthStatus = true;
-    showCustomToastr('info', 'There is no text for input in this post', 4000, false, false, false);
-  }
+
+  });
 })
 
 $(document).on("click", ".reload", function (e) {
@@ -340,20 +351,20 @@ $(document).on("click", ".reload", function (e) {
       // console.log(result.userlimitSettings.new_packages.gender);
       var user_Gender = result.userlimitSettings.new_packages.gender;
       // console.log(user_Gender);
-      FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description, faceebook_name , user_Gender);
-  });
+      FacebookDOM.addChatGPTforFacebook($(this), temp, facebook_post_description, faceebook_name, user_Gender);
+    });
   }
 })
-      $(document).on('change', '#maleGender', function () {
-      chrome.runtime.sendMessage({ action: "updateGenderStorage" });
-      });
-      $(document).on('change', '#femaleGender', function () {
-      chrome.runtime.sendMessage({ action: "updateGenderStorage" });
-      });
+$(document).on('change', '#maleGender', function () {
+  chrome.runtime.sendMessage({ action: "updateGenderStorage" });
+});
+$(document).on('change', '#femaleGender', function () {
+  chrome.runtime.sendMessage({ action: "updateGenderStorage" });
+});
 
-      $(document).on('change', '#othersGender', function () { 
-      chrome.runtime.sendMessage({ action: "updateGenderStorage" });
-      });  
+$(document).on('change', '#othersGender', function () {
+  chrome.runtime.sendMessage({ action: "updateGenderStorage" });
+});
 
 $(document).on('change', '.opinion_popup', function () {
   let value = "";
@@ -882,10 +893,10 @@ async function processPlayButton(play_button, selector_for_validclass, time_inte
       selector_for_validclass.addClass("cai-post-proccessed");
       sendComment.click();   // SEND COMMENT BUTTON CLICKED
       commentSent++;
-      no_ai_comment++;
-      updateCommentAiLimit(no_ai_comment);
+
       $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
       delay_next = time_interval * 1000;
+
       showCustomToastr('success', 'The AI comment was sent successfully. ' + commentSent, 5000, true);
       scrollwindowAi(index_post++);
 
@@ -955,9 +966,6 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
           sendComment2.click();
 
           commentSent++;
-          no_ai_comment++;
-
-          updateCommentAiLimit(no_ai_comment);
           $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
           selector_for_validclass.css("border", "1px solid green");
           selector_for_validclass.addClass("cai-post-proccessed");
@@ -1050,11 +1058,3 @@ function checkPopupActive() {
   });
 }
 
-function updateCommentAiLimit(no_ai_comment) {
-  console.log('no_ai_comment', no_ai_comment);
-  raw = JSON.stringify({
-    'no_ai_comment': no_ai_comment,
-  });
-
-  chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
-}

@@ -370,7 +370,7 @@ let FacebookDOM;
           input.innerHTML = result;
           input.dispatchEvent(evt);
         }
-
+        updateCommentAiLimit();
       }
     },
     like: function (elem) {
@@ -545,5 +545,20 @@ async function waitForElm(selector) {
       childList: true,
       subtree: true,
     });
+  });
+}
+
+function updateCommentAiLimit() {
+  chrome.storage.local.get(["userlimitSettings"], async function (result) {
+    console.log(result.userlimitSettings);
+    userlimitSettings = result.userlimitSettings;
+    no_ai_comment = userlimitSettings?.userlimit?.no_ai_comment ?? 0;
+    console.log('no_ai_comment', no_ai_comment);
+    no_ai_comment++;
+    console.log('no_ai_comment', no_ai_comment);
+    raw = JSON.stringify({
+      'no_ai_comment': no_ai_comment,
+    });
+    chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
   });
 }
