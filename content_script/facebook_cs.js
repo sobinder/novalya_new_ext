@@ -45,6 +45,12 @@ let FacebookDOM;
           $('.loader').show();
           $this.changewriting($(this));
         });
+
+        $(document).on('click', '#ai-comment-submit', function () {
+          console.log($(this));
+          $(this).attr('id','');
+          $this.updateCommentAiLimit();
+        });
       }
     },
     appendresponse: function () {
@@ -299,6 +305,7 @@ let FacebookDOM;
    
     },
     putMessageinTextArea: function (apiResp, elem) {
+
       const isFacebookMessagePage = window.location.href.includes('facebook.com') && window.location.href.includes('/messages/t/');
       let selector;
       if (isFacebookMessagePage) {
@@ -328,6 +335,8 @@ let FacebookDOM;
         selection.removeAllRanges();
         selection.addRange(range);
       }
+
+      
         
       if ($(selector + ' p ').length) {
         // Copy the result to the clipboard
@@ -363,6 +372,7 @@ let FacebookDOM;
 
         // Create and dispatch an 'input' event
         const evt = new Event('input', { bubbles: true });
+        $(selector).parent().parent().parent().next().find('div[aria-label="Comment"]').attr('id', 'ai-comment-submit');
 
         if ($(selector + ' p br').length) {
           const input = document.querySelector(selector + 'p');
@@ -370,8 +380,11 @@ let FacebookDOM;
           input.innerHTML = result;
           input.dispatchEvent(evt);
         }
-        updateCommentAiLimit();
+        
       }
+
+     
+      
     },
     like: function (elem) {
       $('.loader').show();
@@ -524,6 +537,17 @@ let FacebookDOM;
         }
       );
     },
+    updateCommentAiLimit: function () {
+      chrome.storage.local.get(["userlimitSettings"], async function (result) {
+        userlimitSettings = result.userlimitSettings;
+        no_ai_comment = userlimitSettings?.userlimit?.no_ai_comment ?? 0;
+        no_ai_comment++;
+        raw = JSON.stringify({
+          'no_ai_comment': no_ai_comment,
+        });
+        chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+      });
+    }
 
   };
   FacebookDOM.initilaize();
@@ -548,17 +572,4 @@ async function waitForElm(selector) {
   });
 }
 
-function updateCommentAiLimit() {
-  chrome.storage.local.get(["userlimitSettings"], async function (result) {
-    console.log(result.userlimitSettings);
-    userlimitSettings = result.userlimitSettings;
-    no_ai_comment = userlimitSettings?.userlimit?.no_ai_comment ?? 0;
-    console.log('no_ai_comment', no_ai_comment);
-    no_ai_comment++;
-    console.log('no_ai_comment', no_ai_comment);
-    raw = JSON.stringify({
-      'no_ai_comment': no_ai_comment,
-    });
-    chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
-  });
-}
+

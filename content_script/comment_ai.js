@@ -185,6 +185,7 @@ $(document).on("click", ".popup_play", async function (e) {
 })
 
 $(document).on("click", ".play", function (e) {
+  clickedBtn = $(this);
   chrome.storage.local.get(["userlimitSettings"], async function (result) {
     // console.log(result.userlimitSettings);
     var user_Gender = result.userlimitSettings.new_packages.gender;
@@ -197,13 +198,13 @@ $(document).on("click", ".play", function (e) {
 
     if (parseInt(total_no_ai_comment) > parseInt(no_ai_comment)) {
       //console.log('if');
-      clickedBtn = $(this);
+      
 
-      var linkedin_post_description = $(this).closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
-      $(this).addClass('current-class-ld');
+      var linkedin_post_description = clickedBtn.closest('.feed-shared-update-v2__comments-container').parent().parent().find('.feed-shared-update-v2__description-wrapper').text().trim();
+      clickedBtn.addClass('current-class-ld');
       let post_conatainer_selector = ".x78zum5.x1n2onr6.xh8yej3";
       $(post_conatainer_selector).removeClass("que-current-container");
-      $(this).parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
+      clickedBtn.parent().parent().parent().parent().find(".que-processed-class").closest(post_conatainer_selector).addClass("que-current-container que-red-border");
 
       selector_post_description = $(".que-current-container").find(
         'div[data-ad-comet-preview="message"][data-ad-preview="message"]'
@@ -893,6 +894,7 @@ async function processPlayButton(play_button, selector_for_validclass, time_inte
       selector_for_validclass.addClass("cai-post-proccessed");
       sendComment.click();   // SEND COMMENT BUTTON CLICKED
       commentSent++;
+      //autoUpdateCommentAiLimit();
 
       $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
       delay_next = time_interval * 1000;
@@ -966,6 +968,7 @@ async function processPlayButton3(time_interval, temp, limit, commentSent, selec
           sendComment2.click();
 
           commentSent++;
+          //autoUpdateCommentAiLimit();
           $("#toastrMessage").text(`Novalya’s Magic is in progress ${commentSent} of ${limit} `);
           selector_for_validclass.css("border", "1px solid green");
           selector_for_validclass.addClass("cai-post-proccessed");
@@ -1025,6 +1028,18 @@ async function scrollwindowAi(index_post) {
   $("html, body").animate({ scrollTop: (scrollHeight + 500) }, 2800);
 
   //window.scrollTo(0,window.pageYOffset +$(selector_for_validclass)[0].getBoundingClientRect().top -500);
+}
+
+function  autoUpdateCommentAiLimit () {
+  chrome.storage.local.get(["userlimitSettings"], async function (result) {
+    userlimitSettings = result.userlimitSettings;
+    no_ai_comment = userlimitSettings?.userlimit?.no_ai_comment ?? 0;
+    no_ai_comment++;
+    raw = JSON.stringify({
+      'no_ai_comment': no_ai_comment,
+    });
+    chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+  });
 }
 
 
