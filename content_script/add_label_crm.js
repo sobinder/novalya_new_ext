@@ -528,7 +528,7 @@ let AddLabelCRM;
                 if (profilePic.includes('chrome-extension:')) {
                     profilePic = $(this).parent().parent().find('div[aria-label][role="button"]:eq(0)').find('div svg g image').attr('xlink:href');
                 }
-
+                console.log(profilePic);
                 fb_user_id = $(this).parent().attr("fb_user_id");
                 if (fb_user_id == "" || fb_user_id == undefined) {
                     fb_user_id = $(this).parent().parent().parent().attr("fb_user_id");
@@ -550,7 +550,10 @@ let AddLabelCRM;
                 if (fb_user_id == undefined) {
                     fb_user_id = await $this.getClikedFbId();
                 }
-
+                if (fb_user_id == "" || fb_user_id == undefined) {
+                    fb_user_id = $(this).parent().parent().parent().parent().attr("fb_user_id");
+                }
+                console.log(fb_user_id);
                 chrome.runtime.sendMessage({ action: "single_users_tag_get", fb_user_id: fb_user_id }, (response) => {
                     if (response != undefined && response != '') {
                         var tag_data_individual = JSON.parse(response);
@@ -899,7 +902,8 @@ let AddLabelCRM;
 
                                 if (fb_user) {
                                     $(this).find('div.add-button-container-chat').remove();
-                                    $parentContainer.attr('fb_user_id', fb_user).children().children().prepend(add_label_button);
+                                    $('.cts-message-thread-id-1 div[data-visualcompletion]:eq(0)').attr('fb_user_id', fb_user).children().children().prepend(add_label_button);
+                                    
                                 }
 
                                 userTagsArray.forEach((item) => {
@@ -913,7 +917,7 @@ let AddLabelCRM;
                                                                   </div>`;
 
                                             $(this).find('div#add-icon.add-button-container-chat').remove();
-                                            $(this).children().children().prepend(addTagButton);
+                                            $(this).children().children().children().prepend(addTagButton);
                                         }
                                     }
                                 });
