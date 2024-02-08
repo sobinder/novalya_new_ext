@@ -52,7 +52,8 @@ let CommentAI;
       else {
         console.log("in the groups");
         if ($('#comment_Ai').length == 0) {
-          $('.x1yztbdb').find('[role="tablist"]').parent().parent().parent().prepend(button);
+          // $('.x1yztbdb').find('[role="tablist"]').parent().parent().parent().prepend(button);
+          $('.x1yztbdb').find('[aria-label="Filters"]').parent().parent().parent().parent().parent().parent().parent().prepend(button);
           // $('#comment_Ai').css("width", "250px");
         }
       }
