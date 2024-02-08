@@ -46,11 +46,11 @@ let FacebookDOM;
           $this.changewriting($(this));
         });
 
-        $(document).on('click', '#ai-comment-submit', function () {
-          console.log($(this));
-          $(this).attr('id','');
-          $this.updateCommentAiLimit();
-        });
+        // $(document).on('click', '#ai-comment-submit', function () {
+        //   console.log($(this));
+        //   $(this).attr('id','');
+        //   $this.updateCommentAiLimit();
+        // });
       }
     },
     appendresponse: function () {
@@ -299,13 +299,12 @@ let FacebookDOM;
                         $this.putMessageinTextArea(response.result, elem);
                       }
                     );
+                    
                   } 
         })
-
-   
     },
     putMessageinTextArea: function (apiResp, elem) {
-
+      $this.updateCommentAiLimit();
       const isFacebookMessagePage = window.location.href.includes('facebook.com') && window.location.href.includes('/messages/t/');
       let selector;
       if (isFacebookMessagePage) {
@@ -372,7 +371,7 @@ let FacebookDOM;
 
         // Create and dispatch an 'input' event
         const evt = new Event('input', { bubbles: true });
-        $(selector).parent().parent().parent().next().find('div[aria-label="Comment"]').attr('id', 'ai-comment-submit');
+        // $(selector).parent().parent().parent().next().find('div[aria-label="Comment"]').attr('id', 'ai-comment-submit');
 
         if ($(selector + ' p br').length) {
           const input = document.querySelector(selector + 'p');
