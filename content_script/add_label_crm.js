@@ -901,7 +901,7 @@ let AddLabelCRM;
                                 }
 
                                 if (fb_user) {
-                                    $(this).find('div.add-button-container-chat').remove();
+                                   // $(this).find('div.add-button-container-chat').remove();
                                     $('.cts-message-thread-id-1 div[data-visualcompletion]:eq(0)').attr('fb_user_id', fb_user).children().children().prepend(add_label_button);
                                     
                                 }

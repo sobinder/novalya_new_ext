@@ -325,10 +325,6 @@ input.disabled_cls {
   cursor: not-allowed !important;
 }
 
-
-
-
-
 /*  messengers.com css */
 .add-button-container {
   border: 1px solid #f5f5f5;
@@ -349,7 +345,7 @@ input.disabled_cls {
   z-index: 9;
   cursor: pointer;
   /* width: calc(100% - 6px) !important; */
-  width: 160px !important;
+  width: 180px !important;
   padding-bottom: 4px !important;
   white-space-collapse: collapse;
   text-wrap: nowrap;

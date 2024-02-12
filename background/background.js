@@ -650,6 +650,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action == "sendMessageBirthday") {
+        updateBirthdayLimit();
         const window_data = { text_message: message.messagtext };
         getNumericID(message.member_fb_id)
             .then(function (resopnse) {
@@ -690,6 +691,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action == "postFeedBirthday") {
+        updateBirthdayLimit();
         const window_data = { text_message: message.messagtext };
         facebook_profile_url = "https://www.facebook.com/" + message.member_fb_id;
         SendMessageMembersNVClass.postTextOnTimeline(
@@ -1534,4 +1536,39 @@ function getAdminSettings() {
         })
         .catch(error => console.log('error', error));
     return true;
+}
+
+function updateBirthdayLimit(){
+    chrome.storage.local.get(["userlimitSettings"], async function (result) {
+        userlimitSettings = result.userlimitSettings;
+        console.log(userlimitSettings);
+        no_of_birthday_wishes = userlimitSettings?.userlimit?.no_of_birthday_wishes ?? 0;
+        console.log('no_of_birthday_wishes - ', no_of_birthday_wishes);
+        no_of_birthday_wishes++;
+        console.log('no_of_birthday_wishes - ', no_of_birthday_wishes);
+        raw = JSON.stringify({
+          'no_of_birthday_wishes': no_of_birthday_wishes,
+        });
+
+        try {
+            const url = "https://novalyabackend.novalya.com/plan/update-limit";
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "Bearer " + authToken);
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw
+            };
+            const response = await fetch(url, requestOptions);
+            if (response.ok) {
+                const result = await response.json();
+                    getUserPlanLimit();
+            } else {
+                console.log('Error:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 }

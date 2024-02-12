@@ -264,6 +264,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                             }
                             if (loopValue + 1 > secondChild.children().length) {
                                 console.log("stooped");
+                              
                                 $("#toastrMessage").text(`'Congratulations' Goal Achieved`);
                                 setTimeout(() => {
                                     chrome.runtime.sendMessage({ action: "closeTabs" }, function (res1) {
@@ -1391,4 +1392,5 @@ function updateRequestReceivedLimit(no_friend_requests_received) {
     });
     chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
 }
+
 
