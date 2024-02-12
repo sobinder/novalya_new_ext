@@ -129,61 +129,61 @@ let index_post = 1;
 
 // FUNCTIONLATIES START AFTER CLICK ON LAUNCH AI BUTTON
 $(document).on("click", ".popup_play", async function (e) {
-  let index = 0;
-  let clickedBtn = $(this);
-  let commentSent = 0;
+        let index = 0;
+        let clickedBtn = $(this);
+        let commentSent = 0;
 
-  let limit = getValue('comments');
-  let time_interval = getValue('times');
-
-  if (limit > 50 || time_interval < 30) {
-    $('.warning').show();
-    let inputName = (limit > 50) ? 'custom_comments' : 'custom_times';
-    $(`input[name="${inputName}"][type="text"]`).focus();
-    return false;
-  }
-
-  let writing_style_popup = validateAndFocus('.writing_style_popup', 'writing_style_popup');
-  let tone_popup = validateAndFocus('.tone_popup', 'tone_popup');
-
-  if (!writing_style_popup || !tone_popup) {
-    return false;
-  }
-
-  let opinion_popup = validateAndFocus('.opinion_popup', 'opinion_popup');
-  let size_popup = validateAndFocus('.size_popup', 'size_popup');
-  let language_popup = validateAndFocus('.language_popup', 'language_popup');
-  let emojis_popup = validateAndFocus('.emojis_popup', 'emojis_popup');
-
-  if (!opinion_popup || !size_popup || !language_popup || !emojis_popup) {
-    return false;
-  }
-
-  $('.loader').show();
-  $('.popup_play').hide();
-
-  let temp = {
-    opinion: opinion_popup[0],
-    size: size_popup[0],
-    writing: writing_style_popup,
-    tone: tone_popup,
-    language: language_popup[0],
-    emoji: emojis_popup[0]
-  };
-  //console.log(temp);
-  chrome.storage.sync.set({ responsedata: temp });
-  await delay(1000);
-  $('.loader').hide();
-  $('.popup-backdrop').remove();
-  showCustomToastr('info', 'Comment AI feature started', 3000);
-  scrollwindowAi(index_post++);
-  await delay(3000);
-  showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit, 1000, true, true, true);
-  startAiAutomation(time_interval, temp, limit, commentSent);
+        let limit = getValue('comments');
+        let time_interval = getValue('times');
 
 
+        if (limit > 50 || time_interval < 30) {
+          $('.warning').show();
+          let inputName = (limit > 50) ? 'custom_comments' : 'custom_times';
+          $(`input[name="${inputName}"][type="text"]`).focus();
+          return false;
+        }
 
-})
+        let writing_style_popup = validateAndFocus('.writing_style_popup', 'writing_style_popup');
+        let tone_popup = validateAndFocus('.tone_popup', 'tone_popup');
+
+        if (!writing_style_popup || !tone_popup) {
+          return false;
+        }
+
+        let opinion_popup = validateAndFocus('.opinion_popup', 'opinion_popup');
+        let size_popup = validateAndFocus('.size_popup', 'size_popup');
+        let language_popup = validateAndFocus('.language_popup', 'language_popup');
+        let emojis_popup = validateAndFocus('.emojis_popup', 'emojis_popup');
+
+        if (!opinion_popup || !size_popup || !language_popup || !emojis_popup) {
+          return false;
+        }
+
+        $('.loader').show();
+        $('.popup_play').hide();
+
+        let temp = {
+          opinion: opinion_popup[0],
+          size: size_popup[0],
+          writing: writing_style_popup,
+          tone: tone_popup,
+          language: language_popup[0],
+          emoji: emojis_popup[0]
+        };
+
+        //console.log(temp);
+        chrome.storage.sync.set({ responsedata: temp });      
+        await delay(1000);
+        $('.loader').hide();
+        $('.popup-backdrop').remove();
+        showCustomToastr('info', 'Comment AI feature started', 3000);
+        scrollwindowAi(index_post++);
+        await delay(3000);
+        showCustomToastr('info', 'Novalya’s Magic is in progress 0 of ' + limit, 1000, true, true, true);
+        startAiAutomation(time_interval, temp, limit, commentSent);
+
+   })
 
 $(document).on("click", ".play", function (e) {
   clickedBtn = $(this);
@@ -214,6 +214,13 @@ $(document).on("click", ".play", function (e) {
       if (selector_post_description.text() == "") {
         selector_post_description = $(".que-current-container").find("blockquote.x11i5rnm.xieb3on.x1d52u69");
       }
+      if(selector_post_description.text() == ""){
+        selector_post_description = $(".x1iorvi4.x1pi30zi.x1l90r2v.x1swvt13");
+      }
+      if(selector_post_description.text() == ""){
+        selector_post_description = $(".x1swvt13.x1pi30zi.xexx8yu.x18d9i69");
+     }
+     console.log(selector_post_description);
       //console.log(selector_post_description.text());
 
       if (selector_post_description.length > 0) {
@@ -322,8 +329,15 @@ $(document).on("click", ".reload", function (e) {
   console.log(selector_post_description);
 
   if (selector_post_description.text() == "") {
-    selector_post_description = $(".que-current-container").find("blockquote");
+    selector_post_description = $(".que-current-container").find("blockquote.x11i5rnm.xieb3on.x1d52u69");
   }
+  if(selector_post_description.text() == ""){
+    selector_post_description = $(".x1iorvi4.x1pi30zi.x1l90r2v.x1swvt13");
+  }
+  if(selector_post_description.text() == ""){
+     selector_post_description = $(".x1swvt13.x1pi30zi.xexx8yu.x18d9i69");
+  }
+  console.log(selector_post_description);
   if (selector_post_description.length > 0) {
     var facebook_post_description = selector_post_description.text();
     //console.log(post_description);
@@ -838,11 +852,14 @@ async function processFeed(time_interval, temp, limit, commentSent) {
       let post_description_scenario1 = SELECTOR_POST_FEED_LI.find('div[data-ad-comet-preview="message"][data-ad-preview="message"]').text();
       let post_description_scenario2 = SELECTOR_POST_FEED_LI.find("blockquote.x11i5rnm.xieb3on.x1d52u69").text();
       let post_description_scenario3 = SELECTOR_POST_FEED_LI.find(".x1pi30zi.xexx8yu").text();
+      let post_description_scenario4 = SELECTOR_POST_FEED_LI.find(".x1iorvi4.x1pi30zi.x1l90r2v.x1swvt13");
+      let post_description_scenario5 = SELECTOR_POST_FEED_LI.find(".x1swvt13.x1pi30zi.xexx8yu.x18d9i69");
+     
       console.log("reached here");
       console.log(post_description_scenario1);
       console.log(post_description_scenario2);
       console.log(post_description_scenario3);
-      if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25) {
+      if (post_description_scenario1.length > 25 || post_description_scenario2.length > 25 || post_description_scenario3.length > 25 || post_description_scenario4.length > 25  || post_description_scenario5.length > 25) {
         //await processPost(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
         await processButtons(SELECTOR_POST_FEED_LI, time_interval, temp, limit, commentSent);
       } else {
