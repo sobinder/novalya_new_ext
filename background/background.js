@@ -1056,6 +1056,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "updateNoSendConnects") {
         updateNoOfConnects(message, sendResponse);
     }
+
+    //update crm automation
+    if (message.action === "crmAutomation") {
+        console.log(message);
+        const setting = message.setting;
+        const bulkMembers = message.bulk_members;
+        const type = 'bulkTagging';
+    
+        moveGroupId = setting.moveGroupId;
+        moveStageId = setting.moveStageId;
+
+        if(setting.selectAction == 'Move To Stage'){
+            if(bulkMembers.length > 0){
+                moveGroupId = bulkMembers[0].tag_id;
+            }
+        }
+        
+        const bulkMembersInfo = Promise.all(bulkMembers.map(item =>
+            getBothAlphaAndNumericId(item.fb_user_id).then(bothIds => ({
+                fbName: item.fbName,
+                profilePic: item.profilePic,
+                fb_user_alphanumeric_id: bothIds.fb_user_id,
+                fb_user_id: bothIds.numeric_fb_id,
+                fb_image_id: null
+            }))
+        ));
+
+        bulkMembersInfo.then(info => {
+            let token = authToken;
+            if (token != undefined && token != '') {
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", "Bearer " + token);
+                myHeaders.append("Content-Type", "application/json");
+                console.log(moveGroupId);
+                var raw = JSON.stringify({
+                    "type": type,
+                    "members": JSON.stringify({ info }),
+                    "tag_id": moveGroupId,
+                    "stage_id":moveStageId
+                });
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+                fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    chrome.tabs.sendMessage(sender.tab.id, {
+                        type: 'tag_update_done',
+                        from: 'background',
+                        result: result,
+                    });
+                    sendResponse({ data: result.msg, status: "ok" });
+                }).catch(error => console.log('error', error));
+            }
+        });
+    }
 });
 
 var currentDate = getCurrentDate();

@@ -828,6 +828,7 @@ $(document).ready(function () {
         $("#submit-campaign").addClass("disabled_cls");
         let data = JSON.parse($(this).attr('attr-data'));
         console.log(data);
+        //return false;
         let userIds = data.userIds;
         let total_memberss = data.peopleCount;
         setTimeout(() => {
@@ -888,11 +889,15 @@ $(document).ready(function () {
                         } else {
                             randomDelay = 60000;
                         }
-
+                        console.log(selected_group_members);
+                        let updateBulkMembers = [];
                         selected_group_members.map((item, i) => {
                             setTimeout(() => {
                                 if (i < total_memberss && parseInt(total_no_crm_message) > parseInt(no_crm_message)) {
                                     no_crm_message++;
+
+                                   
+
                                     console.log('no_crm_message - ', no_crm_message);
                                     let thread_id = item.fb_user_id;
                                     console.log(thread_id);
@@ -924,6 +929,15 @@ $(document).ready(function () {
                                             $("#stop_crm").text("Close popup");
                                             $(".loading").remove();
                                             $("h3.title_lg").text("Completed");
+                                            if(data.selectAction && data.selectAction != 'Select Below'){
+                                                chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
+                                            }else{
+                                                if(data.moveStageId == null && data.moveGroupId == null){
+                                                    //delete case
+                                                    chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
+                                                }
+                                            }
+                                            
                                         }
                                     })
                                 } else {
