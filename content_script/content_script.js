@@ -929,15 +929,8 @@ $(document).ready(function () {
                                             $("#stop_crm").text("Close popup");
                                             $(".loading").remove();
                                             $("h3.title_lg").text("Completed");
-                                            if(data.selectAction && data.selectAction != 'Select Below'){
-                                                chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
-                                            }else{
-                                                if(data.moveStageId == null && data.moveGroupId == null){
-                                                    //delete case
-                                                    chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
-                                                }
-                                            }
-                                            
+                                            //run crm automation functionality
+                                            crmAutomation(data,selected_group_members);
                                         }
                                     })
                                 } else {
@@ -1405,6 +1398,16 @@ function updateRequestReceivedLimit(no_friend_requests_received) {
         'no_friend_requests_received': no_friend_requests_received,
     });
     chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+}
+
+function crmAutomation(data,selected_group_members){
+    if(data.selectAction && data.selectAction != 'Select Below'){ //group and stage case
+        chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
+    }else{
+        if(data.moveStageId == null && data.moveGroupId == null){  //delete case
+            chrome.runtime.sendMessage({ action: "crmAutomation",'bulk_members':selected_group_members,'setting': data});
+        }
+    }
 }
 
 

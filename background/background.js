@@ -1057,20 +1057,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         updateNoOfConnects(message, sendResponse);
     }
 
-    //update crm automation
+    //crm automation
     if (message.action === "crmAutomation") {
-        console.log(message);
         const setting = message.setting;
         const bulkMembers = message.bulk_members;
         const type = 'bulkTagging';
     
-        moveGroupId = setting.moveGroupId;
-        moveStageId = setting.moveStageId;
-
-        if(setting.selectAction == 'Move To Stage'){
-            if(bulkMembers.length > 0){
-                moveGroupId = bulkMembers[0].tag_id;
-            }
+        let moveGroupId = setting.moveGroupId;
+        let moveStageId = 1;
+        if(setting.moveStageId){
+            moveStageId = setting.moveStageId;
+        }
+        
+        if (setting.selectAction === 'Move To Stage' && bulkMembers.length > 0) {
+            moveGroupId = bulkMembers[0].tag_id;
         }
         
         const bulkMembersInfo = Promise.all(bulkMembers.map(item =>
