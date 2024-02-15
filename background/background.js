@@ -31,7 +31,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 chrome.management.onEnabled.addListener(function (extensionInfo) {
-    if( extensionInfo.name == 'Novalya'){
+    if (extensionInfo.name == 'Novalya') {
         checkMessengerMobileView();
         reloadAllNovalyaTabs();
         reloadAllGroupTabs();
@@ -39,12 +39,12 @@ chrome.management.onEnabled.addListener(function (extensionInfo) {
         reloadMessengersTabs();
         getAdminSettings();
     }
-   
+
 });
 
 chrome.management.onDisabled.addListener(function (extensionInfo) {
     console.log("Extension disabled:", extensionInfo.name);
-    if( extensionInfo.name == 'Novalya'){
+    if (extensionInfo.name == 'Novalya') {
         checkMessengerMobileView();
         reloadAllNovalyaTabs();
         reloadAllGroupTabs();
@@ -175,8 +175,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 const numericUserFbId = fbIDsObject.numeric_fb_id;
                 const alphanumericUserFbId = fbIDsObject.fb_user_id;
 
-                console.log('numericUserFbId - ',numericUserFbId);
-                console.log('alphanumericUserFbId -',alphanumericUserFbId);
+                console.log('numericUserFbId - ', numericUserFbId);
+                console.log('alphanumericUserFbId -', alphanumericUserFbId);
 
                 let token = authToken;
                 if (token != undefined && token != '') {
@@ -193,7 +193,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                         "profile_pic": message.profilePic,
                         "is_primary": message.is_primary,
                         "tag_id": message.selected_tags_ids,
-                        "stage_id":1
+                        "stage_id": 1
                     });
                     var requestOptions = {
                         method: 'POST',
@@ -228,7 +228,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const type = message.type;
 
         console.log(selectedTagId);
-        
+
         const bulkMembersInfo = Promise.all(bulkMembers.map(item =>
             getBothAlphaAndNumericId(item.fb_user_id).then(bothIds => ({
                 fbName: item.fbName,
@@ -252,7 +252,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     "type": type,
                     "members": JSON.stringify({ info }),
                     "tag_id": selectedTagId,
-                    "stage_id":1
+                    "stage_id": 1
                 });
 
                 console.log(raw);
@@ -264,15 +264,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     redirect: 'follow'
                 };
                 fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    chrome.tabs.sendMessage(sender.tab.id, {
-                        type: 'tag_update_done',
-                        from: 'background',
-                        result: result,
-                    });
-                    sendResponse({ data: result.msg, status: "ok" });
-                }).catch(error => console.log('error', error));
+                    .then((response) => response.json())
+                    .then((result) => {
+                        chrome.tabs.sendMessage(sender.tab.id, {
+                            type: 'tag_update_done',
+                            from: 'background',
+                            result: result,
+                        });
+                        sendResponse({ data: result.msg, status: "ok" });
+                    }).catch(error => console.log('error', error));
             }
         });
     }
@@ -497,7 +497,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         return true; // Tells Chrome to keep the message channel open for async response
     }
-    
+
 
     // RECIVED MESSAGE FROM CONTENT SCRIPT AFTER CLICK ON DELECT REQUEST BUTTON
     if (message.action == "deleteRequest") {
@@ -770,7 +770,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         myHeaders.append("Authorization", "Bearer " + token);
         var raw = JSON.stringify({
             // "group_id": message.settins.group_id,
-            "userIds":message.settins.userIds,
+            "userIds": message.settins.userIds,
             "message_id": message.settins.message_id,
             "time_interval": message.settins.time_interval
         });
@@ -832,7 +832,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 var raw = JSON.stringify({
                     "type": "get"
                 });
-    
+
                 var requestOptions = {
                     method: 'POST',
                     headers: myHeaders,
@@ -841,16 +841,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 };
                 // Get all tagged users and filter by selected userIds for campaign 
                 fetch("https://novalyabackend.novalya.com/extension/api/taggeduser-api", requestOptions)
-                .then(response => response.json())
-                .then(result => { 
-                    const filteredArray = result.data.filter(item => userIds.includes(item.id));
-                    if(responseData.data.length > 0){
-                        responseData.data[0].taggedUsers = filteredArray;
-                    }
-                    console.log(responseData);
-                    sendResponse({ api_data: responseData });
-                })
-                .catch(error => console.log('error', error));
+                    .then(response => response.json())
+                    .then(result => {
+                        const filteredArray = result.data.filter(item => userIds.includes(item.id));
+                        if (responseData.data.length > 0) {
+                            responseData.data[0].taggedUsers = filteredArray;
+                        }
+                        console.log(responseData);
+                        sendResponse({ api_data: responseData });
+                    })
+                    .catch(error => console.log('error', error));
             })
             .catch(error => console.log('error', error));
         return true;
@@ -1041,16 +1041,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     //all update no_crm_message, no_friend_request
     if (message.action === "updateLimit") {
         updateLimit(message, sendResponse);
-        setTimeout(()=>{
+        setTimeout(() => {
             getUserPlanLimit();
-        },1000);
-        
+        }, 1000);
+
     }
 
-    if(message.action === "updateGenderStorage"){
-        setTimeout(()=>{
+    if (message.action === "updateGenderStorage") {
+        setTimeout(() => {
             getUserPlanLimit();
-        },1000);
+        }, 1000);
     }
 
     if (message.action === "updateNoSendConnects") {
@@ -1062,17 +1062,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const setting = message.setting;
         const bulkMembers = message.bulk_members;
         const type = 'bulkTagging';
-    
+
         let moveGroupId = setting.moveGroupId;
         let moveStageId = 1;
-        if(setting.moveStageId){
+        if (setting.moveStageId) {
             moveStageId = setting.moveStageId;
         }
-        
+
         if (setting.selectAction === 'Move To Stage' && bulkMembers.length > 0) {
             moveGroupId = bulkMembers[0].tag_id;
         }
-        
+
         const bulkMembersInfo = Promise.all(bulkMembers.map(item =>
             getBothAlphaAndNumericId(item.fb_user_id).then(bothIds => ({
                 fbName: item.fbName,
@@ -1094,7 +1094,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     "type": type,
                     "members": JSON.stringify({ info }),
                     "tag_id": moveGroupId,
-                    "stage_id":moveStageId
+                    "stage_id": moveStageId
                 });
 
                 var requestOptions = {
@@ -1104,18 +1104,25 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     redirect: 'follow'
                 };
                 fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
-                .then((response) => response.json())
-                .then((result) => {
-                    chrome.tabs.sendMessage(sender.tab.id, {
-                        type: 'tag_update_done',
-                        from: 'background',
-                        result: result,
-                    });
-                    sendResponse({ data: result.msg, status: "ok" });
-                }).catch(error => console.log('error', error));
+                    .then((response) => response.json())
+                    .then((result) => {
+                        chrome.tabs.sendMessage(sender.tab.id, {
+                            type: 'tag_update_done',
+                            from: 'background',
+                            result: result,
+                        });
+                        sendResponse({ data: result.msg, status: "ok" });
+                    }).catch(error => console.log('error', error));
             }
         });
     }
+
+    if (message.action === "crmAutomationOnebyOne") {
+
+        crmAutomationProcessMembers(message);
+
+    }
+
 });
 
 var currentDate = getCurrentDate();
@@ -1194,9 +1201,9 @@ function getGroupName(sendResponse, grouppage_url) {
 }
 
 FriendRequestsNVClass.getRequestSettings();
-setTimeout(()=>{
+setTimeout(() => {
     getUserPlanLimit();
-},5000);
+}, 5000);
 
 // FriendCRMClass.getCRMStatus();
 
@@ -1532,8 +1539,8 @@ async function getUserPlanLimit() {
         const response = await fetch(url, requestOptions);
         if (response.ok) {
             const result = await response.json();
-            chrome.storage.local.set({ userlimitSettings: result.data}, function() {   });
-           // console.log(result);
+            chrome.storage.local.set({ userlimitSettings: result.data }, function () { });
+            // console.log(result);
             return result;
         } else {
             console.log('Error:', response.status, response.statusText);
@@ -1589,16 +1596,16 @@ function getAdminSettings() {
     fetch(url, requestOptions)
         .then(response => response.json())
         .then((result) => {
-            if(result.status == 'success'){
+            if (result.status == 'success') {
                 const extension_version = result.data[0].extension_version;
-                chrome.storage.local.set({ extension_version: extension_version}, function() {   });
+                chrome.storage.local.set({ extension_version: extension_version }, function () { });
             }
         })
         .catch(error => console.log('error', error));
     return true;
 }
 
-function updateBirthdayLimit(){
+function updateBirthdayLimit() {
     chrome.storage.local.get(["userlimitSettings"], async function (result) {
         userlimitSettings = result.userlimitSettings;
         console.log(userlimitSettings);
@@ -1607,7 +1614,7 @@ function updateBirthdayLimit(){
         no_of_birthday_wishes++;
         console.log('no_of_birthday_wishes - ', no_of_birthday_wishes);
         raw = JSON.stringify({
-          'no_of_birthday_wishes': no_of_birthday_wishes,
+            'no_of_birthday_wishes': no_of_birthday_wishes,
         });
 
         try {
@@ -1623,7 +1630,7 @@ function updateBirthdayLimit(){
             const response = await fetch(url, requestOptions);
             if (response.ok) {
                 const result = await response.json();
-                    getUserPlanLimit();
+                getUserPlanLimit();
             } else {
                 console.log('Error:', response.status, response.statusText);
             }
@@ -1631,4 +1638,65 @@ function updateBirthdayLimit(){
             console.error('Error:', error);
         }
     });
+}
+
+async function crmAutomationProcessMembers(message) {
+    let info = [];
+    const setting = message.setting;
+    const members = message.member;
+    const type = 'bulkTagging';
+
+    let moveGroupId = setting.moveGroupId;
+    let moveStageId = setting.moveStageId || 1;
+
+    if (setting.selectAction === 'Move To Stage' && members.length > 0) {
+        moveGroupId = members[0].tag_id;
+    }
+
+    try {
+        const bothIds = await getBothAlphaAndNumericId(members.fb_user_id);
+
+        const details = {
+            fbName: members.fbName,
+            profilePic: members.profilePic,
+            fb_user_alphanumeric_id: bothIds.fb_user_id,
+            fb_user_id: bothIds.numeric_fb_id,
+            fb_image_id: null
+        };
+
+        info.push(details);
+        let token = authToken;
+        if (token != undefined && token != '') {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer " + token);
+            myHeaders.append("Content-Type", "application/json");
+            console.log(moveGroupId);
+            var raw = JSON.stringify({
+                "type": type,
+                "members": JSON.stringify({ info }),
+                "tag_id": moveGroupId,
+                "stage_id": moveStageId
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    chrome.tabs.sendMessage(sender.tab.id, {
+                        type: 'tag_update_done',
+                        from: 'background',
+                        result: result,
+                    });
+                    sendResponse({ data: result.msg, status: "ok" });
+                }).catch(error => console.log('error', error));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Handle error if necessary
+    }
 }

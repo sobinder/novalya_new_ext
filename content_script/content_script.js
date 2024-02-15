@@ -922,6 +922,7 @@ $(document).ready(function () {
                                             });
                                             // send message to update crm message limit
                                             chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+                                            crmAutomationOneByOne(data,selected_group_members[i]);
                                         }
                                         $('#processed_member').text(i + 1);
                                         if (i === selected_group_members.length - 1) {
@@ -930,7 +931,7 @@ $(document).ready(function () {
                                             $(".loading").remove();
                                             $("h3.title_lg").text("Completed");
                                             //run crm automation functionality
-                                            crmAutomation(data,selected_group_members);
+                                            //crmAutomation(data,selected_group_members);
                                         }
                                     })
                                 } else {
@@ -1410,4 +1411,13 @@ function crmAutomation(data,selected_group_members){
     }
 }
 
+function crmAutomationOneByOne(data,selected_group_members){
+    if(data.selectAction && data.selectAction != 'Select Below'){ //group and stage case
+        chrome.runtime.sendMessage({ action: "crmAutomationOnebyOne",'member':selected_group_members,'setting': data});
+    }else{
+        if(data.moveStageId == null && data.moveGroupId == null){  //delete case
+            chrome.runtime.sendMessage({ action: "crmAutomationOnebyOne",'member':selected_group_members,'setting': data});
+        }
+    }
+}
 
