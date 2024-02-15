@@ -1118,9 +1118,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.action === "crmAutomationOnebyOne") {
-
-        crmAutomationProcessMembers(message);
-
+        crmAutomationProcessMembers(message,sender,sendResponse);
     }
 
 });
@@ -1640,7 +1638,7 @@ function updateBirthdayLimit() {
     });
 }
 
-async function crmAutomationProcessMembers(message) {
+async function crmAutomationProcessMembers(message,sender,sendResponse) {
     let info = [];
     const setting = message.setting;
     const members = message.member;
