@@ -390,13 +390,15 @@ $(document).on('change', '.opinion_popup', function () {
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
     console.log('result', result);
-    // console.log('!= "undefined"',  result[0]);            
+    console.log('!= "undefined"',  result[0]);            
     if (typeof result.responsedata != "undefined" && result.responsedata != '') {
-    } else {
-      responsedata = {};
-    }
-    responsedata.opinion = value;
+      responsedata.opinion = value;
     chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { opinion: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
+    
 
   })
 });
@@ -409,9 +411,17 @@ $(document).on('change', '.writing_style_popup', function () {
   value = selectedValue;
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
-    responsedata.writing = value;
-    console.log(responsedata);
-    chrome.storage.sync.set({ "responsedata": responsedata });
+
+    if (typeof result.responsedata != "undefined" && result.responsedata != '') {
+      responsedata.writing = value;
+      console.log(responsedata);
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { writing: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
+
+  
   })
 });
 
@@ -424,9 +434,15 @@ $(document).on('change', '.tone_popup', function () {
 
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
-    responsedata.tone = value;
-    console.log(responsedata);
-    chrome.storage.sync.set({ "responsedata": responsedata });
+   
+    if (typeof result.responsedata != "undefined" && result.responsedata != '') {
+      responsedata.tone = value;
+      console.log(responsedata);
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { tone: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
   })
 });
 
@@ -439,8 +455,15 @@ $(document).on('change', '.size_popup', function () {
 
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
-    responsedata.size = value;
-    chrome.storage.sync.set({ "responsedata": responsedata });
+   
+    if (typeof result.responsedata != "undefined" && result.responsedata != '') {
+      responsedata.size = value;
+      console.log(responsedata);
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { size: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
   })
 });
 
@@ -453,9 +476,16 @@ $(document).on('change', '.language_popup', function () {
 
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
-    responsedata.language = value;
+  
     console.log(responsedata);
-    chrome.storage.sync.set({ "responsedata": responsedata });
+    if (typeof result.responsedata != "undefined" && result.responsedata != '') {
+      responsedata.language = value;
+      console.log(responsedata);
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { language: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
   })
 });
 
@@ -468,16 +498,24 @@ $(document).on('change', '.emojis_popup', function () {
 
   chrome.storage.sync.get(["responsedata"], function (result) {
     let responsedata = result.responsedata;
-    responsedata.emoji = value;
+   
     console.log(responsedata);
-    chrome.storage.sync.set({ "responsedata": responsedata });
+    if (typeof result.responsedata != "undefined" && result.responsedata != '') {
+      responsedata.emoji = value;
+      console.log(responsedata);
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    } else {
+      responsedata = { emoji: value};
+      chrome.storage.sync.set({ "responsedata": responsedata });
+    }
   })
 });
 
 //storageupdate($(this));
 
 
-// -------------------------------------COMMENT AI CODE STARTS------------------------
+// -------------------------------------COMMENT AI CODE STARTS-----------------------------------
+
 appendHTML = `
 <div id="quentintou">
     <div class="loader" style="display:none"></div>
@@ -495,35 +533,32 @@ appendHTML = `
         </select>
       </div>
       <div class="input-box">
-        <select
-          class="writing_style_popup"
-          data-type="writing_style_popup"
-        >
-          <option value="">Writing</option>
-          <option value="Conversational">Conversational</option>
-          <option value="Informative">Informative</option>
-          <option value="Descriptive">Descriptive</option>
-          <option value="Creative">Creative</option>
-          <option value="Friendly">Friendly</option>
-          <option value="Professional">Professional</option>
+        <select class="writing_style_popup" data-type="writing_style_popup">
+              <option value="">Writing</option>
+              <option value="Conversational">Conversational</option>
+              <option value="Informative">Informative</option>
+              <option value="Descriptive">Descriptive</option>
+              <option value="Creative">Creative</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Professional">Professional</option>
         </select>
       </div>
       <div class="input-box">
         <select class="tone_popup" data-type="tone_popup">
-          <option value="">Tone</option>
-          <option value="Encouraging">Encouraging</option>
-          <option value="Respectful">Respectful</option>
-          <option value="Enthusiastic">Enthusiastic</option>
-          <option value="Humorous">Humorous</option>
-          <option value="Objective">Objective</option>
+              <option value="">Tone</option>
+              <option value="Encouraging">Encouraging</option>
+              <option value="Respectful">Respectful</option>
+              <option value="Enthusiastic">Enthusiastic</option>
+              <option value="Humorous">Humorous</option>
+              <option value="Objective">Objective</option>
         </select>
       </div>
       <div class="input-box">
         <select class="size_popup" data-type="tone_popup">
-          <option value="">Size</option>
-          <option value="Long">Long</option>
-          <option value="Medium">Medium</option>
-          <option value="Short">Short</option>
+                <option value="">Size</option>
+                <option value="Long">Long</option>
+                <option value="Medium">Medium</option>
+                <option value="Short">Short</option>
         </select>
       </div>
       <div class="input-box">
