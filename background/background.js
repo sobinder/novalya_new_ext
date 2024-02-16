@@ -541,13 +541,49 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     var window_data = {
                         text_message: messageText,
                     };
-                    mfacebook_thread_url =
-                        "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
-                    SendMessageMembersNVClass.openSmallWindow(
-                        mfacebook_thread_url,
-                        window_data
-                    );
-                    sendResponse({ status: "ok" });
+
+                    chrome.storage.local.get(["messengerMobViewStatus"], function (result) {
+                        console.log(result);
+                        if (
+                            typeof result.messengerMobViewStatus != "undefined" &&
+                            result.messengerMobViewStatus != ""
+                        ) {
+                            console.log('if 0');
+                            let mobileViewEnable = result.messengerMobViewStatus.enable;
+                            console.log(mobileViewEnable);
+                            if (mobileViewEnable) {
+                                console.log('if 1');
+                                mfacebook_thread_url =
+                                "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+
+                                SendMessageMembersNVClass.openSmallWindow(
+                                    mfacebook_thread_url,
+                                    window_data
+                                );
+                                sendResponse({ status: "ok" });
+                            } else {
+                                console.log('else 1');
+                                SendMessageMembersNVClass.openMessengersWindow(
+                                    message.data.id,
+                                    window_data
+                                );
+                                sendResponse({ status: "ok" });
+                            }
+
+                        }else {
+                            console.log('else 0');
+                            mfacebook_thread_url =
+                            "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+
+                            SendMessageMembersNVClass.openSmallWindow(
+                                mfacebook_thread_url,
+                                window_data
+                            );
+                            checkMessengerMobileView();
+                            sendResponse({ status: "ok" });
+                        }
+
+                    });
                 }
             });
             return true;
@@ -592,14 +628,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     var window_data = {
                         text_message: messageText,
                     };
-                    mfacebook_thread_url =
-                        "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+                    chrome.storage.local.get(["messengerMobViewStatus"], function (result) {
+                        console.log(result);
+                        if (
+                            typeof result.messengerMobViewStatus != "undefined" &&
+                            result.messengerMobViewStatus != ""
+                        ) {
+                            let mobileViewEnable = result.messengerMobViewStatus.enable;
+                            //console.log(mobileViewEnable);
+                            if (mobileViewEnable) {
+                                mfacebook_thread_url =
+                                "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+        
+                                SendMessageMembersNVClass.openSmallWindow(
+                                    mfacebook_thread_url,
+                                    window_data
+                                );
+                                sendResponse({ status: "ok" });
+                            } else {
+                                SendMessageMembersNVClass.openMessengersWindow(
+                                    message.data.id,
+                                    window_data.text_message
+                                );
+                                sendResponse({ status: "ok" });
+                            }
 
-                    SendMessageMembersNVClass.openSmallWindow(
-                        mfacebook_thread_url,
-                        window_data
-                    );
-                    sendResponse({ status: "ok" });
+                        }else {
+                            mfacebook_thread_url =
+                                "https://m.facebook.com/messages/compose/?ids=" + message.data.id;
+        
+                                SendMessageMembersNVClass.openSmallWindow(
+                                    mfacebook_thread_url,
+                                    window_data
+                                );
+                            checkMessengerMobileView();
+                            sendResponse({ status: "ok" });
+                        }
+                    });  
                 }
             });
             return true;

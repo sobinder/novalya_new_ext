@@ -739,16 +739,19 @@ if (window.location.href.indexOf(my_domain) > -1) {
             if ($('.Mui-checked').length == 0) {
                 $('#switch-extension').parent().mclick();
             } else {
-                $('#download-extension').hide();
-                var latest_uploaded_version = $("#update-extension-bar").attr("data-version");
-                const extensionVersion = chrome.runtime.getManifest().version;
-                if (latest_uploaded_version <= extensionVersion) {
-                    $("#update-extension").hide();
-                    $("#update-extension-bar").hide();
-                } else {
-                    $("#update-extension").show();
-                    $("#update-extension-bar").show();
-                }
+                $('#download-extension').hide(); 
+            }
+
+            var latest_uploaded_version = $("#update-extension-bar").attr("data-version");
+            const extensionVersion = chrome.runtime.getManifest().version;
+            // console.log('extensionVersion - ',extensionVersion);
+            // console.log('latest_uploaded_version',latest_uploaded_version);
+            if (latest_uploaded_version <= extensionVersion) {
+                $("#update-extension").hide();
+                $("#update-extension-bar").hide();
+            } else {
+                $("#update-extension").show();
+                $("#update-extension-bar").show();
             }
             
         }, 1000)
