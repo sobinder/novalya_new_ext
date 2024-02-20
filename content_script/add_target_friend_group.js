@@ -11,6 +11,8 @@ let AddTargetFriendNV;
   let $this;
   let groupId;
   let total_message_limit = 300000; // read by api or by storage of specific user settings.
+  let connectAction;
+  let memberInfo = {};
   AddTargetFriendNV = {
     settings: {},
     initilaize: function () {
@@ -54,6 +56,10 @@ let AddTargetFriendNV;
 
       console.log(settings, no_friend_request);
       console.log(settings, total_no_friend_request);
+
+      
+      connectAction = settings[0].action;
+      connectAction = JSON.parse(connectAction)
 
       processing_status = "running";
       totalGroupMembers = $("h2:contains(Members):eq(0)").text();
@@ -125,7 +131,8 @@ let AddTargetFriendNV;
           messageArray,
           prospect,
           selectedInterval,
-          dateValue
+          dateValue,
+          connectAction
         );
       }, 8000);
     },
@@ -140,7 +147,8 @@ let AddTargetFriendNV;
       messageArray,
       prospect,
       selectedInterval,
-      dateValue
+      dateValue,
+      connectAction
     ) {
       selector_for_validclass2 =
         'div[data-visualcompletion="ignore-dynamic"][role="listitem"]:not(.sca-member-proccessed, .working-scl):eq(0)';
@@ -195,7 +203,8 @@ let AddTargetFriendNV;
                       selectedInterval,
                       dateValue,
                       btnText,
-                      loop2
+                      loop2,
+                      connectAction
                     );
                   } else if (res.result.message == "Record already found") {
                     console.log("record allready found");
@@ -233,7 +242,8 @@ let AddTargetFriendNV;
                           selectedInterval,
                           dateValue,
                           btnText,
-                          loop2
+                          loop2,
+                          connectAction
                         );
                       } else {
                         console.log("in the not sendong condition");
@@ -258,7 +268,8 @@ let AddTargetFriendNV;
                             messageArray,
                             prospect,
                             selectedInterval,
-                            dateValue
+                            dateValue,
+                            connectAction
                           );
                         }, 4000);
                       }
@@ -277,7 +288,8 @@ let AddTargetFriendNV;
                         selectedInterval,
                         dateValue,
                         btnText,
-                        loop2
+                        loop2,
+                        connectAction
                       );
                     }
                   }
@@ -303,7 +315,8 @@ let AddTargetFriendNV;
                       selectedInterval,
                       dateValue,
                       btnText,
-                      loop2
+                      loop2,
+                      connectAction
                     );
                   } else {
                     $(selector_for_validclass).addClass("sca-member-proccessed");
@@ -327,7 +340,8 @@ let AddTargetFriendNV;
                         messageArray,
                         prospect,
                         selectedInterval,
-                        dateValue
+                        dateValue,
+                        connectAction
                       );
                     }, 4000);
                   }
@@ -348,7 +362,8 @@ let AddTargetFriendNV;
                     messageArray,
                     prospect,
                     selectedInterval,
-                    dateValue
+                    dateValue,
+                    connectAction
                   );
                 }, 4000);
               }
@@ -369,7 +384,8 @@ let AddTargetFriendNV;
                   messageArray,
                   prospect,
                   selectedInterval,
-                  dateValue
+                  dateValue,
+                  connectAction
                 );
               }, 4000);
             } else {
@@ -390,7 +406,7 @@ let AddTargetFriendNV;
         }
       }
     },
-    addFriendButtonCheck: function(  
+    addFriendButtonCheck: async function(  
       randomDelay,
       limit_req,
       keywordTypeValue,
@@ -401,7 +417,7 @@ let AddTargetFriendNV;
       messageArray,
       prospect,
       selectedInterval,
-      dateValue , btnText , loop2 , no_of_send_message){
+      dateValue , btnText , loop2 , no_of_send_message,connectAction){
       //  console.log("Total limit: " + parseInt(total_message_limit) ,"send message no :" + parseInt(no_of_send_message) );
         // if(parseInt(total_message_limit) > parseInt(no_of_send_message)){
           selector_for_validclass2 =
@@ -538,6 +554,8 @@ let AddTargetFriendNV;
                     $(selector_for_validclass).addClass("add-done-border");
                     $(selector_for_validclass).addClass("loading_w_scl");
                     $(selector_for_validclass).attr("member_id", memberid2);
+
+                    let image = $(selector_for_validclass).find('svg image').attr('xlink:href');
       
                     let groupHref = $(selector_for_validclass2)
                       .find('a[href*="/groups/"]')
@@ -548,12 +566,17 @@ let AddTargetFriendNV;
                     let memberurl = groupHref.split("user/");
                     //let memberid = memberurl[1].replace('/', '');
                     var memberid = $(selector_for_validclass2).attr("member_id");
-      
+
+                    memberInfo = {};
+                    memberInfo.fb_user_id = memberid;
+                    memberInfo.fbName = member_name;
+                    memberInfo.profilePic = image;
+
                     let member_names = member_name.split(" ");
                     $(selector_for_validclass).addClass("sca-member-proccessed");
                     var segementMessage = [];
                     segementMessagetextArray = messageArray;
-                    console.log(segementMessagetextArray);
+                    //console.log(segementMessagetextArray);
                     segementMessagetextArray.forEach(function (item, i) {
                       segementMessage_json = segementMessagetextArray[i];
                       segementMessage_varient_json = segementMessage_json.varient;
@@ -566,7 +589,7 @@ let AddTargetFriendNV;
                     });
                     //2, 11, 333
                     segementMessage = segementMessage.join('');
-                    console.log(segementMessage);
+                    //console.log(segementMessage);
                     setTimeout(() => {
                       //console.log(segementMessage);
                       showCustomToastr('success', 'Friend Request Sent', 5000, false);
@@ -626,7 +649,8 @@ let AddTargetFriendNV;
                                   messageArray,
                                   prospect,
                                   selectedInterval,
-                                  dateValue
+                                  dateValue,
+                                  connectAction
                                 );
                               }
                             );
@@ -643,8 +667,6 @@ let AddTargetFriendNV;
                             chrome.runtime.sendMessage({ action: "createProspectUser", memberid: memberid2, }, (res) => {
                               console.log(res);
                             });
-      
-      
                             setTimeout(() => {
                               $this.checkValidUsers(
                                 randomDelay,
@@ -657,7 +679,8 @@ let AddTargetFriendNV;
                                 messageArray,
                                 prospect,
                                 selectedInterval,
-                                dateValue
+                                dateValue,
+                                connectAction
                               );
                             }, 4000);
                             warningStatus = false;
@@ -693,7 +716,8 @@ let AddTargetFriendNV;
                         messageArray,
                         prospect,
                         selectedInterval,
-                        dateValue
+                        dateValue,
+                        connectAction
                       );
                     }, 4000);
                   }
@@ -721,7 +745,8 @@ let AddTargetFriendNV;
                   messageArray,
                   prospect,
                   selectedInterval,
-                  dateValue
+                  dateValue,
+                  connectAction
                 );
               }, 4000);
             }
@@ -747,7 +772,8 @@ let AddTargetFriendNV;
                 messageArray,
                 prospect,
                 selectedInterval,
-                dateValue
+                dateValue,
+                connectAction
               );
             }, 4000);
           }
@@ -882,11 +908,19 @@ let AddTargetFriendNV;
       }
     },
     updateRequestLimit: function () {
+     
       raw = JSON.stringify({
         'no_friend_request': no_friend_request,
       });
       chrome.runtime.sendMessage({ action: "updateLimit", request: raw });
+      setTimeout(()=>{
+        console.log(connectAction);
+        console.log(memberInfo);
+        chrome.runtime.sendMessage({ action: "connectAutomation", setting: connectAction,member:memberInfo });
+      },2000);
+      
     }
+
   };
   AddTargetFriendNV.initilaize();
 })(jQuery);

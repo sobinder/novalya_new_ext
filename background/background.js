@@ -407,6 +407,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .then(response => response.json())
             .then(async res1 => {
                 console.log(res1);
+                //return false;
                 if (res1.status == "error") {
                     console.log(res1.message);
                 } else {
@@ -1186,6 +1187,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         crmAutomationProcessMembers(message,sender,sendResponse);
     }
 
+    if (message.action === "connectAutomation") {
+        connectAutomation(message,sender,sendResponse);
+    }
+
 });
 
 var currentDate = getCurrentDate();
@@ -1727,6 +1732,61 @@ async function crmAutomationProcessMembers(message,sender,sendResponse) {
             fb_image_id: null
         };
 
+        info.push(details);
+        let token = authToken;
+        if (token != undefined && token != '') {
+            var myHeaders = new Headers();
+            myHeaders.append("Authorization", "Bearer " + token);
+            myHeaders.append("Content-Type", "application/json");
+            console.log(moveGroupId);
+            var raw = JSON.stringify({
+                "type": type,
+                "members": JSON.stringify({ info }),
+                "tag_id": moveGroupId,
+                "stage_id": moveStageId
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            fetch("https://novalyabackend.novalya.com/api/ext/tag/get-tagged-user", requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    chrome.tabs.sendMessage(sender.tab.id, {
+                        type: 'tag_update_done',
+                        from: 'background',
+                        result: result,
+                    });
+                    sendResponse({ data: result.msg, status: "ok" });
+                }).catch(error => console.log('error', error));
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Handle error if necessary
+    }
+}
+
+async function connectAutomation(message,sender,sendResponse){
+    let info = [];
+    const setting = message.setting;
+    const members = message.member;
+    const type = 'bulkTagging';
+
+    let moveGroupId = setting.moveGroupId;
+    let moveStageId = setting.moveStageId || 1;
+    
+    try {
+        const bothIds = await getBothAlphaAndNumericId(members.fb_user_id);
+        const details = {
+            fbName: members.fbName,
+            profilePic: members.profilePic,
+            fb_user_alphanumeric_id: bothIds.fb_user_id,
+            fb_user_id: bothIds.numeric_fb_id,
+            fb_image_id: null
+        };
         info.push(details);
         let token = authToken;
         if (token != undefined && token != '') {
